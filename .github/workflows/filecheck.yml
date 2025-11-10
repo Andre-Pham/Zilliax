@@ -1,0 +1,59 @@
+name: File Check
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  file-check:
+    name: Verify Sources Mirror
+    runs-on: macos-26
+
+    steps:
+      - uses: actions/checkout@v4
+      - name: Check Sources Match Demo
+        run: |
+          set -euo pipefail
+          python3 <<'PY'
+          import hashlib
+          import pathlib
+          import sys
+
+          sources_root = pathlib.Path("Sources")
+          demo_root = pathlib.Path("Demo")
+          failures: list[str] = []
+
+          for source_file in sources_root.rglob("*"):
+              if not source_file.is_file() or source_file.name.startswith("."):
+                  continue
+
+              # Gather all Demo files that share the same filename.
+              matches = [candidate for candidate in demo_root.rglob(source_file.name) if candidate.is_file()]
+              if not matches:
+                  failures.append(f"{source_file} is missing from Demo/")
+                  continue
+
+              source_bytes = source_file.read_bytes()
+              source_hash = hashlib.sha256(source_bytes).digest()
+
+              identical_match = False
+              for candidate in matches:
+                  if hashlib.sha256(candidate.read_bytes()).digest() == source_hash:
+                      identical_match = True
+                      break
+
+              if not identical_match:
+                  failures.append(
+                      f"{source_file} has {len(matches)} name matches in Demo/ but none with identical content"
+                  )
+
+          if failures:
+              print("File mirror check failed:")
+              for failure in failures:
+                  print(f"- {failure}")
+              sys.exit(1)
+
+          print("All files under Sources/ exist with identical filename and content somewhere in Demo/.")
+          PY
