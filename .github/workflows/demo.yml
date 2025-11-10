@@ -31,10 +31,10 @@ jobs:
           xcodebuild -project Demo.xcodeproj -scheme Demo -destination 'platform=iOS Simulator,name=iPhone 17,OS=latest' clean build > swift-build.log 2>&1
       - name: SwiftLint
         working-directory: Demo
-        run: swiftlint --strict --config /Demo/.swiftlint.yml
+        run: swiftlint --strict --config ./Demo/.swiftlint.yml
       - name: SwiftLint Analyze
         working-directory: Demo
-        run: swiftlint analyze --strict --config /Demo/.swiftlint.yml --compiler-log-path swift-build.log
+        run: swiftlint analyze --strict --config ./Demo/.swiftlint.yml --compiler-log-path swift-build.log
 
   build:
     name: Build
