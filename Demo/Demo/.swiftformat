@@ -1,0 +1,1303 @@
+# Sets the Swift compiler version so version-dependent rules (e.g. ones that
+# rely on Swift 5.9 features) can run.
+#
+# BEFORE:
+# var foo: String { return "foo" }
+#
+# AFTER:
+# var foo: String { "foo" }
+--swift-version 5.9
+
+# Sets the indentation unit to be four spaces.
+#
+# BEFORE:
+# if 1 > 0 {
+#   return
+# }
+#
+# AFTER:
+# if 1 > 0 {
+#     return
+# }
+--indent 4
+
+# Use LF (Unix) line breaks throughout the file.
+#
+# BEFORE:
+# let a = 1\r\nlet b = 2\r\n
+#
+# AFTER:
+# let a = 1\nlet b = 2\n
+--linebreaks lf
+
+# Wrap lines that exceed 140 columns.
+#
+# BEFORE:
+# let s = "..." + "a very long string that keeps going and going and going"
+#
+# AFTER:
+# let s =
+#     "..." + "a very long string that keeps going and going and going"
+--max-width 140
+
+# Include trailing commas in comma-separated lists (arrays, dictionaries,
+# generic parameter lists, multiline calls) when legal.
+#
+# BEFORE:
+# let a = [
+#     1,
+#     2
+# ]
+#
+# AFTER:
+# let a = [
+#     1,
+#     2,
+# ]
+--trailing-commas always
+
+# Trims trailing whitespace (on all lines).
+#
+# BEFORE:
+# let a = 1··
+#
+# AFTER:
+# let a = 1
+--trim-whitespace always
+
+# Enable sorting imports alphabetically and grouping according to
+# `--import-grouping` (kept default grouping).
+#
+# BEFORE:
+# import B
+# import A
+#
+# AFTER:
+# import A
+# import B
+--enable sortImports
+
+# Enable removal of duplicate import statements.
+#
+# BEFORE:
+# import Foo
+# import Bar
+# import Foo
+#
+# AFTER:
+# import Bar
+# import Foo
+--enable duplicateImports
+
+# Indents `#if`/`#endif` blocks.
+#
+# BEFORE:
+# #if DEBUG
+# print("debug")
+# #endif
+#
+# AFTER:
+# #if DEBUG
+#     print("debug")
+# #endif
+--ifdef indent
+
+# Controls whether `else` in a multiline `guard` sits on the same line as the
+# last binding or is moved to the next line.
+#
+# BEFORE:
+# guard
+#     let x = x,
+#     let y = y
+# else {
+#     return
+# }
+#
+# AFTER:
+# guard
+#     let x = x,
+#     let y = y else {
+#     return
+# }
+--guard-else same-line
+
+# Controls whether `else`/`catch` follows the closing brace on the same line or
+# moves to the next line.
+#
+# BEFORE:
+# if ok {
+#     run()
+# }
+# else {
+#     stop()
+# }
+#
+# AFTER:
+# if ok {
+#     run()
+# } else {
+#     stop()
+# }
+--else-position same-line
+
+# Removes whitespace inside empty brace pairs.
+#
+# BEFORE:
+# func foo() { }
+#
+# AFTER:
+# func foo() {}
+--empty-braces no-space
+
+# Places the closing parenthesis for wrapped argument lists in a balanced
+# position relative to the opening parenthesis. The closing paren aligns
+# under the call rather than being placed on its own line.
+#
+# BEFORE:
+# foo(
+#     bar: 1,
+#     baz: 2
+#     )
+#
+# AFTER:
+# foo(
+#     bar: 1,
+#     baz: 2
+# )
+--closing-paren balanced
+
+# When wrapping call sites, places the closing parenthesis so that it aligns
+# under the opening call rather than on the same line as the last argument.
+#
+# BEFORE:
+# someFunction(
+#     value: 1,
+#     other: 2)
+#
+# AFTER:
+# someFunction(
+#     value: 1,
+#     other: 2
+# )
+--call-site-paren balanced
+
+# For function/initializer declarations: when wrapping parameters, put the
+# first parameter on a new line and align subsequent ones.
+#
+# BEFORE:
+# func f(a: Int, b: String, c: Bool) {
+#     print(a, b, c)
+# }
+#
+# AFTER:
+# func f(
+#     a: Int,
+#     b: String,
+#     c: Bool
+# ) {
+#     print(a, b, c)
+# }
+--wrap-arguments before-first
+
+# For function call sites: when wrapping arguments, put the first argument on
+# a new line and align subsequent ones.
+#
+# BEFORE:
+# f(a: 1, b: "two", c: true)
+#
+# AFTER:
+# f(
+#     a: 1,
+#     b: "two",
+#     c: true
+# )
+--wrap-parameters before-first
+
+# For array/dictionary literals: preserve the author’s original wrapping style
+# (don’t force before/after-first).
+#
+# BEFORE:
+# let a = [
+#     1, 2,
+#     3
+# ]
+#
+# AFTER:
+# let a = [
+#     1, 2,
+#     3
+# ]
+--wrap-collections preserve
+
+# Wraps conditions in `if` and `guard` statements so that, when wrapping is
+# needed, the first condition appears on its own line and subsequent
+# conditions align under it.
+#
+# BEFORE:
+# if
+#     let a,
+#     let b {
+#     // ...
+# }
+#
+# AFTER:
+# if let a,
+#    let b {
+#     // ...
+# }
+--wrap-conditions after-first
+
+# Never wraps the function return type onto its own line. Even if other
+# wrapping occurs, the return type stays on the same line as the closing
+# parenthesis.
+#
+# BEFORE:
+# func foo(
+#     bar: Int,
+#     baz: Int
+# )
+#     -> String
+#
+# AFTER:
+# func foo(
+#     bar: Int,
+#     baz: Int
+# ) -> String
+--wrap-return-type never
+
+# Never wraps function effect specifiers such as `throws` or `async`. These
+# keywords remain on the same line as the closing parenthesis.
+#
+# BEFORE:
+# func foo(
+#     bar: Int
+# )
+#     async throws
+#     -> Int
+#
+# AFTER:
+# func foo(
+#     bar: Int
+# ) async throws -> Int
+--wrap-effects never
+
+# Wraps long typealias definitions so that the first generic type appears on
+# its own line when wrapping. Subsequent types align under the first.
+#
+# BEFORE:
+# typealias Dependencies = Foo & Bar & Baz & Quux
+#
+# AFTER:
+# typealias Dependencies =
+#     Foo & Bar & Baz & Quux
+--wrap-type-aliases before-first
+
+# Disallows partially wrapped argument lists. Either all arguments are
+# wrapped or none of them are.
+#
+# BEFORE:
+# foo(bar: 1,
+#     baz: 2)
+#
+# AFTER:
+# foo(
+#     bar: 1,
+#     baz: 2
+# )
+--allow-partial-wrapping false
+
+# Places type @attributes on the previous line.
+#
+# BEFORE:
+# @main public class AppDelegate
+#
+# AFTER:
+# @main
+# public class AppDelegate
+--type-attributes prev-line
+
+# Places function @attributes on the previous line.
+#
+# BEFORE:
+# @available(*, deprecated) func f() {}
+#
+# AFTER:
+# @available(*, deprecated)
+# func f() {}
+--func-attributes prev-line
+
+# Places attributes on computed variables on the line above the declaration.
+#
+# BEFORE:
+# @available(*, deprecated) var foo: Int { 0 }
+#
+# AFTER:
+# @available(*, deprecated)
+# var foo: Int { 0 }
+--computed-var-attributes prev-line
+
+# Places attributes on stored variables on the line above the declaration.
+#
+# BEFORE:
+# @IBOutlet var label: UILabel!
+#
+# AFTER:
+# @IBOutlet
+# var label: UILabel!
+--stored-var-attributes prev-line
+
+# Places complex attributes (attributes containing parentheses or multiple
+# clauses) on the line before the declaration.
+#
+# BEFORE:
+# @available(iOS 14.0, *) func foo() {}
+#
+# AFTER:
+# @available(iOS 14.0, *)
+# func foo() {}
+--complex-attributes prev-line
+
+# Organize declarations by declaration type (properties/lifecycle/functions).
+#
+# BEFORE:
+# public class C {
+#     public func z() {}
+#     public let a = 1
+# }
+#
+# AFTER:
+# public class C {
+#     // MARK: Properties
+#     public let a = 1
+#
+#     // MARK: Functions
+#     public func z() {}
+# }
+--organization-mode type
+
+# Specifies the order of visibility groups when organizing declarations.
+#
+# BEFORE:
+# private func a() {}
+# public func b() {}
+# internal func c() {}
+#
+# AFTER:
+# public func b() {}
+# internal func c() {}
+# private func a() {}
+--visibility-order open,public,package,internal,fileprivate,private
+
+# Specifies the order of types.
+#
+# BEFORE:
+# var a = 1
+# static let b = 1
+#
+# AFTER:
+# static let b = 1
+# var a = 1
+--type-order beforeMarks,nestedType,staticProperty,staticPropertyWithBody,classPropertyWithBody,overriddenProperty,swiftUIPropertyWrapper,instanceProperty,computedProperty,instanceLifecycle,swiftUIProperty,swiftUIMethod,overriddenMethod,staticMethod,classMethod,instanceMethod
+
+# Removes // MARK: comments inside type bodies that aren't separating groups.
+#
+# BEFORE:
+# struct Foo {
+#     // MARK: Helper
+#     func bar() {}
+# }
+#
+# AFTER:
+# struct Foo {
+#     func bar() {}
+# }
+--type-body-marks remove
+
+# Moves access control keywords from the extension to the declarations inside it.
+#
+# BEFORE:
+# public extension Foo {
+#     func bar() {}
+# }
+#
+# AFTER:
+# extension Foo {
+#     public func bar() {}
+# }
+--extension-acl on-declarations
+
+# Disables automatic insertion and removal of `// MARK:` comments in enums.
+--mark-enum-threshold 100000
+
+# Disables automatic insertion and removal of `// MARK:` comments in extensions.
+--mark-extension-threshold 100000
+
+# Marks unused closure parameters with `_` only in closures.
+#
+# BEFORE:
+# request { response, data in
+#     consume(data)
+# }
+#
+# AFTER:
+# request { _, data in
+#     consume(data)
+# }
+--strip-unused-args closure-only
+
+# Converts property declarations to use inferred types.
+#
+# BEFORE:
+# private let header: HeaderView = .init()
+#
+# AFTER:
+# private let header = HeaderView()
+--property-types inferred
+
+# Disables the `redundantReturn` rule (otherwise removes unnecessary `return`
+# in closures/computed properties and Swift 5.9 if/switch expressions).
+#
+# ENABLED:
+# let xs = nums.map({ $0 * 2 })
+#
+# DISABLED:
+# let xs = nums.map({ return $0 * 2 })
+--disable redundantReturn
+
+# Disables the `redundantNilInit` rule (otherwise removes `= nil` default from
+# Optional `var` properties).
+#
+# ENABLED:
+# var name: String?
+#
+# DISABLED:
+# var name: String? = nil
+--disable redundantNilInit
+
+# Disables the `trailingClosures` rule (otherwise prefers trailing closure
+# syntax where appropriate).
+#
+# ENABLED:
+# items.map { $0 * 2 }.forEach { print($0) }
+#
+# DISABLED:
+# items.map({ $0 * 2 }).forEach({ print($0) })
+--disable trailingClosures
+
+# Disables the `redundantPublic` rule (otherwise removes redundant `public`
+# inside non-public contexts).
+#
+# ENABLED:
+# struct S {
+#     func f() {}
+# }
+#
+# DISABLED:
+# struct S {
+#     public func f() {}
+# }
+--disable redundantPublic
+
+# Disables the `redundantInternal` rule (otherwise removes explicit `internal`).
+#
+# ENABLED:
+# class C {}
+#
+# DISABLED:
+# internal class C {}
+--disable redundantInternal
+
+# Configure the `redundantSelf` rule to insert explicit `self` where applicable
+# (e.g. to match a project style that prefers explicit `self`).
+#
+# BEFORE:
+# struct S {
+#     var x = 0
+#     mutating func set(_ v: Int) {
+#         x = v
+#     }
+# }
+#
+# AFTER:
+# struct S {
+#     var x = 0
+#     mutating func set(_ v: Int) {
+#         self.x = v
+#     }
+# }
+--self insert
+
+# Disables the `redundantStaticSelf` rule (otherwise removes unneeded `Self.`
+# inside static members).
+#
+# ENABLED:
+# enum E {
+#     static func f() { g() }
+#     static func g() {}
+# }
+#
+# DISABLED:
+# enum E {
+#     static func f() { Self.g() }
+#     static func g() {}
+# }
+--disable redundantStaticSelf
+
+# Disables the `wrapMultilineStatementBraces` rule (otherwise ensures braces
+# appear correctly for wrapped expressions).
+#
+# ENABLED:
+# if condition,
+#    other
+# {
+#     doThing()
+# }
+#
+# DISABLED:
+# if condition,
+#    other {
+#     doThing()
+# }
+--disable wrapMultilineStatementBraces
+
+# Enables the `wrapConditionalBodies` rule, wrapping inline `if`/`guard` bodies
+# onto their own lines.
+#
+# BEFORE:
+# if ok { proceed() }
+#
+# AFTER:
+# if ok {
+#     proceed()
+# }
+--enable wrapConditionalBodies
+
+# Enables the `trailingCommas` rule (adds/removes trailing commas according to
+# `--trailing-commas` behavior).
+#
+# BEFORE:
+# let a = [
+#     1,
+#     2
+# ]
+#
+# AFTER:
+# let a = [
+#     1,
+#     2,
+# ]
+--enable trailingCommas
+
+# Enables the `redundantParens` rule (removes redundant parentheses).
+#
+# BEFORE:
+# if (x == y) { }
+#
+# AFTER:
+# if x == y { }
+--enable redundantParens
+
+# Enables the `organizeDeclarations` rule (groups/sorts members inside types
+# and extensions according to organization options).
+#
+# BEFORE:
+# public class C {
+#     public func z() {}
+#     public let a = 1
+# }
+#
+# AFTER:
+# public class C {
+#     // MARK: Properties
+#     public let a = 1
+#
+#     // MARK: Functions
+#     public func z() {}
+# }
+--enable organizeDeclarations
+
+# Enables the `consecutiveBlankLines` rule (collapses multiple blank lines down
+# to a single blank line).
+#
+# BEFORE:
+# func f() {
+#
+#
+#     print("x")
+# }
+#
+# AFTER:
+# func f() {
+#
+#     print("x")
+# }
+--enable consecutiveBlankLines
+
+# Enables the `blankLinesAroundMark` rule (ensures a blank line before and after
+# `MARK:` comments).
+#
+# BEFORE:
+# // MARK: Section
+# func f() {}
+#
+# AFTER:
+#
+# // MARK: Section
+#
+# func f() {}
+--enable blankLinesAroundMark
+
+# Enables the `blankLinesAtStartOfScope` rule (removes leading blank lines just
+# inside a scope).
+#
+# BEFORE:
+# func f() {
+#
+#     print("x")
+# }
+#
+# AFTER:
+# func f() {
+#     print("x")
+# }
+--enable blankLinesAtStartOfScope
+
+# Enables the `blankLinesAtEndOfScope` rule (removes trailing blank lines just
+# before a closing brace).
+#
+# BEFORE:
+# func f() {
+#     print("x")
+#
+# }
+#
+# AFTER:
+# func f() {
+#     print("x")
+# }
+--enable blankLinesAtEndOfScope
+
+# Prefers commas over `&&` in conditional statements.
+#
+# BEFORE:
+# if foo && bar {
+#     // ...
+# }
+#
+# AFTER:
+# if foo, bar {
+#     // ...
+# }
+--enable andOperator
+
+# Prefers `AnyObject` over `class` in protocols to indicate class constraints.
+#
+# BEFORE:
+# protocol Foo: class {}
+#
+# AFTER:
+# protocol Foo: AnyObject {}
+--enable anyObjectProtocol
+
+# Inserts a blank line before declarations to separate logical scopes.
+#
+# BEFORE:
+# func foo() {}
+# func bar() {}
+#
+# AFTER:
+# func foo() {}
+#
+# func bar() {}
+--enable blankLinesBetweenScopes
+
+# Replaces sequences of consecutive spaces with a single space.
+#
+# BEFORE:
+# let foo  =  5
+#
+# AFTER:
+# let foo = 5
+--enable consecutiveSpaces
+
+# Removes redundant type annotations when the type can be inferred from the initializer.
+#
+# BEFORE:
+# let view: UIView = UIView()
+#
+# AFTER:
+# let view = UIView()
+--enable redundantType
+
+# Removes redundant pattern matching syntax. Underscores in tuple patterns or
+# case patterns that match everything are reduced to a single underscore.
+#
+# BEFORE:
+# if case .foo(_, _) = bar {}
+#
+# AFTER:
+# if case .foo = bar {}
+--enable redundantPattern
+
+# Removes redundant `get` blocks from computed properties. If the body only
+# contains a `return` statement, the braces and `get` can be omitted.
+#
+# BEFORE:
+# var value: Int {
+#     get { return 5 }
+# }
+#
+# AFTER:
+# var value: Int { 5 }
+--enable redundantGet
+
+# Replaces `fileprivate` with `private` where equivalent. Since Swift 4,
+# `private` allows access from extensions in the same file, making
+# `fileprivate` unnecessary in many cases.
+#
+# BEFORE:
+# fileprivate var someConstant = 0
+#
+# AFTER:
+# private var someConstant = 0
+--enable redundantFileprivate
+
+# Allows redundant raw string values from enum cases whose string literal
+# matches the case name.
+#
+# ENABLED:
+# enum Foo: String {
+#     case bar
+#     case baz = "quux"
+# }
+#
+# DISABLED:
+# enum Foo: String {
+#     case bar = "bar"
+#     case baz = "quux"
+# }
+--disable redundantRawValues
+
+# Uses shorthand syntax for arrays, dictionaries and optionals.
+#
+# BEFORE:
+# var items: Array<Int>
+#
+# AFTER:
+# var items: [Int]
+--enable typeSugar
+
+# Forces each variable or constant to occupy its own line.
+#
+# BEFORE:
+# let a, b, c: Int
+#
+# AFTER:
+# let a: Int
+# let b: Int
+# let c: Int
+--enable singlePropertyPerLine
+
+# Removes redundant immediately invoked closure expressions. When a closure
+# contains a single statement and is called immediately, the closure can be
+# eliminated.
+#
+# BEFORE:
+# let foo = { Bar() }()
+#
+# AFTER:
+# let foo = Bar()
+--enable redundantClosure
+
+# Removes unnecessary calls to `.init` when a type initializer can be inferred.
+#
+# BEFORE:
+# String.init("text")
+#
+# AFTER:
+# String("text")
+--enable redundantInit
+
+# Removes explicit `-> Void` return types from function declarations. If a
+# function does not return a value, the return type clause is omitted.
+#
+# BEFORE:
+# func foo() -> Void { }
+#
+# AFTER:
+# func foo() { }
+--enable redundantVoidReturnType
+
+# Disables removing redundant variable names in optional binding conditions. The bound
+# value inherits the original name if no new identifier is provided.
+#
+# BEFORE:
+# if let foo = foo {
+#     print(foo)
+# }
+#
+# AFTER:
+# if let foo {
+#     print(foo)
+# }
+--disable redundantOptionalBinding
+
+# Simplifies redundant property declarations that immediately return an
+# instance.
+#
+# BEFORE:
+# func makeFoo() -> Foo {
+#     let foo = Foo()
+#     return foo
+# }
+#
+# AFTER:
+# func makeFoo() -> Foo {
+#     return Foo()
+# }
+--enable redundantProperty
+
+# Removes space inside square brackets. Elements or index expressions are
+# placed immediately inside the brackets without surrounding spaces.
+#
+# BEFORE:
+# [ 1, 2, 3 ]
+#
+# AFTER:
+# [1, 2, 3]
+--enable spaceInsideBrackets
+
+# Inserts a space inside curly braces for inline closures or expressions.
+#
+# BEFORE:
+# foo.filter {return true}
+#
+# AFTER:
+# foo.filter { return true }
+--enable spaceInsideBraces
+
+# Adds or removes space around curly braces according to the preferred style.
+#
+# BEFORE:
+# foo.filter{ return true }.map{ $0 }
+#
+# AFTER:
+# foo.filter { return true }.map { $0 }
+--enable spaceAroundBraces
+
+# Removes space inside parentheses. Parentheses hug the enclosed expression.
+#
+# BEFORE:
+# ( a, b )
+#
+# AFTER:
+# (a, b)
+--enable spaceInsideParens
+
+# Adds or removes space around parentheses. For example, it inserts a space
+# before the opening parenthesis of a `switch` expression.
+#
+# BEFORE:
+# switch(x){ }
+#
+# AFTER:
+# switch (x) { }
+--enable spaceAroundParens
+
+# Converts classes or structs used solely as namespaces into enums.
+#
+# BEFORE:
+# class FeatureConstants {
+#     static let foo = "foo"
+# }
+#
+# AFTER:
+# enum FeatureConstants {
+#     static let foo = "foo"
+# }
+--enable enumNamespaces
+
+# Converts block comments (`/* */`) into consecutive single line comments.
+#
+# BEFORE:
+# /*
+#  * foo
+#  * bar
+#  */
+#
+# AFTER:
+# // foo
+# // bar
+--enable blockComments
+
+# Uses documentation comments (`///`) for API declarations and converts
+# misplaced `///` comments into regular `//` comments on implementation
+# details.
+#
+# BEFORE:
+# // A placeholder type used to demonstrate syntax rules
+# class Foo {}
+#
+# AFTER:
+# /// A placeholder type used to demonstrate syntax rules
+# class Foo {}
+--enable docComments
+
+# Places documentation comments before modifiers or attributes.
+#
+# BEFORE:
+# @MainActor
+# /// Doc comment
+# func foo() {}
+#
+# AFTER:
+# /// Doc comment
+# @MainActor func foo() {}
+--enable docCommentsBeforeModifiers
+
+# Adds a space before or after `//` comments when needed.
+#
+# BEFORE:
+# let a = 5//assignment
+#
+# AFTER:
+# let a = 5 // assignment
+--enable spaceAroundComments
+
+# Adds leading and trailing spaces inside comments.
+#
+# BEFORE:
+# func foo() {/*...*/}
+#
+# AFTER:
+# func foo() { /* ... */ }
+--enable spaceInsideComments
+
+# Disables replacing unconstrained generics with `some Any`.
+#
+# ENABLED:
+# func handle<T: Fooable>(_ value: T) {}
+#
+# DISABLED:
+# func handle(_ value: some Fooable) {}
+--disable opaqueGenericParameters
+
+# Places `else`, `catch` and `while` keywords on the same line.
+#
+# BEFORE:
+# if foo {
+#     bar()
+# }
+# else {
+#     baz()
+# }
+#
+# AFTER:
+# if foo {
+#     bar()
+# } else {
+#     baz()
+# }
+--enable elseOnSameLine
+
+# Disables sorting protocol composition typealiases alphabetically.
+#
+# BEFORE:
+# typealias Placeholders = Foo & Bar & Baz & Quux
+#
+# AFTER:
+# typealias Placeholders = Bar & Baz & Foo & Quux
+--disable sortTypealiases
+
+# Converts functional `forEach` calls into traditional `for` loops when
+# appropriate.
+#
+# BEFORE:
+# strings.forEach { print($0) }
+#
+# AFTER:
+# for string in strings {
+#     print(string)
+# }
+--enable preferForLoop
+
+# Ensures consistent spacing between cases in a `switch` statement.
+#
+# BEFORE:
+# switch value {
+# case .a:
+#     doSomething()
+#
+#     break
+# case .b:
+#     doSomethingElse()
+# }
+#
+# AFTER:
+# switch value {
+# case .a:
+#     doSomething()
+# case .b:
+#     doSomethingElse()
+# }
+--enable consistentSwitchCaseSpacing
+
+# Converts property declarations to use inferred or explicit types.
+#
+# BEFORE:
+# let view: UIView = UIView()
+#
+# AFTER:
+# let view = UIView()
+--enable propertyTypes
+
+# Removes blank lines between chained function calls.
+#
+# BEFORE:
+# [0,1,2]
+#     .map { $0 * 2 }
+#
+#     .map { $0 * 3 }
+#
+# AFTER:
+# [0,1,2]
+#     .map { $0 * 2 }
+#     .map { $0 * 3 }
+--enable blankLinesBetweenChainedFunctions
+
+# Removes empty, nonconforming extensions.
+#
+# BEFORE:
+# extension String {}
+#
+# AFTER:
+# // (extension removed)
+--enable emptyExtensions
+
+# Prefers using count(where:) over filtering and counting.
+#
+# BEFORE:
+# planets.filter { !$0.moons.isEmpty }.count
+#
+# AFTER:
+# planets.count(where: { !$0.moons.isEmpty })
+--enable preferCountWhere
+
+# Removes redundant throws keywords from functions that never throw.
+#
+# BEFORE:
+# func testFoo() throws {
+#     XCTAssertTrue(true)
+# }
+#
+# AFTER:
+# func testFoo() {
+#     XCTAssertTrue(true)
+# }
+--enable redundantThrows
+
+# Removes redundant async keywords from functions that perform no asynchronous operations.
+#
+# BEFORE:
+# func testFoo() async {
+#     XCTAssertTrue(true)
+# }
+#
+# AFTER:
+# func testFoo() {
+#     XCTAssertTrue(true)
+# }
+--enable redundantAsync
+
+# Removes explicit memberwise initializers in structs that are identical to the synthesized initializer.
+#
+# BEFORE:
+# struct Person {
+#     var name: String
+#     var age: Int
+#     init(name: String, age: Int) {
+#         self.name = name
+#         self.age = age
+#     }
+# }
+#
+# AFTER:
+# struct Person {
+#     var name: String
+#     var age: Int
+# }
+--enable redundantMemberwiseInit
+
+# Removes unnecessary `break` statements from switch cases.
+#
+# BEFORE:
+# switch foo {
+# case .bar:
+#     print("bar")
+#     break
+# default:
+#     print("default")
+#     break
+# }
+#
+# AFTER:
+# switch foo {
+# case .bar:
+#     print("bar")
+# default:
+#     print("default")
+# }
+--enable redundantBreak
+
+# Simplifies typed throws by converting throws(any Error) to throws and throws(Never) to a non-throwing function.
+#
+# BEFORE:
+# func foo() throws(Never) -> Int { return 0 }
+#
+# AFTER:
+# func foo() -> Int { return 0 }
+--enable redundantTypedThrows
+
+# Groups import statements and moves any `@testable` imports to the bottom of the
+# group.
+#
+# BEFORE:
+# import Foo
+# @testable import FooTests
+# import Bar
+#
+# AFTER:
+# import Foo
+# import Bar
+# @testable import FooTests
+--import-grouping testable-bottom
+
+# Replaces force unwraps in tests with safe unwrapping helpers like XCTUnwrap or #require.
+#
+# BEFORE:
+# let value = optionalValue!
+#
+# AFTER:
+# let value = try XCTUnwrap(optionalValue)
+--enable noForceUnwrapInTests
+
+# Replaces guard statements in tests with safe unwrapping helpers.
+#
+# BEFORE:
+# guard let value = optionalValue else {
+#     XCTFail()
+#     return
+# }
+#
+# AFTER:
+# let value = try XCTUnwrap(optionalValue)
+--enable noGuardInTests
+
+# Wraps ternary conditional expressions such that each `?` or `:` operator
+# appears at the beginning of its line when wrapping is needed.
+#
+# BEFORE:
+# let value = condition ? a : b
+#
+# AFTER:
+# let value =
+#     condition
+#     ? a
+#     : b
+--wrap-ternary before-operators
+
+# Inserts `let` or `var` keywords directly into pattern bindings rather than
+# repeating them for each bound value.
+#
+# BEFORE:
+# (let a, let b) = foo()
+#
+# AFTER:
+# let (a, b) = foo()
+--pattern-let inline
+
+# Removes spacing around range operators (such as `...` and `..<`).
+#
+# BEFORE:
+# for i in 0 ..< 10 {
+#
+# AFTER:
+# for i in 0..<10 {
+--ranges no-space
+
+# Inserts spaces around operator function names.
+#
+# BEFORE:
+# func ==(lhs: Int, rhs: Int) -> Bool { lhs == rhs }
+#
+# AFTER:
+# func == (lhs: Int, rhs: Int) -> Bool { lhs == rhs }
+--operator-func spaced
+
+# Disables automatic replacement of opaque generic parameters with `some Any`.
+#
+# ENABLED:
+# func handle(_ value: some Any) {
+#     print(value)
+# }
+#
+# DISABLED:
+# func handle<T>(_ value: T) {
+#     print(value)
+# }
+--some-any disabled
+
+# Converts single-line `.forEach` closures into traditional `for` loops when set to `convert`.
+#
+# BEFORE:
+# array.forEach { print($0) }
+#
+# AFTER:
+# for element in array {
+#     print(element)
+# }
+--single-line-for-each convert
+
+# Uses shorthand syntax for optionals everywhere. With `always`, even
+# property declarations use the `?` shorthand instead of `Optional<T>`.
+#
+# BEFORE:
+# var foo: Optional<String>
+#
+# AFTER:
+# var foo: String?
+--short-optionals always
+
+# Removes semicolons wherever possible. When `never` is specified, even
+# inline semicolons are removed if it does not change program behavior.
+#
+# BEFORE:
+# let a = 5; let b = 6
+#
+# AFTER:
+# let a = 5
+# let b = 6
+--semicolons never
+
+# Specifies the exact ordering for member modifiers such as access control
+# keywords, `override`, `final`, `static` and others. Members are sorted
+# according to this comma‑separated list.
+#
+# BEFORE:
+# lazy public weak private(set) var foo: UIView?
+#
+# AFTER:
+# public private(set) lazy weak var foo: UIView?
+--modifier-order private,fileprivate,internal,package,public,open,private(set),fileprivate(set),internal(set),package(set),public(set),open(set),override,final,dynamic,optional,required,convenience,indirect,isolated,nonisolated,nonisolated(unsafe),lazy,weak,unowned,unowned(safe),unowned(unsafe),static,class,borrowing,consuming,mutating,nonmutating,prefix,infix,postfix,async
+
+# Keep thousands separators in integer and decimal literals.
+#
+# BEFORE:
+# let a = 50000
+# let b = 50000.0
+#
+# AFTER:
+# let a = 50_000
+# let b = 50_000.0
+--enable numberFormatting
+--decimalgrouping 3,4

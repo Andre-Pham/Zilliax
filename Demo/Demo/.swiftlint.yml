@@ -1,0 +1,92 @@
+# https://realm.github.io/SwiftLint/rule-directory.html
+
+disabled_rules:
+  - identifier_name
+  - type_body_length
+  - large_tuple
+  - file_length
+  - force_cast
+  - force_try
+  - function_body_length
+  - implicit_optional_initialization
+  - cyclomatic_complexity
+  - function_parameter_count
+  - inclusive_language
+  - line_length
+  - nesting
+  - redundant_string_enum_value
+  - todo
+
+opt_in_rules:
+  - array_init
+  - async_without_await
+  - closure_end_indentation
+  - closure_spacing
+  - collection_alignment
+  - conditional_returns_on_newline
+  - contains_over_filter_count
+  - contains_over_filter_is_empty
+  - contains_over_first_not_nil
+  - contains_over_range_nil_comparison
+  - convenience_type
+  - direct_return
+  - empty_count
+  - empty_string
+  - explicit_init
+  - explicit_acl
+  - explicit_top_level_acl
+  - fallthrough
+  - file_name_no_space
+  - first_where
+  - incompatible_concurrency_annotation
+  - joined_default_parameter
+  - last_where
+  - let_var_whitespace
+  - literal_expression_end_indentation
+  - multiline_arguments
+  - multiline_arguments_brackets
+  - multiline_function_chains
+  - multiline_literal_brackets
+  - multiline_parameters
+  - multiline_parameters_brackets
+  - number_separator
+  - overridden_super_call
+  - prefer_condition_list
+  - prefer_self_in_static_references
+  - prefer_self_type_over_type_of_self
+  - prohibited_super_call
+  - redundant_nil_coalescing
+  - redundant_type_annotation
+  - return_value_from_void_function
+  - self_binding
+  - sorted_first_last
+  - unowned_variable_capture
+  - vertical_parameter_alignment_on_call
+  - vertical_whitespace_closing_braces
+  - vertical_whitespace_opening_braces
+  - yoda_condition
+
+excluded:
+  - .build
+  - .swiftpm
+  - Packages
+  - Pods
+  - build
+  - DerivedData
+
+analyzer_rules:
+  - explicit_self
+  - typesafe_array_init
+  - unused_import
+
+trailing_comma:
+  mandatory_comma: true
+  severity: error
+
+custom_rules:
+  private_type_explicit_acl:
+    name: "Private Type Requires Explicit ACL"
+    included: ".*\\.swift"
+    regex: "(?s)private\\s+(?:class|struct|enum)\\s+[^\\{]+\\{(?:(?!\\}).)*\\n\\s*(?!(?:private|fileprivate|internal|public|open|static|class|@)\\b)(?:override\\s+)?(?:var|let|func|init|subscript)"
+    message: "Members inside private types must declare an explicit access level."
+    severity: error
