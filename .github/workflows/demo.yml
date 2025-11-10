@@ -20,17 +20,21 @@ jobs:
       - name: Install SwiftFormat
         run: brew install swiftformat
       - name: SwiftFormat Check
+        working-directory: Demo
         run: swiftformat . --lint
       - name: Install SwiftLint
         run: brew install swiftlint
       - name: Generate Compiler Log
+        working-directory: Demo
         run: |
           set -o pipefail
-          swift build --build-tests -v > swift-build.log 2>&1
+          xcodebuild -project Demo.xcodeproj -scheme Demo -destination 'platform=iOS Simulator,name=iPhone 17,OS=latest' clean build > swift-build.log 2>&1
       - name: SwiftLint
-        run: swiftlint --strict --config .swiftlint.yml
+        working-directory: Demo
+        run: swiftlint --strict --config /Demo/.swiftlint.yml
       - name: SwiftLint Analyze
-        run: swiftlint analyze --strict --config .swiftlint.yml --compiler-log-path swift-build.log
+        working-directory: Demo
+        run: swiftlint analyze --strict --config /Demo/.swiftlint.yml --compiler-log-path swift-build.log
 
   build:
     name: Build
@@ -44,4 +48,5 @@ jobs:
         with:
           xcode-version: '26'
       - name: Build
-        run: xcodebuild -project ./Demo/Demo.xcodeproj -scheme Demo -destination 'platform=iOS Simulator,name=iPhone 17,OS=latest' clean build
+        working-directory: Demo
+        run: xcodebuild -project Demo.xcodeproj -scheme Demo -destination 'platform=iOS Simulator,name=iPhone 17,OS=latest' clean build
