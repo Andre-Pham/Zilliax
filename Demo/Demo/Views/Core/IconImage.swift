@@ -103,7 +103,7 @@ public class IconImage: UIImageView {
 
     // MARK: Properties
 
-    private var config = Config(size: 26.0, color: Colors.black)
+    private var config = Config(size: 24.0, color: Colors.black)
 
     // MARK: Lifecycle
 

@@ -8,12 +8,12 @@ on:
 
 jobs:
   file-check:
-    name: Verify Sources Mirror
+    name: Sources Mirror Demo
     runs-on: macos-26
 
     steps:
       - uses: actions/checkout@v4
-      - name: Check Sources Match Demo
+      - name: Check Sources Mirror Demo
         run: |
           set -euo pipefail
           python3 <<'PY'
@@ -38,16 +38,18 @@ jobs:
               source_bytes = source_file.read_bytes()
               source_hash = hashlib.sha256(source_bytes).digest()
 
-              identical_match = False
+              identical_match = None
               for candidate in matches:
                   if hashlib.sha256(candidate.read_bytes()).digest() == source_hash:
-                      identical_match = True
+                      identical_match = candidate
                       break
 
               if not identical_match:
                   failures.append(
                       f"{source_file} has {len(matches)} name matches in Demo/ but none with identical content"
                   )
+              else:
+                  print(f"{source_file.as_posix()} matches {identical_match.as_posix()}")
 
           if failures:
               print("File mirror check failed:")
