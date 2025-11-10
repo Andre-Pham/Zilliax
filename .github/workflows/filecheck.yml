@@ -59,3 +59,97 @@ jobs:
 
           print("All files under Sources/ exist with identical filename and content somewhere in Demo/.")
           PY
+      - name: Check Zilliax Files
+        run: |
+          set -euo pipefail
+          python3 <<'PY'
+          import hashlib
+          import pathlib
+          import sys
+          from collections import defaultdict
+
+          marker = "//  https://github.com/Andre-Pham/Zilliax"
+
+          def files_with_marker(root: pathlib.Path) -> list[dict[str, str]]:
+              found: list[dict[str, str]] = []
+              for file in root.rglob("*"):
+                  if not file.is_file() or file.name.startswith("."):
+                      continue
+                  try:
+                      data = file.read_bytes()
+                      lines = data.decode("utf-8").splitlines()
+                  except (UnicodeDecodeError, OSError):
+                      continue
+                  if marker in lines:
+                      relative = file.relative_to(root)
+                      parts = list(relative.parts)
+                      if parts and parts[0] == "Demo":
+                          relative = pathlib.Path(*parts[1:])
+                      found.append(
+                          {
+                              "relative": relative.as_posix(),
+                              "name": file.name,
+                              "hash": hashlib.sha256(data).hexdigest(),
+                          }
+                      )
+              return found
+
+          sources = files_with_marker(pathlib.Path("Sources"))
+          demo = files_with_marker(pathlib.Path("Demo"))
+
+          print("Sources files containing marker:")
+          for entry in sorted(sources, key=lambda item: item["relative"]):
+              print(f"- {entry['relative']}")
+
+          print("Demo files containing marker:")
+          for entry in sorted(demo, key=lambda item: item["relative"]):
+              print(f"- {entry['relative']}")
+
+          errors: list[str] = []
+
+          def build_lookup(entries: list[dict[str, str]]):
+              table: dict[str, list[dict[str, str]]] = defaultdict(list)
+              for entry in entries:
+                  table[entry["name"]].append(entry)
+              return table
+
+          source_lookup = build_lookup(sources)
+          demo_lookup = {name: list(entries) for name, entries in build_lookup(demo).items()}
+
+          for name, source_entries in source_lookup.items():
+              demo_entries = demo_lookup.get(name, [])
+              if not demo_entries:
+                  errors.append(f"No Demo file found for filename '{name}'")
+                  continue
+              for source_entry in source_entries:
+                  match_index = next(
+                      (idx for idx, candidate in enumerate(demo_entries) if candidate["hash"] == source_entry["hash"]),
+                      None,
+                  )
+                  if match_index is None:
+                      errors.append(
+                          f"{source_entry['relative']} has {len(demo_entries)} Demo files named '{name}' but none match content"
+                      )
+                      continue
+                  match = demo_entries.pop(match_index)
+                  print(f"Sources/{source_entry['relative']} matches Demo/{match['relative']}")
+              if demo_entries:
+                  demo_lookup[name] = demo_entries
+              else:
+                  demo_lookup.pop(name, None)
+
+          leftover_demo = []
+          for entries in demo_lookup.values():
+              for entry in entries:
+                  leftover_demo.append(entry["relative"])
+          if leftover_demo:
+              errors.append("Marker files present only in Demo: " + ", ".join(sorted(leftover_demo)))
+
+          if errors:
+              print("Zilliax marker file check failed:")
+              for error in errors:
+                  print(f"- {error}")
+              sys.exit(1)
+
+          print("All marker files match between Sources/ and Demo/.")
+          PY
