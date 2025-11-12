@@ -1,5 +1,5 @@
 //
-//  TabBarViewController.swift
+//  TabBarController.swift
 //  https://github.com/Andre-Pham/Zilliax
 //
 //  Created by Andre Pham.
@@ -7,7 +7,7 @@
 
 import UIKit
 
-public class TabBarViewController: UITabBarController, UITabBarControllerDelegate {
+public class TabBarController: UITabBarController, UITabBarControllerDelegate {
     // MARK: Nested Types
 
     private class TabBarOption {

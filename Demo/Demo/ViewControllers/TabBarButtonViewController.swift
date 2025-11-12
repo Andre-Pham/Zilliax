@@ -24,7 +24,7 @@ public class TabBarButtonViewController: UIViewController {
             .constrainTop()
             .constrainHorizontal(padding: Dimensions.screenContentPaddingHorizontal)
             .setTitle(to: "TabBarButton")
-            .setDescription(to: "Used with TabBarViewController to create a responsive tab bar.")
+            .setDescription(to: "Used with TabBarController to create a responsive tab bar.")
             .setOnBack({
                 guard let nav = self.navigationController else {
                     assertionFailure("Expected navigation controller")
