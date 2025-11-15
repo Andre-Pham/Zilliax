@@ -75,4 +75,15 @@ public class IconButton: View {
         self.button.removeMenu()
         return self
     }
+
+    @discardableResult
+    public func setDisabled(to state: Bool) -> Self {
+        self.button.setDisabled(to: state)
+        if state {
+            self.setDisabledOpacity()
+        } else {
+            self.setOpacity(to: 1.0)
+        }
+        return self
+    }
 }
