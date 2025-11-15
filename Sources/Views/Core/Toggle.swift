@@ -7,7 +7,7 @@
 
 import UIKit
 
-class Toggle: View {
+public class Toggle: View {
     // MARK: Static Properties
 
     private static let HEIGHT = 30.0
