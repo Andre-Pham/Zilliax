@@ -31,6 +31,7 @@ public class ViewsViewController: UIViewController {
         "TabBarButton": TabBarButtonViewController(),
         "Text": TextViewController(),
         "TextField": TextFieldViewController(),
+        "Toggle": ToggleViewController(),
         "VStack": VStackViewController(),
         "View": ViewViewController(),
     ]
