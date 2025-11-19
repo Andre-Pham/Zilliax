@@ -19,10 +19,20 @@ public class Stepper: View {
     private let text = Text()
     private let decreaseButton = IconButton()
     private let increaseButton = IconButton()
+    private let decreasePanGesture = PanGesture()
+    private let increasePanGesture = PanGesture()
     private var textMinWidthConstraint: NSLayoutConstraint? = nil
+    private let decreaseIcon = Icon.Config(systemName: "minus", size: 17, weight: .bold)
+    private let retreatIcon = Icon.Config(systemName: "chevron.left.2", size: 17, weight: .bold)
+    private let increaseIcon = Icon.Config(systemName: "plus", size: 17, weight: .bold)
+    private let advanceIcon = Icon.Config(systemName: "chevron.right.2", size: 17, weight: .bold)
     private var value = 0
     private var minValue: Int? = nil
     private var maxValue: Int? = nil
+    private var decreaseHoldTimer: Timer? = nil
+    private var decreaseHoldTranslation: CGPoint? = nil
+    private var increaseHoldTimer: Timer? = nil
+    private var increaseHoldTranslation: CGPoint? = nil
 
     // MARK: Overridden Functions
 
@@ -42,7 +52,7 @@ public class Stepper: View {
             .append(self.increaseButton)
 
         self.decreaseButton
-            .setIcon(to: .init(systemName: "minus", size: 17, weight: .bold))
+            .setIcon(to: self.decreaseIcon)
             .setSizeConstraint(to: Self.HEIGHT - Self.INNER_PADDING * 2)
             .setBackgroundColor(to: Colors.fillForeground)
             .setOnTap({ [weak self] in
@@ -58,7 +68,7 @@ public class Stepper: View {
         self.textMinWidthConstraint = self.text.setMinWidthConstraintValue(to: self.getMinWidth(for: self.value))
 
         self.increaseButton
-            .setIcon(to: .init(systemName: "plus", size: 17, weight: .bold))
+            .setIcon(to: self.increaseIcon)
             .setSizeConstraint(to: Self.HEIGHT - Self.INNER_PADDING * 2)
             .setBackgroundColor(to: Colors.fillForeground)
             .setOnTap({ [weak self] in
@@ -66,6 +76,56 @@ public class Stepper: View {
                     return
                 }
                 self.setValue(to: self.value + 1)
+            })
+
+        self.decreasePanGesture
+            .setCancelsTouchesInView(to: false)
+            .addGestureRecognizer(to: self.decreaseButton)
+            .setOnGesture({ gesture in
+                self.decreaseHoldTranslation = gesture.translation(in: self.decreaseButton)
+                if self.decreaseHoldTimer == nil && (gesture.state == .began || gesture.state == .changed) {
+                    self.decreaseHoldTimer = Timer.scheduledTimer(withTimeInterval: 0.1, repeats: true) { [weak self] _ in
+                        guard let self = self else {
+                            return
+                        }
+                        if let decreaseHoldTranslation, decreaseHoldTranslation.x.isLess(than: -35.0) {
+                            self.setValue(to: self.value - 1)
+                            self.decreaseButton.setIcon(to: self.retreatIcon)
+                        } else {
+                            self.decreaseButton.setIcon(to: self.decreaseIcon)
+                        }
+                    }
+                } else if gesture.state == .ended || gesture.state == .cancelled || gesture.state == .failed {
+                    self.decreaseHoldTimer?.invalidate()
+                    self.decreaseHoldTimer = nil
+                    self.decreaseHoldTranslation = nil
+                    self.decreaseButton.setIcon(to: self.decreaseIcon)
+                }
+            })
+
+        self.increasePanGesture
+            .setCancelsTouchesInView(to: false)
+            .addGestureRecognizer(to: self.increaseButton)
+            .setOnGesture({ gesture in
+                self.increaseHoldTranslation = gesture.translation(in: self.increaseButton)
+                if self.increaseHoldTimer == nil && (gesture.state == .began || gesture.state == .changed) {
+                    self.increaseHoldTimer = Timer.scheduledTimer(withTimeInterval: 0.1, repeats: true) { [weak self] _ in
+                        guard let self = self else {
+                            return
+                        }
+                        if let increaseHoldTranslation, increaseHoldTranslation.x.isGreater(than: 35.0) {
+                            self.setValue(to: self.value + 1)
+                            self.increaseButton.setIcon(to: self.advanceIcon)
+                        } else {
+                            self.increaseButton.setIcon(to: self.increaseIcon)
+                        }
+                    }
+                } else if gesture.state == .ended || gesture.state == .cancelled || gesture.state == .failed {
+                    self.increaseHoldTimer?.invalidate()
+                    self.increaseHoldTimer = nil
+                    self.increaseHoldTranslation = nil
+                    self.increaseButton.setIcon(to: self.increaseIcon)
+                }
             })
 
         self.update()
