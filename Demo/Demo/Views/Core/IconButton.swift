@@ -14,6 +14,12 @@ public class IconButton: View {
     private let icon = Icon()
     private var onTap: (() -> Void)? = nil
 
+    // MARK: Computed Properties
+
+    public var isDisabled: Bool {
+        return self.button.isDisabled
+    }
+
     // MARK: Overridden Functions
 
     public override func setup() {

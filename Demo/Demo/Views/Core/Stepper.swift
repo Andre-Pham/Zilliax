@@ -26,6 +26,10 @@ public class Stepper: View {
     private let retreatIcon = Icon.Config(systemName: "chevron.left.2", size: 17, weight: .bold)
     private let increaseIcon = Icon.Config(systemName: "plus", size: 17, weight: .bold)
     private let advanceIcon = Icon.Config(systemName: "chevron.right.2", size: 17, weight: .bold)
+    private var isShowingRetreatIcon: Bool? = nil
+    private var isShowingAdvanceIcon: Bool? = nil
+    private var decreaseIconAnimationID = 0
+    private var increaseIconAnimationID = 0
     private var value = 0
     private var minValue: Int? = nil
     private var maxValue: Int? = nil
@@ -33,6 +37,8 @@ public class Stepper: View {
     private var decreaseHoldTranslation: CGPoint? = nil
     private var increaseHoldTimer: Timer? = nil
     private var increaseHoldTranslation: CGPoint? = nil
+    private var isIncreasing = false
+    private var isDecreasing = false
 
     // MARK: Overridden Functions
 
@@ -61,6 +67,7 @@ public class Stepper: View {
                 }
                 self.setValue(to: self.value - 1)
             })
+        self.setDecreaseButtonIcon(isRetreat: false, animated: false)
 
         self.text
             .setTextAlignment(to: .center)
@@ -68,7 +75,6 @@ public class Stepper: View {
         self.textMinWidthConstraint = self.text.setMinWidthConstraintValue(to: self.getMinWidth(for: self.value))
 
         self.increaseButton
-            .setIcon(to: self.increaseIcon)
             .setSizeConstraint(to: Self.HEIGHT - Self.INNER_PADDING * 2)
             .setBackgroundColor(to: Colors.fillForeground)
             .setOnTap({ [weak self] in
@@ -77,6 +83,7 @@ public class Stepper: View {
                 }
                 self.setValue(to: self.value + 1)
             })
+        self.setIncreaseButtonIcon(isAdvance: false, animated: false)
 
         self.decreasePanGesture
             .setCancelsTouchesInView(to: false)
@@ -88,18 +95,26 @@ public class Stepper: View {
                         guard let self = self else {
                             return
                         }
-                        if let decreaseHoldTranslation, decreaseHoldTranslation.x.isLess(than: -35.0) {
+                        if let decreaseHoldTranslation {
+                            if decreaseHoldTranslation.x.isLess(than: -35.0) {
+                                self.isDecreasing = true
+                            } else if decreaseHoldTranslation.x.isGreater(than: -20.0) {
+                                self.isDecreasing = false
+                            }
+                        }
+                        if self.isDecreasing {
                             self.setValue(to: self.value - 1)
-                            self.decreaseButton.setIcon(to: self.retreatIcon)
+                            self.setDecreaseButtonIcon(isRetreat: true, animated: true)
                         } else {
-                            self.decreaseButton.setIcon(to: self.decreaseIcon)
+                            self.setDecreaseButtonIcon(isRetreat: false, animated: true)
                         }
                     }
                 } else if gesture.state == .ended || gesture.state == .cancelled || gesture.state == .failed {
                     self.decreaseHoldTimer?.invalidate()
                     self.decreaseHoldTimer = nil
                     self.decreaseHoldTranslation = nil
-                    self.decreaseButton.setIcon(to: self.decreaseIcon)
+                    self.isDecreasing = false
+                    self.setDecreaseButtonIcon(isRetreat: false, animated: true, force: true)
                 }
             })
 
@@ -113,18 +128,25 @@ public class Stepper: View {
                         guard let self = self else {
                             return
                         }
-                        if let increaseHoldTranslation, increaseHoldTranslation.x.isGreater(than: 35.0) {
+                        if let increaseHoldTranslation {
+                            if increaseHoldTranslation.x.isGreater(than: 35.0) {
+                                self.isIncreasing = true
+                            } else if increaseHoldTranslation.x.isLess(than: 20.0) {
+                                self.isIncreasing = false
+                            }
+                        }
+                        if self.isIncreasing {
                             self.setValue(to: self.value + 1)
-                            self.increaseButton.setIcon(to: self.advanceIcon)
+                            self.setIncreaseButtonIcon(isAdvance: true, animated: true)
                         } else {
-                            self.increaseButton.setIcon(to: self.increaseIcon)
+                            self.setIncreaseButtonIcon(isAdvance: false, animated: true)
                         }
                     }
                 } else if gesture.state == .ended || gesture.state == .cancelled || gesture.state == .failed {
                     self.increaseHoldTimer?.invalidate()
                     self.increaseHoldTimer = nil
                     self.increaseHoldTranslation = nil
-                    self.increaseButton.setIcon(to: self.increaseIcon)
+                    self.setIncreaseButtonIcon(isAdvance: false, animated: true, force: true)
                 }
             })
 
@@ -170,15 +192,13 @@ public class Stepper: View {
     private func update() {
         self.text.setText(to: String(self.value))
         self.textMinWidthConstraint?.constant = self.getMinWidth(for: self.value)
-        if let minValue {
-            self.decreaseButton.setDisabled(to: self.value <= minValue)
-        } else {
-            self.decreaseButton.setDisabled(to: false)
+        let disableDecrease = self.minValue.map({ self.value <= $0 }) ?? false
+        if disableDecrease != self.decreaseButton.isDisabled {
+            self.decreaseButton.setDisabled(to: disableDecrease)
         }
-        if let maxValue {
-            self.increaseButton.setDisabled(to: self.value >= maxValue)
-        } else {
-            self.increaseButton.setDisabled(to: false)
+        let disableIncrease = self.minValue.map({ self.value >= $0 }) ?? false
+        if disableIncrease != self.increaseButton.isDisabled {
+            self.increaseButton.setDisabled(to: disableIncrease)
         }
     }
 
@@ -189,5 +209,89 @@ public class Stepper: View {
             return digitMinWidth + 12
         }
         return digitMinWidth
+    }
+
+    private func setDecreaseButtonIcon(isRetreat: Bool, animated: Bool, force: Bool = false) {
+        guard force || self.isShowingRetreatIcon != isRetreat else {
+            return
+        }
+        self.isShowingRetreatIcon = isRetreat
+        self.decreaseIconAnimationID += 1
+        let animationID = self.decreaseIconAnimationID
+        self.decreaseButton.layer.removeAllAnimations()
+        self.decreaseButton.transform = .identity
+        let icon = isRetreat ? self.retreatIcon : self.decreaseIcon
+        let iconUpdate = {
+            guard animationID == self.decreaseIconAnimationID else {
+                return
+            }
+            _ = self.decreaseButton.setIcon(to: icon)
+        }
+        if animated {
+            UIView.animate(
+                withDuration: 0.1,
+                delay: 0.0,
+                options: [.curveEaseIn],
+                animations: {
+                    self.decreaseButton.transform = CGAffineTransform(scaleX: 0.6, y: 0.6)
+                },
+                completion: { _ in
+                    iconUpdate()
+                    UIView.animate(
+                        withDuration: 0.1,
+                        delay: 0.0,
+                        options: [.curveEaseOut],
+                        animations: {
+                            self.decreaseButton.transform = .identity
+                        },
+                        completion: nil
+                    )
+                }
+            )
+        } else {
+            iconUpdate()
+        }
+    }
+
+    private func setIncreaseButtonIcon(isAdvance: Bool, animated: Bool, force: Bool = false) {
+        guard force || self.isShowingAdvanceIcon != isAdvance else {
+            return
+        }
+        self.isShowingAdvanceIcon = isAdvance
+        self.increaseIconAnimationID += 1
+        let animationID = self.increaseIconAnimationID
+        self.increaseButton.layer.removeAllAnimations()
+        self.increaseButton.transform = .identity
+        let icon = isAdvance ? self.advanceIcon : self.increaseIcon
+        let iconUpdate = {
+            guard animationID == self.increaseIconAnimationID else {
+                return
+            }
+            _ = self.increaseButton.setIcon(to: icon)
+        }
+        if animated {
+            UIView.animate(
+                withDuration: 0.1,
+                delay: 0.0,
+                options: [.curveEaseIn],
+                animations: {
+                    self.increaseButton.transform = CGAffineTransform(scaleX: 0.6, y: 0.6)
+                },
+                completion: { _ in
+                    iconUpdate()
+                    UIView.animate(
+                        withDuration: 0.1,
+                        delay: 0.0,
+                        options: [.curveEaseOut],
+                        animations: {
+                            self.increaseButton.transform = .identity
+                        },
+                        completion: nil
+                    )
+                }
+            )
+        } else {
+            iconUpdate()
+        }
     }
 }
