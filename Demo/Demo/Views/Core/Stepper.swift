@@ -91,14 +91,17 @@ public class Stepper: View {
         self.decreasePanGesture
             .setCancelsTouchesInView(to: false)
             .addGestureRecognizer(to: self.decreaseButton)
-            .setOnGesture({ gesture in
+            .setOnGesture({ [weak self] gesture in
+                guard let self = self else {
+                    return
+                }
                 self.decreaseHoldTranslation = gesture.translation(in: self.decreaseButton)
                 if self.decreaseHoldTimer == nil && (gesture.state == .began || gesture.state == .changed) {
                     self.decreaseHoldTimer = Timer.scheduledTimer(withTimeInterval: 0.08, repeats: true) { [weak self] _ in
                         guard let self = self else {
                             return
                         }
-                        if let decreaseHoldTranslation {
+                        if let decreaseHoldTranslation = self.decreaseHoldTranslation {
                             if decreaseHoldTranslation.x.isLess(than: -35.0) {
                                 self.isDecreasing = true
                             } else if decreaseHoldTranslation.x.isGreater(than: -20.0) {
@@ -124,14 +127,17 @@ public class Stepper: View {
         self.increasePanGesture
             .setCancelsTouchesInView(to: false)
             .addGestureRecognizer(to: self.increaseButton)
-            .setOnGesture({ gesture in
+            .setOnGesture({ [weak self] gesture in
+                guard let self = self else {
+                    return
+                }
                 self.increaseHoldTranslation = gesture.translation(in: self.increaseButton)
                 if self.increaseHoldTimer == nil && (gesture.state == .began || gesture.state == .changed) {
                     self.increaseHoldTimer = Timer.scheduledTimer(withTimeInterval: 0.08, repeats: true) { [weak self] _ in
                         guard let self = self else {
                             return
                         }
-                        if let increaseHoldTranslation {
+                        if let increaseHoldTranslation = self.increaseHoldTranslation {
                             if increaseHoldTranslation.x.isGreater(than: 35.0) {
                                 self.isIncreasing = true
                             } else if increaseHoldTranslation.x.isLess(than: 20.0) {
@@ -149,6 +155,7 @@ public class Stepper: View {
                     self.increaseHoldTimer?.invalidate()
                     self.increaseHoldTimer = nil
                     self.increaseHoldTranslation = nil
+                    self.isIncreasing = false
                     self.setIncreaseButtonIcon(isAdvance: false, animated: true, force: true)
                 }
             })
@@ -226,7 +233,7 @@ public class Stepper: View {
         if disableDecrease != self.decreaseButton.isDisabled {
             self.decreaseButton.setDisabled(to: disableDecrease)
         }
-        let disableIncrease = self.minValue.map({ self.value >= $0 }) ?? false
+        let disableIncrease = self.maxValue.map({ self.value >= $0 }) ?? false
         if disableIncrease != self.increaseButton.isDisabled {
             self.increaseButton.setDisabled(to: disableIncrease)
         }
