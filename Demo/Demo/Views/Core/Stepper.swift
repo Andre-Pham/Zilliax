@@ -12,6 +12,7 @@ public class Stepper: View {
 
     private static let HEIGHT = 50.0
     private static let INNER_PADDING = 5.0
+    private static let TEXT_PAN_STEP: CGFloat = 5.0
 
     // MARK: Properties
 
@@ -21,6 +22,7 @@ public class Stepper: View {
     private let increaseButton = IconButton()
     private let decreasePanGesture = PanGesture()
     private let increasePanGesture = PanGesture()
+    private let textPanGesture = PanGesture()
     private var textMinWidthConstraint: NSLayoutConstraint? = nil
     private let decreaseIcon = Icon.Config(systemName: "minus", size: 17, weight: .bold)
     private let retreatIcon = Icon.Config(systemName: "chevron.left.2", size: 17, weight: .bold)
@@ -39,6 +41,7 @@ public class Stepper: View {
     private var increaseHoldTranslation: CGPoint? = nil
     private var isIncreasing = false
     private var isDecreasing = false
+    private var textPanStartValue = 0
 
     // MARK: Overridden Functions
 
@@ -47,8 +50,9 @@ public class Stepper: View {
 
         self.setHeightConstraint(to: Self.HEIGHT)
             .setCornerRadius(to: Self.HEIGHT / 2)
-            .add(self.stack)
             .setBackgroundColor(to: Colors.fillSecondary)
+            .add(self.stack)
+            .add(self.textPanGesture)
 
         self.stack
             .constrainAllSides(padding: Self.INNER_PADDING)
@@ -91,7 +95,7 @@ public class Stepper: View {
             .setOnGesture({ gesture in
                 self.decreaseHoldTranslation = gesture.translation(in: self.decreaseButton)
                 if self.decreaseHoldTimer == nil && (gesture.state == .began || gesture.state == .changed) {
-                    self.decreaseHoldTimer = Timer.scheduledTimer(withTimeInterval: 0.1, repeats: true) { [weak self] _ in
+                    self.decreaseHoldTimer = Timer.scheduledTimer(withTimeInterval: 0.08, repeats: true) { [weak self] _ in
                         guard let self = self else {
                             return
                         }
@@ -124,7 +128,7 @@ public class Stepper: View {
             .setOnGesture({ gesture in
                 self.increaseHoldTranslation = gesture.translation(in: self.increaseButton)
                 if self.increaseHoldTimer == nil && (gesture.state == .began || gesture.state == .changed) {
-                    self.increaseHoldTimer = Timer.scheduledTimer(withTimeInterval: 0.1, repeats: true) { [weak self] _ in
+                    self.increaseHoldTimer = Timer.scheduledTimer(withTimeInterval: 0.08, repeats: true) { [weak self] _ in
                         guard let self = self else {
                             return
                         }
@@ -147,6 +151,33 @@ public class Stepper: View {
                     self.increaseHoldTimer = nil
                     self.increaseHoldTranslation = nil
                     self.setIncreaseButtonIcon(isAdvance: false, animated: true, force: true)
+                }
+            })
+
+        self.textPanGesture
+            .setCancelsTouchesInView(to: false)
+            .constrainToRightSide(of: self.decreaseButton)
+            .constrainToLeftSide(of: self.increaseButton)
+            .constrainVertical()
+            .setOnGesture({ [weak self] gesture in
+                guard let self = self else {
+                    return
+                }
+                switch gesture.state {
+                case .began:
+                    self.textPanStartValue = self.value
+                    fallthrough
+                case .changed:
+                    let translation = gesture.translation(in: self)
+                    let delta = Int((translation.x / Self.TEXT_PAN_STEP).rounded(.towardZero))
+                    let newValue = self.textPanStartValue + delta
+                    if newValue != self.value {
+                        self.setValue(to: newValue)
+                    }
+                case .ended, .cancelled, .failed:
+                    self.textPanStartValue = self.value
+                default:
+                    break
                 }
             })
 
