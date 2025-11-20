@@ -75,7 +75,6 @@ public class Stepper: View {
 
         self.text
             .setTextAlignment(to: .center)
-
         self.textMinWidthConstraint = self.text.setMinWidthConstraintValue(to: self.getMinWidth(for: self.value))
 
         self.increaseButton
