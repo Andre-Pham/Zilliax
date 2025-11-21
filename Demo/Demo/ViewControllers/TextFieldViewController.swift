@@ -34,7 +34,7 @@ public class TextFieldViewController: UIViewController {
             })
 
         self.textField
-            .constrainHorizontal(padding: Dimensions.screenContentPaddingHorizontal)
+            .matchWidthConstrainCenter(padding: Dimensions.screenContentPaddingHorizontal, maxWidth: 400)
             .constrainCenterVertical()
             .setPlaceholder(to: "Placeholder")
 

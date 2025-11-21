@@ -14,6 +14,12 @@ public class IconButton: View {
     private let icon = Icon()
     private var onTap: (() -> Void)? = nil
 
+    // MARK: Computed Properties
+
+    public var isDisabled: Bool {
+        return self.button.isDisabled
+    }
+
     // MARK: Overridden Functions
 
     public override func setup() {
@@ -73,6 +79,17 @@ public class IconButton: View {
     @discardableResult
     public func removeMenu() -> Self {
         self.button.removeMenu()
+        return self
+    }
+
+    @discardableResult
+    public func setDisabled(to state: Bool) -> Self {
+        self.button.setDisabled(to: state)
+        if state {
+            self.setDisabledOpacity()
+        } else {
+            self.setOpacity(to: 1.0)
+        }
         return self
     }
 }

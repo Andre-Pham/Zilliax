@@ -22,6 +22,12 @@ public class PillButton: View {
     private var iconAdded = false
     private var labelAdded = false
 
+    // MARK: Computed Properties
+
+    public var isDisabled: Bool {
+        return self.button.isDisabled
+    }
+
     // MARK: Overridden Functions
 
     public override func setup() {

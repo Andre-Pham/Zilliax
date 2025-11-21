@@ -35,7 +35,7 @@ public class SegmentedSliderViewController: UIViewController {
 
         self.segmentedSlider
             .constrainCenterVertical()
-            .constrainHorizontal(padding: Dimensions.screenContentPaddingHorizontal)
+            .matchWidthConstrainCenter(padding: Dimensions.screenContentPaddingHorizontal, maxWidth: 400)
             .addSegment(value: 1, label: "One")
             .addSegment(value: 2, label: "Two")
             .addSegment(value: 3, label: "Three")

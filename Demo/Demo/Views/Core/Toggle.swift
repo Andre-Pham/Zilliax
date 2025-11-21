@@ -57,7 +57,7 @@ public class Toggle: View {
                 self?.toggle()
             })
 
-        self.updateAppearance(animated: false)
+        self.update(animated: false)
     }
 
     // MARK: Functions
@@ -68,7 +68,7 @@ public class Toggle: View {
             return self
         }
         self.isOn = isOn
-        self.updateAppearance(animated: animated)
+        self.update(animated: animated)
         if trigger {
             self.onToggle?(self.isOn)
         }
@@ -83,11 +83,11 @@ public class Toggle: View {
 
     private func toggle() {
         self.isOn.toggle()
-        self.updateAppearance(animated: true)
+        self.update(animated: true)
         self.onToggle?(self.isOn)
     }
 
-    private func updateAppearance(animated: Bool) {
+    private func update(animated: Bool) {
         let activeColor = self.isOn ? Colors.accent : Colors.fillSecondary
         self.thumbLeftConstraint?.constant = self.isOn
             ? Self.WIDTH - Self.INNER_PADDING - (Self.HEIGHT - Self.INNER_PADDING * 2)

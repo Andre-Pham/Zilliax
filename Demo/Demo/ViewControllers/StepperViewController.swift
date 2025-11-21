@@ -1,15 +1,15 @@
 //
-//  SliderViewController.swift
+//  StepperViewController.swift
 //  Demo
 //
 
 import UIKit
 
-public class SliderViewController: UIViewController {
+public class StepperViewController: UIViewController {
     // MARK: Properties
 
     private let header = HeaderView()
-    private let slider = Slider()
+    private let stepper = Stepper()
 
     // MARK: Overridden Functions
 
@@ -18,13 +18,13 @@ public class SliderViewController: UIViewController {
 
         self.view
             .add(self.header)
-            .add(self.slider)
+            .add(self.stepper)
 
         self.header
             .constrainTop()
             .constrainHorizontal(padding: Dimensions.screenContentPaddingHorizontal)
-            .setTitle(to: "Slider")
-            .setDescription(to: "A continuous slider. Allows the selection of a value within a given range.")
+            .setTitle(to: "Stepper")
+            .setDescription(to: "A control that increments/decrements a number.")
             .setOnBack({
                 guard let nav = self.navigationController else {
                     assertionFailure("Expected navigation controller")
@@ -33,8 +33,7 @@ public class SliderViewController: UIViewController {
                 nav.popViewController(animated: true)
             })
 
-        self.slider
-            .constrainCenterVertical()
-            .matchWidthConstrainCenter(padding: Dimensions.screenContentPaddingHorizontal, maxWidth: 400)
+        self.stepper
+            .constrainCenter()
     }
 }

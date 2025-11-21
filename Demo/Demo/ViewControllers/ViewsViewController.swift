@@ -28,6 +28,7 @@ public class ViewsViewController: UIViewController {
         "PillButton": PillButtonViewController(),
         "SegmentedSlider": SegmentedSliderViewController(),
         "Slider": SliderViewController(),
+        "Stepper": StepperViewController(),
         "TabBarButton": TabBarButtonViewController(),
         "Text": TextViewController(),
         "TextField": TextFieldViewController(),

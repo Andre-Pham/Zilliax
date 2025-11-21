@@ -34,7 +34,7 @@ public class ClearableTextFieldViewController: UIViewController {
             })
 
         self.clearableTextField
-            .constrainHorizontal(padding: Dimensions.screenContentPaddingHorizontal)
+            .matchWidthConstrainCenter(padding: Dimensions.screenContentPaddingHorizontal, maxWidth: 400)
             .constrainCenterVertical()
             .setPlaceholder(to: "Placeholder")
 
