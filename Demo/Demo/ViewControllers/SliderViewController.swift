@@ -35,6 +35,6 @@ public class SliderViewController: UIViewController {
 
         self.slider
             .constrainCenterVertical()
-            .constrainHorizontal(padding: Dimensions.screenContentPaddingHorizontal)
+            .matchWidthConstrainCenter(padding: Dimensions.screenContentPaddingHorizontal, maxWidth: 400)
     }
 }

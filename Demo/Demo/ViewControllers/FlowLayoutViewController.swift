@@ -66,7 +66,7 @@ public class FlowLayoutViewController: UIViewController {
             })
 
         self.flow
-            .constrainHorizontal(padding: Dimensions.screenContentPaddingHorizontal)
+            .matchWidthConstrainCenter(padding: Dimensions.screenContentPaddingHorizontal, maxWidth: 400)
             .constrainCenterVertical()
             .setSpacing(to: 8)
             .setVerticalAlignment(to: .bottom)
