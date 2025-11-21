@@ -96,7 +96,7 @@ public class Stepper: View {
                     return
                 }
                 self.decreaseHoldTranslation = gesture.translation(in: self.decreaseButton)
-                if self.decreaseHoldTimer == nil, (gesture.state == .began || gesture.state == .changed) {
+                if self.decreaseHoldTimer == nil, gesture.state == .began || gesture.state == .changed {
                     self.decreaseHoldTimer = Timer.scheduledTimer(withTimeInterval: 0.08, repeats: true) { [weak self] _ in
                         guard let self = self else {
                             return
@@ -132,7 +132,7 @@ public class Stepper: View {
                     return
                 }
                 self.increaseHoldTranslation = gesture.translation(in: self.increaseButton)
-                if self.increaseHoldTimer == nil, (gesture.state == .began || gesture.state == .changed) {
+                if self.increaseHoldTimer == nil, gesture.state == .began || gesture.state == .changed {
                     self.increaseHoldTimer = Timer.scheduledTimer(withTimeInterval: 0.08, repeats: true) { [weak self] _ in
                         guard let self = self else {
                             return
