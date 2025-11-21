@@ -36,6 +36,7 @@ public class TabBarController: UITabBarController, UITabBarControllerDelegate {
     private let tabBarStack = HStack()
     private let tabBarBorder = View()
     private var tabBarOptions = [TabBarOption]()
+    private var didAppear = false
 
     // MARK: Computed Properties
 
@@ -182,6 +183,11 @@ public class TabBarController: UITabBarController, UITabBarControllerDelegate {
         }
     }
 
+    public override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        self.didAppear = true
+    }
+
     public override func viewSafeAreaInsetsDidChange() {
         super.viewSafeAreaInsetsDidChange()
 
@@ -191,7 +197,11 @@ public class TabBarController: UITabBarController, UITabBarControllerDelegate {
             viewController.additionalSafeAreaInsets = UIEdgeInsets(top: 0, left: 0, bottom: self.tabBarContentHeight, right: 0)
         }
 
-        self.view.layoutIfNeededAnimated()
+        if self.didAppear {
+            self.view.layoutIfNeededAnimated()
+        } else {
+            self.view.layoutIfNeeded()
+        }
     }
 
     // MARK: Functions
