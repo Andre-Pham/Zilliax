@@ -40,7 +40,8 @@ public class ProgressBar: View {
 
     // MARK: Functions
 
-    public func setProgress(to progress: Double, animated: Bool = false) {
+    @discardableResult
+    public func setProgress(to progress: Double, animated: Bool = false) -> Self {
         let clamped = min(max(progress, 0.0), 1.0)
         self.fillWidthConstraint.isActive = false
         self.fillWidthConstraint = self.fill.setWidthConstraintValue(proportion: clamped)
@@ -55,5 +56,15 @@ public class ProgressBar: View {
                 completion: nil
             )
         }
+        return self
+    }
+
+    @discardableResult
+    public func setHeight(to height: Double) -> Self {
+        assert(height.isGreaterThanZero(), "Expected positive progress bar height")
+        self.heightConstraint.constant = max(height, 0.0)
+        self.setCornerRadius(to: height / 2)
+        self.fill.setCornerRadius(to: height / 2)
+        return self
     }
 }
