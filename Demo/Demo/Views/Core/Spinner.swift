@@ -19,6 +19,8 @@ public class Spinner: View {
     private let shapeLayer = CAShapeLayer()
     private var widthConstraint: NSLayoutConstraint!
     private var heightConstraint: NSLayoutConstraint!
+    private var color = Colors.textDark
+    private var traitRegistration: UITraitChangeRegistration? = nil
 
     // MARK: Overridden Functions
 
@@ -28,11 +30,15 @@ public class Spinner: View {
         (self.widthConstraint, self.heightConstraint) = self.setSizeConstraintValue(to: Self.DEFAULT_SIZE)
 
         self.shapeLayer.fillColor = UIColor.clear.cgColor
-        self.shapeLayer.strokeColor = Colors.accent.cgColor
+        self.shapeLayer.strokeColor = self.color.cgColor
         self.shapeLayer.lineWidth = Self.DEFAULT_LINE_WIDTH
         self.shapeLayer.lineCap = .round
 
         self.add(self.shapeLayer)
+
+        self.traitRegistration = self.registerForTraitChanges([UITraitUserInterfaceStyle.self]) { (spinner: Spinner, _) in
+            spinner.updateColor()
+        }
     }
 
     public override func layoutSubviews() {
@@ -74,7 +80,8 @@ public class Spinner: View {
 
     @discardableResult
     public func setColor(to color: UIColor) -> Self {
-        self.shapeLayer.strokeColor = color.cgColor
+        self.color = color
+        self.updateColor()
         return self
     }
 
@@ -96,6 +103,11 @@ public class Spinner: View {
         self.heightConstraint.constant = size
         self.setNeedsLayout()
         return self
+    }
+
+    private func updateColor() {
+        let resolved = self.color.resolvedColor(with: self.traitCollection)
+        self.shapeLayer.strokeColor = resolved.cgColor
     }
 
     private func updatePath() {
