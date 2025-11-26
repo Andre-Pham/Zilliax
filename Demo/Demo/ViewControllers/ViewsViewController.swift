@@ -26,6 +26,7 @@ public class ViewsViewController: UIViewController {
         "Image": ImageViewController(),
         "PanGesture": PanGestureViewController(),
         "PillButton": PillButtonViewController(),
+        "ProgressBar": ProgressBarViewController(),
         "SegmentedSlider": SegmentedSliderViewController(),
         "Slider": SliderViewController(),
         "Stepper": StepperViewController(),
