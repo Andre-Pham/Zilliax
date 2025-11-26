@@ -13,7 +13,7 @@ public class ProgressBar: View {
     private static let DEFAULT_HEIGHT = 16.0
 
     // MARK: Properties
-    
+
     private let fill = View()
     private var heightConstraint: NSLayoutConstraint!
     private var fillWidthConstraint: NSLayoutConstraint!
@@ -22,22 +22,24 @@ public class ProgressBar: View {
 
     public override func setup() {
         super.setup()
-        
+
         self.heightConstraint = self.setHeightConstraintValue(to: Self.DEFAULT_HEIGHT)
 
         self.setCornerRadius(to: Self.DEFAULT_HEIGHT / 2)
             .setBackgroundColor(to: Colors.fillSecondary)
             .add(self.fill)
-        
+
         self.fillWidthConstraint = self.fill.setWidthConstraintValue(to: 0.0)
-        
+
         self.fill
             .setCornerRadius(to: Self.DEFAULT_HEIGHT / 2)
             .setBackgroundColor(to: Colors.accent)
             .constrainLeft()
             .constrainVertical()
     }
-    
+
+    // MARK: Functions
+
     public func setProgress(to progress: Double, animated: Bool = false) {
         let clamped = min(max(progress, 0.0), 1.0)
         self.fillWidthConstraint.isActive = false
