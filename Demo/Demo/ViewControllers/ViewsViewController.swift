@@ -29,6 +29,7 @@ public class ViewsViewController: UIViewController {
         "ProgressBar": ProgressBarViewController(),
         "SegmentedSlider": SegmentedSliderViewController(),
         "Slider": SliderViewController(),
+        "Spinner": SpinnerViewController(),
         "Stepper": StepperViewController(),
         "TabBarButton": TabBarButtonViewController(),
         "Text": TextViewController(),
