@@ -16,6 +16,7 @@ disabled_rules:
   - nesting
   - redundant_string_enum_value
   - todo
+  - xctfail_message
 
 opt_in_rules:
   - array_init
