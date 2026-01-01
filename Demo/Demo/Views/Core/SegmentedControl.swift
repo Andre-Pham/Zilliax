@@ -49,44 +49,6 @@ public class SegmentedControl<T: Any>: View {
             .constrainMaxLeft(padding: 24)
             .constrainMaxRight(padding: 24)
             .setDistribution(to: .fillEqually)
-        
-//        let s1v = View()
-//            .addBorder(color: .blue)
-//        let s1 = HStack()
-//            .addAsSubview(of: s1v)
-//            .constrainCenterHorizontal()
-//            .constrainVertical()
-//            .constrainMaxHorizontal()
-//            .setSpacing(to: 8)
-//            .setAlignment(to: .center)
-//            .addBorder()
-//        s1
-//            .appendGap(size: 12)
-//            .append(Text().setText(to: "Hello World"))
-//            .append(IconImage().setIcon(to: .init(systemName: "arrow.up", size: 14, weight: .bold)))
-//            .appendGap(size: 12)
-//        self.segmentStack.append(s1v)
-//        
-//        let s2v = View()
-//            .addBorder(color: .blue)
-//        let s2 = HStack()
-//            .addAsSubview(of: s2v)
-//            .constrainCenterHorizontal()
-//            .constrainVertical()
-//            .constrainMaxHorizontal()
-//            .setSpacing(to: 8)
-//            .setAlignment(to: .center)
-//            .addBorder()
-//        s2
-//            .appendGap(size: 12)
-//            .append(Text().setText(to: "Bye"))
-//            .appendGap(size: 12)
-//        self.segmentStack.append(s2v)
-//        
-//        self.selection
-//            .constrainCenterVertical()
-//            .constrainCenterHorizontal(to: s1v)
-//            .matchWidthConstraint(to: s1v, adjust: Self.INNER_PADDING * -2)
     }
     
     @discardableResult
