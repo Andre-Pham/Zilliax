@@ -46,8 +46,6 @@ public class SegmentedControl<T: Any>: View {
 
         self.segmentStack
             .constrainAllSides(respectSafeArea: false)
-            .constrainMaxLeft(padding: 24)
-            .constrainMaxRight(padding: 24)
             .setDistribution(to: .fillEqually)
     }
     
@@ -61,6 +59,7 @@ public class SegmentedControl<T: Any>: View {
     @discardableResult
     public func addSegment(value: T, label: String, icon: IconImage.Config? = nil) -> Self {
         let segment = View()
+            .setHeightConstraint(to: Self.HEIGHT)
         
         let segmentText = Text()
             .setFont(to: UIFont.systemFont(ofSize: 18, weight: .medium))
@@ -76,6 +75,13 @@ public class SegmentedControl<T: Any>: View {
             .appendGap(size: 12)
             .append(segmentText)
             .appendGap(size: 12)
+        
+        Control()
+            .addAsSubview(of: segment)
+            .constrainAllSides()
+            .setOnPress({
+                // TODO: Change selection to this segment (animate the selection)
+            })
         
         if let icon {
             let segmentIcon = IconImage()
