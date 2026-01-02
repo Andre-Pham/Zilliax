@@ -9,7 +9,7 @@ public class SegmentedControlViewController: UIViewController {
     // MARK: Properties
 
     private let header = HeaderView()
-    private let segmentedControl = SegmentedControl<String>()
+    private let segmentedControl = SegmentedControl<Bool>()
 
     // MARK: Overridden Functions
 
@@ -36,7 +36,7 @@ public class SegmentedControlViewController: UIViewController {
         self.segmentedControl
             .constrainCenterVertical()
             .matchWidthConstrainCenter(padding: Dimensions.screenContentPaddingHorizontal, maxWidth: 400)
-            .addSegment(value: "", label: "Correct", icon: .init(systemName: "checkmark"))
-            .addSegment(value: "", label: "Wrong", icon: .init(systemName: "xmark"))
+            .addSegment(value: true, label: "Correct", icon: .init(systemName: "checkmark"))
+            .addSegment(value: false, label: "Wrong", icon: .init(systemName: "xmark"))
     }
 }
