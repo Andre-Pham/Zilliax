@@ -82,11 +82,13 @@ public class SegmentedControl<T: Any>: View {
             .addAsSubview(of: segment)
             .constrainAllSides()
             .setOnPress({
-                // TODO: When you hold down, the selection view should shrink (scale down) (animated)
-                // TODO: When you let go, the scale transformation should reset (animated)
                 // TODO: I should also be able to drag around the selected segment to change my selection
                 // TODO: All the other stuff, like callbacks whenever the value changes
                 self.setSelectedSegment(index: segmentIndex, animated: true)
+                self.selection.setTransformation(to: CGAffineTransform(scaleX: 0.95, y: 0.95), animated: true)
+            })
+            .setOnRelease({
+                self.selection.setTransformation(to: .identity, animated: true)
             })
         
         if let icon {
