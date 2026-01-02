@@ -42,6 +42,7 @@ public class Stepper: View {
     private var isIncreasing = false
     private var isDecreasing = false
     private var textPanStartValue = 0
+    private var onChange: ((_ value: Int) -> Void)? = nil
 
     // MARK: Overridden Functions
 
@@ -193,6 +194,12 @@ public class Stepper: View {
     // MARK: Functions
 
     @discardableResult
+    public func setOnChange(_ callback: ((_ value: Int) -> Void)?) -> Self {
+        self.onChange = callback
+        return self
+    }
+
+    @discardableResult
     public func setValue(to value: Int) -> Self {
         var clamped = value
         if let minValue = self.minValue {
@@ -237,6 +244,7 @@ public class Stepper: View {
         if disableIncrease != self.increaseButton.isDisabled {
             self.increaseButton.setDisabled(to: disableIncrease)
         }
+        self.onChange?(self.value)
     }
 
     private func getMinWidth(for value: Int) -> CGFloat {
