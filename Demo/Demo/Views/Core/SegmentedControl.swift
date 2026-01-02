@@ -76,11 +76,17 @@ public class SegmentedControl<T: Any>: View {
             .append(segmentText)
             .appendGap(size: 12)
         
+        let segmentIndex = self.segments.count
+        
         Control()
             .addAsSubview(of: segment)
             .constrainAllSides()
             .setOnPress({
-                // TODO: Change selection to this segment (animate the selection)
+                // TODO: When you hold down, the selection view should shrink (scale down) (animated)
+                // TODO: When you let go, the scale transformation should reset (animated)
+                // TODO: I should also be able to drag around the selected segment to change my selection
+                // TODO: All the other stuff, like callbacks whenever the value changes
+                self.setSelectedSegment(index: segmentIndex, animated: true)
             })
         
         if let icon {
@@ -100,6 +106,35 @@ public class SegmentedControl<T: Any>: View {
         
         self.redrawSelection()
 
+        return self
+    }
+    
+    @discardableResult
+    public func setSelectedSegment(index: Int, animated: Bool) -> Self {
+        guard index >= 0, index < self.segments.count else {
+            assertionFailure("Invalid index provided: \(index)")
+            return self
+        }
+        guard self.selectedIndex != index else {
+            return self
+        }
+        self.selectedIndex = index
+        self.redrawSelection()
+        if animated {
+            UIView.animate(
+                withDuration: 0.2,
+                delay: 0,
+                usingSpringWithDamping: 1.0,
+                initialSpringVelocity: 2,
+                options: [.curveEaseInOut, .allowUserInteraction, .beginFromCurrentState],
+                animations: {
+                    self.layoutIfNeeded()
+                },
+                completion: nil
+            )
+        } else {
+            self.layoutIfNeeded()
+        }
         return self
     }
     
