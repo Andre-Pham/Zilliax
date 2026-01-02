@@ -8,9 +8,13 @@
 import UIKit
 
 public class SegmentedControl<T: Any>: View {
+    // MARK: Static Computed Properties
+
     private static var HEIGHT: Double { 50.0 }
     private static var INNER_PADDING: Double { 5.0 }
-    
+
+    // MARK: Properties
+
     private let selection = View()
     private let segmentStack = HStack()
     private let panGesture = PanGesture()
@@ -18,6 +22,14 @@ public class SegmentedControl<T: Any>: View {
     private var values = [T]()
     private var selectedIndex: Int? = nil
     private var onChange: ((_ value: T) -> Void)? = nil
+    private var selectedConstraints: (
+        vertical: NSLayoutConstraint,
+        horizontal: NSLayoutConstraint,
+        width: NSLayoutConstraint
+    )? = nil
+
+    // MARK: Computed Properties
+
     private var selectedSegment: View? {
         guard let selectedIndex else {
             return nil
@@ -27,6 +39,7 @@ public class SegmentedControl<T: Any>: View {
         }
         return self.segments[selectedIndex]
     }
+
     private var selectedValue: T? {
         guard let selectedIndex else {
             return nil
@@ -36,21 +49,18 @@ public class SegmentedControl<T: Any>: View {
         }
         return self.values[selectedIndex]
     }
-    private var selectedConstraints: (
-        vertical: NSLayoutConstraint,
-        horizontal: NSLayoutConstraint,
-        width: NSLayoutConstraint
-    )? = nil
-    
+
+    // MARK: Overridden Functions
+
     public override func setup() {
         super.setup()
-        
+
         self.setHeightConstraint(to: Self.HEIGHT)
             .setBackgroundColor(to: Colors.fillSecondary)
             .setCornerRadius(to: Self.HEIGHT / 2)
             .add(self.selection)
             .add(self.segmentStack)
-        
+
         self.selection
             .setHeightConstraint(to: Self.HEIGHT - Self.INNER_PADDING * 2)
             .setBackgroundColor(to: Colors.fillForeground)
@@ -67,29 +77,31 @@ public class SegmentedControl<T: Any>: View {
             })
             .setCancelsTouchesInView(to: false)
     }
-    
+
+    // MARK: Functions
+
     @discardableResult
     public func setOnChange(_ callback: ((_ value: T) -> Void)?) -> Self {
         self.onChange = callback
         return self
     }
-    
+
     @discardableResult
     public func setDistribution(to distribution: UIStackView.Distribution) -> Self {
         // TODO: Can this only accept .fillEqually | .fillProportionally
         self.segmentStack.setDistribution(to: distribution)
         return self
     }
-    
+
     @discardableResult
     public func addSegment(value: T, label: String, icon: IconImage.Config? = nil) -> Self {
         let segment = View()
             .setHeightConstraint(to: Self.HEIGHT)
-        
+
         let segmentText = Text()
             .setFont(to: UIFont.systemFont(ofSize: 18, weight: .medium))
             .setText(to: label)
-        
+
         let segmentStack = HStack()
             .addAsSubview(of: segment)
             .constrainCenterHorizontal()
@@ -100,9 +112,9 @@ public class SegmentedControl<T: Any>: View {
             .appendGap(size: 12)
             .append(segmentText)
             .appendGap(size: 12)
-        
+
         let segmentIndex = self.segments.count
-        
+
         Control()
             .addAsSubview(of: segment)
             .constrainAllSides()
@@ -113,7 +125,7 @@ public class SegmentedControl<T: Any>: View {
             .setOnRelease({
                 self.selection.setTransformation(to: .identity, animated: true)
             })
-        
+
         if let icon {
             let segmentIcon = IconImage()
                 .setSize(to: 14)
@@ -121,20 +133,20 @@ public class SegmentedControl<T: Any>: View {
                 .setIcon(to: icon)
             segmentStack.insert(segmentIcon, at: 2)
         }
-        
+
         self.segmentStack.append(segment)
         self.segments.append(segment)
         self.values.append(value)
-        
+
         if self.selectedIndex == nil {
             self.selectedIndex = 0
         }
-        
+
         self.redrawSelection()
 
         return self
     }
-    
+
     @discardableResult
     public func setSelectedSegment(index: Int, animated: Bool) -> Self {
         guard index >= 0, index < self.segments.count else {
@@ -163,7 +175,7 @@ public class SegmentedControl<T: Any>: View {
         }
         return self
     }
-    
+
     @discardableResult
     private func redrawSelection() -> Self {
         if let selectedSegment {

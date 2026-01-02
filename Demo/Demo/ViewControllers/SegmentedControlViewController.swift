@@ -32,7 +32,7 @@ public class SegmentedControlViewController: UIViewController {
                 }
                 nav.popViewController(animated: true)
             })
-        
+
         self.segmentedControl
             .constrainCenterVertical()
             .matchWidthConstrainCenter(padding: Dimensions.screenContentPaddingHorizontal, maxWidth: 400)

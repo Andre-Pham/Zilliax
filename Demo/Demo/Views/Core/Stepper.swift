@@ -192,7 +192,7 @@ public class Stepper: View {
     }
 
     // MARK: Functions
-    
+
     @discardableResult
     public func setOnChange(_ callback: ((_ value: Int) -> Void)?) -> Self {
         self.onChange = callback
