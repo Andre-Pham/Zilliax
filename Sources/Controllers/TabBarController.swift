@@ -220,8 +220,8 @@ public class TabBarController: UITabBarController, UITabBarControllerDelegate {
             self.tabBarButtons[itemButtonIndex]
                 .setIcon(to: self.itemIconConfigs[itemButtonIndex])
         }
-        // Pop the target tab's navigation stack to root if applicable
-        if let nav = (self.viewControllers?[index] as? UINavigationController) {
+        // Pop the target tab's navigation stack to root if already selected
+        if index == self.selectedIndex, let nav = (self.viewControllers?[index] as? UINavigationController) {
             nav.popToRootViewController(animated: true)
         }
         self.selectedIndex = index
