@@ -13,6 +13,7 @@ public class SegmentedControl<T: Any>: View {
     
     private let selection = View()
     private let segmentStack = HStack()
+    private let panGesture = PanGesture()
     private var segments = [View]()
     private var selectedIndex: Int? = nil
     private var selectedSegment: View? {
@@ -47,6 +48,13 @@ public class SegmentedControl<T: Any>: View {
         self.segmentStack
             .constrainAllSides(respectSafeArea: false)
             .setDistribution(to: .fillEqually)
+
+        self.panGesture
+            .addGestureRecognizer(to: self)
+            .setOnGesture({ gesture in
+                self.handlePan(gesture)
+            })
+            .setCancelsTouchesInView(to: false)
     }
     
     @discardableResult
@@ -161,5 +169,36 @@ public class SegmentedControl<T: Any>: View {
             }
         }
         return self
+    }
+
+    private func handlePan(_ gesture: UIPanGestureRecognizer) {
+        guard !self.segments.isEmpty else {
+            return
+        }
+        let location = gesture.location(in: self.segmentStack)
+        let index = self.segmentIndex(for: location)
+        if gesture.state == .began {
+            self.selection.setTransformation(to: CGAffineTransform(scaleX: 0.95, y: 0.95), animated: true)
+        }
+        if gesture.state == .ended || gesture.state == .cancelled || gesture.state == .failed {
+            self.selection.setTransformation(to: .identity, animated: true)
+        }
+        if gesture.state == .changed {
+            self.setSelectedSegment(index: index, animated: true)
+        }
+        if gesture.state == .ended {
+            self.setSelectedSegment(index: index, animated: true)
+        }
+    }
+
+    private func segmentIndex(for location: CGPoint) -> Int {
+        let segmentCount = self.segments.count
+        let width = self.segmentStack.bounds.width
+        guard segmentCount > 0, width > 0 else {
+            return 0
+        }
+        let segmentWidth = width / CGFloat(segmentCount)
+        let index = Int(location.x / segmentWidth)
+        return min(max(index, 0), segmentCount - 1)
     }
 }
