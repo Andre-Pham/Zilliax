@@ -15,7 +15,9 @@ public class SegmentedControl<T: Any>: View {
     private let segmentStack = HStack()
     private let panGesture = PanGesture()
     private var segments = [View]()
+    private var values = [T]()
     private var selectedIndex: Int? = nil
+    private var onChange: ((_ value: T) -> Void)? = nil
     private var selectedSegment: View? {
         guard let selectedIndex else {
             return nil
@@ -24,6 +26,15 @@ public class SegmentedControl<T: Any>: View {
             return nil
         }
         return self.segments[selectedIndex]
+    }
+    private var selectedValue: T? {
+        guard let selectedIndex else {
+            return nil
+        }
+        guard selectedIndex < self.segments.count else {
+            return nil
+        }
+        return self.values[selectedIndex]
     }
     private var selectedConstraints: (
         vertical: NSLayoutConstraint,
@@ -55,6 +66,12 @@ public class SegmentedControl<T: Any>: View {
                 self.handlePan(gesture)
             })
             .setCancelsTouchesInView(to: false)
+    }
+    
+    @discardableResult
+    public func setOnChange(_ callback: ((_ value: T) -> Void)?) -> Self {
+        self.onChange = callback
+        return self
     }
     
     @discardableResult
@@ -90,8 +107,6 @@ public class SegmentedControl<T: Any>: View {
             .addAsSubview(of: segment)
             .constrainAllSides()
             .setOnPress({
-                // TODO: I should also be able to drag around the selected segment to change my selection
-                // TODO: All the other stuff, like callbacks whenever the value changes
                 self.setSelectedSegment(index: segmentIndex, animated: true)
                 self.selection.setTransformation(to: CGAffineTransform(scaleX: 0.95, y: 0.95), animated: true)
             })
@@ -109,6 +124,7 @@ public class SegmentedControl<T: Any>: View {
         
         self.segmentStack.append(segment)
         self.segments.append(segment)
+        self.values.append(value)
         
         if self.selectedIndex == nil {
             self.selectedIndex = 0
@@ -160,6 +176,11 @@ public class SegmentedControl<T: Any>: View {
             let horizontal = self.selection.constrainCenterHorizontalValue(to: selectedSegment)
             let width = self.selection.matchWidthConstraintValue(to: selectedSegment, adjust: Self.INNER_PADDING * -2)
             self.selectedConstraints = (vertical: vertical, horizontal: horizontal, width: width)
+            if let selectedValue {
+                self.onChange?(selectedValue)
+            } else {
+                assertionFailure("Expected selected value to be defined")
+            }
         } else {
             if let selectedConstraints {
                 selectedConstraints.vertical.isActive = false
