@@ -10,7 +10,6 @@ public class SegmentedControlViewController: UIViewController {
 
     private let header = HeaderView()
     private let segmentedControl = SegmentedControl<String>()
-    private let segmentedControlMin = SegmentedControl<String>()
 
     // MARK: Overridden Functions
 
@@ -37,14 +36,7 @@ public class SegmentedControlViewController: UIViewController {
         self.segmentedControl
             .constrainCenterVertical()
             .matchWidthConstrainCenter(padding: Dimensions.screenContentPaddingHorizontal, maxWidth: 400)
-            .addSegment(value: "", label: "Hello World", icon: .init(systemName: "arrow.up"))
-            .addSegment(value: "", label: "Bye")
-        
-        self.segmentedControlMin
-            .addAsSubview(of: self.view)
-            .constrainBottom(padding: 100)
-            .constrainLeft()
-            .addSegment(value: "", label: "Hello World", icon: .init(systemName: "arrow.up"))
-            .addSegment(value: "", label: "Bye")
+            .addSegment(value: "", label: "Correct", icon: .init(systemName: "checkmark"))
+            .addSegment(value: "", label: "Wrong", icon: .init(systemName: "xmark"))
     }
 }
