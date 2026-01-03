@@ -9,7 +9,8 @@ public class PillSelect: View {
     public override func setup() {
         super.setup()
 
-        self.setBackgroundColor(to: Colors.fillBackground)
+        self.setSizeConstraint(to: 100)
+            .setBackgroundColor(to: Colors.fillBackground)
             .setCornerRadius(to: 16)
     }
 }
