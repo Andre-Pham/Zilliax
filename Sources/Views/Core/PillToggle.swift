@@ -1,5 +1,5 @@
 //
-//  PillButton.swift
+//  PillToggle.swift
 //  https://github.com/Andre-Pham/Zilliax
 //
 //  Created by Andre Pham.
@@ -7,22 +7,31 @@
 
 import UIKit
 
-public class PillButton: View {
+public class PillToggle: View {
     // MARK: Static Properties
 
-    private static let HEIGHT = 42.0
+    private static let HEIGHT = 36.0
 
     // MARK: Properties
+
+    public private(set) var isOn = false
 
     private let contentStack = HStack()
     private let button = Button()
     private let icon = IconImage()
     private let label = Text()
-    private var onTap: (() -> Void)? = nil
+    private var onToggle: ((_ isOn: Bool) -> Void)? = nil
     private var iconAdded = false
     private var labelAdded = false
+    private var isLocked = false
+    private var onColors: (background: UIColor, foreground: UIColor) = (Colors.fillPrimary, Colors.textPrimary)
+    private var offColors: (background: UIColor, foreground: UIColor) = (Colors.fillSecondary, Colors.textSecondary)
 
     // MARK: Computed Properties
+
+    public var isOff: Bool {
+        return !self.isOn
+    }
 
     public var isDisabled: Bool {
         return self.button.isDisabled
@@ -48,10 +57,21 @@ public class PillButton: View {
 
         self.button
             .constrainAllSides(respectSafeArea: false)
-            .animateOnPress(self)
+            .setOnRelease({ [weak self] in
+                self?.toggle()
+            })
+            .animateOnPress(
+                self,
+                onPress: { view in
+                    view.setTransformation(to: CGAffineTransform(scaleX: 0.95, y: 0.95), animated: true)
+                },
+                onRelease: { view in
+                    view.setTransformation(to: .identity, animated: true)
+                }
+            )
 
         self.icon
-            .setIcon(to: .init(size: 16, weight: .bold, color: Colors.textSecondary))
+            .setIcon(to: .init(size: 14, weight: .bold, color: Colors.textSecondary))
 
         self.label
             .setFont(to: UIFont.systemFont(ofSize: 15, weight: .semibold))
@@ -92,21 +112,32 @@ public class PillButton: View {
     }
 
     @discardableResult
-    public func setColor(to color: UIColor) -> Self {
-        self.setBackgroundColor(to: color)
+    public func setColors(
+        on: (background: UIColor, foreground: UIColor),
+        off: (background: UIColor, foreground: UIColor)
+    ) -> Self {
+        self.onColors = on
+        self.offColors = off
+        self.updateColors()
         return self
     }
 
     @discardableResult
-    public func setForegroundColor(to color: UIColor) -> Self {
-        self.icon.setColor(to: color)
-        self.label.setTextColor(to: color)
+    public func setState(isOn: Bool, trigger: Bool = false) -> Self {
+        guard self.isOn != isOn else {
+            return self
+        }
+        self.isOn = isOn
+        self.updateColors()
+        if trigger {
+            self.onToggle?(self.isOn)
+        }
         return self
     }
 
     @discardableResult
-    public func setOnTap(_ callback: (() -> Void)?) -> Self {
-        self.button.setOnRelease(callback)
+    public func setOnToggle(_ callback: ((_ isOn: Bool) -> Void)?) -> Self {
+        self.onToggle = callback
         return self
     }
 
@@ -119,5 +150,28 @@ public class PillButton: View {
             self.setOpacity(to: 1.0)
         }
         return self
+    }
+
+    @discardableResult
+    public func setLocked(to state: Bool) -> Self {
+        self.isLocked = state
+        return self
+    }
+
+    private func toggle() {
+        guard !self.isLocked else {
+            return
+        }
+        self.isOn.toggle()
+        self.updateColors()
+        self.onToggle?(self.isOn)
+    }
+
+    private func updateColors() {
+        let backgroundColor = self.isOn ? self.onColors.background : self.offColors.background
+        let foregroundColor = self.isOn ? self.onColors.foreground : self.offColors.foreground
+        self.setBackgroundColor(to: backgroundColor)
+        self.icon.setColor(to: foregroundColor)
+        self.label.setTextColor(to: foregroundColor)
     }
 }
