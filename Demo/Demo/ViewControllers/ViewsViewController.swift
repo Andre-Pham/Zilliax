@@ -26,6 +26,7 @@ public class ViewsViewController: UIViewController {
         "Image": ImageViewController(),
         "PanGesture": PanGestureViewController(),
         "PillButton": PillButtonViewController(),
+        "PillMultiselect": PillMultiselectViewController(),
         "PillSelect": PillSelectViewController(),
         "PillToggle": PillToggleViewController(),
         "ProgressBar": ProgressBarViewController(),
