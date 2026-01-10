@@ -126,12 +126,32 @@ public class PillSelect<T: Any>: View {
         return self
     }
 
+    @discardableResult
+    public func setHorizontalAlignment(to alignment: FlowLayout.HorizontalAlignment) -> Self {
+        self.flowLayout.setHorizontalAlignment(to: alignment)
+        return self
+    }
+
+    @discardableResult
+    public func setVerticalAlignment(to alignment: FlowLayout.VerticalAlignment) -> Self {
+        self.flowLayout.setVerticalAlignment(to: alignment)
+        return self
+    }
+
+    @discardableResult
+    public func setDirection(to direction: FlowLayout.Direction) -> Self {
+        self.flowLayout.setDirection(to: direction)
+        return self
+    }
+
     private func updateSelection() {
         for (index, pill) in self.pills.enumerated() {
             let isSelected = index == self.selectedIndex
             pill.setState(isOn: isSelected)
             if self.requireSelection {
                 pill.setLocked(to: isSelected)
+            } else {
+                pill.setLocked(to: false)
             }
         }
     }
