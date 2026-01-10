@@ -15,14 +15,14 @@ public class PillSelect<T: Any>: View {
     // MARK: Properties
 
     private let flowLayout = FlowLayout()
-    private var pills = [Pill]()
+    private var pills = [PillToggle]()
     private var values = [T]()
     private var selectedIndex: Int? = nil
-    private var onChange: ((_ value: T) -> Void)? = nil
+    private var onChange: ((_ value: T?) -> Void)? = nil
 
     // MARK: Computed Properties
 
-    private var selectedPill: Pill? {
+    private var selectedPill: PillToggle? {
         guard let selectedIndex else {
             return nil
         }
@@ -57,17 +57,15 @@ public class PillSelect<T: Any>: View {
     // MARK: Functions
 
     @discardableResult
-    public func setOnChange(_ callback: ((_ value: T) -> Void)?) -> Self {
+    public func setOnChange(_ callback: ((_ value: T?) -> Void)?) -> Self {
         self.onChange = callback
         return self
     }
 
     @discardableResult
     public func addSegment(value: T, label: String, icon: IconImage.Config? = nil) -> Self {
-        let pill = Pill()
+        let pill = PillToggle()
             .setLabel(to: label)
-            .setColor(to: Colors.fillSecondary)
-            .setForegroundColor(to: Colors.textSecondary)
 
         if let icon {
             pill.setIcon(to: icon)
@@ -75,8 +73,15 @@ public class PillSelect<T: Any>: View {
 
         let segmentIndex = self.pills.count
 
-        pill.setOnTap({
-            self.setSelectedSegment(index: segmentIndex, animated: true)
+        pill.setOnToggle({ [weak self] isOn in
+            guard let self = self else {
+                return
+            }
+            if isOn {
+                self.setSelectedSegment(index: segmentIndex, trigger: true)
+            } else {
+                self.setSelectedSegment(index: nil, trigger: true)
+            }
         })
 
         self.flowLayout.append(pill)
@@ -84,49 +89,36 @@ public class PillSelect<T: Any>: View {
         self.values.append(value)
 
         if self.selectedIndex == nil {
-            self.selectedIndex = 0
+            self.setSelectedSegment(index: 0)
+        } else {
+            self.redrawSelection()
         }
-
-        self.redrawSelection(animated: false)
 
         return self
     }
 
     @discardableResult
-    public func setSelectedSegment(index: Int, animated: Bool) -> Self {
-        guard index >= 0, index < self.pills.count else {
-            assertionFailure("Invalid index provided: \(index)")
-            return self
-        }
+    public func setSelectedSegment(index: Int?, trigger: Bool = false) -> Self {
         guard self.selectedIndex != index else {
             return self
         }
+        if let index, index < 0 || index >= self.pills.count {
+            assertionFailure("Invalid index provided: \(index)")
+            return self
+        }
         self.selectedIndex = index
-        self.redrawSelection(animated: animated)
+        self.redrawSelection()
+        if trigger {
+            self.onChange?(self.selectedValue)
+        }
         return self
     }
 
-    @discardableResult
-    private func redrawSelection(animated: Bool) -> Self {
-        let updateColors = {
-            for (index, pill) in self.pills.enumerated() {
-                let isSelected = index == self.selectedIndex
-                let backgroundColor = isSelected ? Colors.fillPrimary : Colors.fillSecondary
-                let foregroundColor = isSelected ? Colors.textPrimary : Colors.textSecondary
-                pill.setColor(to: backgroundColor)
-                    .setForegroundColor(to: foregroundColor)
-            }
+    private func redrawSelection() {
+        for (index, pill) in self.pills.enumerated() {
+            let isSelected = index == self.selectedIndex
+            pill.setState(isOn: isSelected)
         }
-
-        updateColors()
-
-        if let selectedValue, self.selectedPill != nil {
-            self.onChange?(selectedValue)
-        } else if self.selectedIndex != nil {
-            assertionFailure("Expected selected value to be defined")
-        }
-
-        return self
     }
 }
 
@@ -137,22 +129,30 @@ public class PillSelect<T: Any>: View {
 // TODO: Define it in its own file
 // TODO: Then use it in components like this, and obviously add it to the ViewsViewController
 
-private class Pill: View {
+private class PillToggle: View {
     // MARK: Static Properties
 
     private static let HEIGHT = 36.0
 
     // MARK: Properties
 
+    public private(set) var isOn = false
+
     private let contentStack = HStack()
     private let button = Button()
     private let icon = IconImage()
     private let label = Text()
-    private var onTap: (() -> Void)? = nil
+    private var onToggle: ((_ isOn: Bool) -> Void)? = nil
     private var iconAdded = false
     private var labelAdded = false
+    private var onColors: (background: UIColor, foreground: UIColor) = (Colors.fillPrimary, Colors.textPrimary)
+    private var offColors: (background: UIColor, foreground: UIColor) = (Colors.fillSecondary, Colors.textSecondary)
 
     // MARK: Computed Properties
+
+    public var isOff: Bool {
+        return !self.isOn
+    }
 
     public var isDisabled: Bool {
         return self.button.isDisabled
@@ -178,6 +178,9 @@ private class Pill: View {
 
         self.button
             .constrainAllSides(respectSafeArea: false)
+            .setOnRelease({ [weak self] in
+                self?.toggle()
+            })
             .animateOnPress(
                 self,
                 onPress: { view in
@@ -229,21 +232,32 @@ private class Pill: View {
     }
 
     @discardableResult
-    public func setColor(to color: UIColor) -> Self {
-        self.setBackgroundColor(to: color)
+    public func setColors(
+        on: (background: UIColor, foreground: UIColor),
+        off: (background: UIColor, foreground: UIColor)
+    ) -> Self {
+        self.onColors = on
+        self.offColors = off
+        self.updateColors()
         return self
     }
 
     @discardableResult
-    public func setForegroundColor(to color: UIColor) -> Self {
-        self.icon.setColor(to: color)
-        self.label.setTextColor(to: color)
+    public func setState(isOn: Bool, trigger: Bool = false) -> Self {
+        guard self.isOn != isOn else {
+            return self
+        }
+        self.isOn = isOn
+        self.updateColors()
+        if trigger {
+            self.onToggle?(self.isOn)
+        }
         return self
     }
 
     @discardableResult
-    public func setOnTap(_ callback: (() -> Void)?) -> Self {
-        self.button.setOnRelease(callback)
+    public func setOnToggle(_ callback: ((_ isOn: Bool) -> Void)?) -> Self {
+        self.onToggle = callback
         return self
     }
 
@@ -256,5 +270,19 @@ private class Pill: View {
             self.setOpacity(to: 1.0)
         }
         return self
+    }
+
+    private func toggle() {
+        self.isOn.toggle()
+        self.updateColors()
+        self.onToggle?(self.isOn)
+    }
+
+    private func updateColors() {
+        let backgroundColor = self.isOn ? self.onColors.background : self.offColors.background
+        let foregroundColor = self.isOn ? self.onColors.foreground : self.offColors.foreground
+        self.setBackgroundColor(to: backgroundColor)
+        self.icon.setColor(to: foregroundColor)
+        self.label.setTextColor(to: foregroundColor)
     }
 }
