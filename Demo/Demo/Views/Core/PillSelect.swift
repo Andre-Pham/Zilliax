@@ -8,10 +8,6 @@
 import UIKit
 
 public class PillSelect<T: Any>: View {
-    // MARK: Static Computed Properties
-
-    private static var SPACING: Double { 8.0 }
-
     // MARK: Properties
 
     private let flowLayout = FlowLayout()
@@ -52,7 +48,7 @@ public class PillSelect<T: Any>: View {
 
         self.flowLayout
             .constrainAllSides(respectSafeArea: false)
-            .setSpacing(to: Self.SPACING)
+            .setSpacing(to: 8)
     }
 
     // MARK: Functions
