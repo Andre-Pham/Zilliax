@@ -19,6 +19,7 @@ public class PillSelect<T: Any>: View {
     private var values = [T]()
     private var selectedIndex: Int? = nil
     private var onChange: ((_ value: T?) -> Void)? = nil
+    private var requireSelection = false
 
     // MARK: Computed Properties
 
@@ -88,10 +89,10 @@ public class PillSelect<T: Any>: View {
         self.pills.append(pill)
         self.values.append(value)
 
-        if self.selectedIndex == nil {
+        if self.requireSelection, self.selectedIndex == nil {
             self.setSelectedSegment(index: 0)
         } else {
-            self.redrawSelection()
+            self.updateSelection()
         }
 
         return self
@@ -107,17 +108,31 @@ public class PillSelect<T: Any>: View {
             return self
         }
         self.selectedIndex = index
-        self.redrawSelection()
+        self.updateSelection()
         if trigger {
             self.onChange?(self.selectedValue)
         }
         return self
     }
+    
+    @discardableResult
+    public func setRequiredSelection(to state: Bool) -> Self {
+        self.requireSelection = state
+        if self.requireSelection, self.selectedIndex == nil, !self.pills.isEmpty {
+            self.setSelectedSegment(index: 0)
+        } else {
+            self.updateSelection()
+        }
+        return self
+    }
 
-    private func redrawSelection() {
+    private func updateSelection() {
         for (index, pill) in self.pills.enumerated() {
             let isSelected = index == self.selectedIndex
             pill.setState(isOn: isSelected)
+            if self.requireSelection {
+                pill.setLocked(to: isSelected)
+            }
         }
     }
 }
@@ -145,6 +160,7 @@ private class PillToggle: View {
     private var onToggle: ((_ isOn: Bool) -> Void)? = nil
     private var iconAdded = false
     private var labelAdded = false
+    private var isLocked = false
     private var onColors: (background: UIColor, foreground: UIColor) = (Colors.fillPrimary, Colors.textPrimary)
     private var offColors: (background: UIColor, foreground: UIColor) = (Colors.fillSecondary, Colors.textSecondary)
 
@@ -271,8 +287,17 @@ private class PillToggle: View {
         }
         return self
     }
+    
+    @discardableResult
+    public func setLocked(to state: Bool) -> Self {
+        self.isLocked = state
+        return self
+    }
 
     private func toggle() {
+        guard !self.isLocked else {
+            return
+        }
         self.isOn.toggle()
         self.updateColors()
         self.onToggle?(self.isOn)
