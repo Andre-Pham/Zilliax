@@ -197,7 +197,7 @@ public class PillMultiselect<T: Any>: View {
     }
 
     private func invalidIndices(from indices: Set<Int>) -> [Int]? {
-        let invalid = indices.filter { $0 < 0 || $0 >= self.pills.count }.sorted()
+        let invalid = indices.filter({ $0 < 0 || $0 >= self.pills.count }).sorted()
         return invalid.isEmpty ? nil : invalid
     }
 }
