@@ -69,7 +69,8 @@ public class PillSelect<T: Any>: View {
             .setLabel(to: label)
 
         if let icon {
-            pill.setIcon(to: icon)
+            pill.setIcon(to: .init(size: 14, weight: .bold))
+                .setIcon(to: icon)
         }
 
         let segmentIndex = self.pills.count
@@ -262,8 +263,8 @@ private class PillToggle: View {
     }
 
     @discardableResult
-    public func setLabelSize(to size: CGFloat) -> Self {
-        self.label.setSize(to: size)
+    public func setFont(to font: UIFont) -> Self {
+        self.label.setFont(to: font)
         return self
     }
 

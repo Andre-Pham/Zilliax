@@ -9,7 +9,7 @@ public class PillSelectViewController: UIViewController {
     // MARK: Properties
 
     private let header = HeaderView()
-    private let pillSelect = PillSelect<String>()
+    private let pillSelect = PillSelect<Int>()
 
     // MARK: Overridden Functions
 
@@ -36,9 +36,9 @@ public class PillSelectViewController: UIViewController {
         self.pillSelect
             .matchWidthConstrainCenter(padding: Dimensions.screenContentPaddingHorizontal, maxWidth: 400)
             .constrainCenterVertical()
-            .addSegment(value: "small", label: "Small")
-            .addSegment(value: "medium", label: "Medium")
-            .addSegment(value: "large", label: "Large")
-            .addSegment(value: "xl", label: "Extra Large")
+            .setHorizontalAlignment(to: .center)
+            .addSegment(value: 1, label: "Sun", icon: .init(systemName: "sun.max"))
+            .addSegment(value: 2, label: "Moon", icon: .init(systemName: "moon.stars"))
+            .addSegment(value: 3, label: "Cloud", icon: .init(systemName: "cloud"))
     }
 }

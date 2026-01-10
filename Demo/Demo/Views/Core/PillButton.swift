@@ -85,8 +85,8 @@ public class PillButton: View {
     }
 
     @discardableResult
-    public func setLabelSize(to size: CGFloat) -> Self {
-        self.label.setSize(to: size)
+    public func setFont(to font: UIFont) -> Self {
+        self.label.setFont(to: font)
         return self
     }
 
