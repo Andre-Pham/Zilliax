@@ -178,13 +178,15 @@ private class Pill: View {
 
         self.button
             .constrainAllSides(respectSafeArea: false)
-            .setOnPress({
-                self.setTransformation(to: CGAffineTransform(scaleX: 0.95, y: 0.95), animated: true)
-            })
-            .setOnRelease({
-                self.setTransformation(to: .identity, animated: true)
-                self.onTap?()
-            })
+            .animateOnPress(
+                self,
+                onPress: { view in
+                    view.setTransformation(to: CGAffineTransform(scaleX: 0.95, y: 0.95), animated: true)
+                },
+                onRelease: { view in
+                    view.setTransformation(to: .identity, animated: true)
+                }
+            )
 
         self.icon
             .setColor(to: Colors.textSecondary)
@@ -241,7 +243,7 @@ private class Pill: View {
 
     @discardableResult
     public func setOnTap(_ callback: (() -> Void)?) -> Self {
-        self.onTap = callback
+        self.button.setOnRelease(callback)
         return self
     }
 
