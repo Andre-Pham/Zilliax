@@ -69,8 +69,7 @@ public class PillSelect<T: Any>: View {
             .setLabel(to: label)
 
         if let icon {
-            pill.setIcon(to: .init(size: 14, weight: .bold))
-                .setIcon(to: icon)
+            pill.setIcon(to: icon)
         }
 
         let segmentIndex = self.pills.count
@@ -158,13 +157,6 @@ public class PillSelect<T: Any>: View {
     }
 }
 
-// TODO: Define a callback for `Button` passed in to `animateOnPress` with params `onPress` and `onRelease`
-// TODO: Then use it here, just re-copy PillButton again, but change the height, and pass in `onPress` and `onRelease`
-// TODO: Name it `PillToggle`
-// TODO: Then define functions on it like `setToggled(to state: Bool)` and `setToggledColors(background:, foreground:)`
-// TODO: Define it in its own file
-// TODO: Then use it in components like this, and obviously add it to the ViewsViewController
-
 private class PillToggle: View {
     // MARK: Static Properties
 
@@ -229,10 +221,11 @@ private class PillToggle: View {
             )
 
         self.icon
-            .setColor(to: Colors.textSecondary)
+            .setIcon(to: .init(size: 14, weight: .bold, color: Colors.textSecondary))
 
         self.label
             .setFont(to: UIFont.systemFont(ofSize: 15, weight: .semibold))
+            .setTextColor(to: Colors.textSecondary)
             .setTextAlignment(to: .center)
     }
 

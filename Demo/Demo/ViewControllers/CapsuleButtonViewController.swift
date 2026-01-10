@@ -36,6 +36,6 @@ public class CapsuleButtonViewController: UIViewController {
         self.capsuleButton
             .constrainCenter()
             .setLabel(to: "Capsule Button")
-            .setIcon(to: .init(systemName: "arrow.up", size: 16, weight: .bold))
+            .setIcon(to: .init(systemName: "arrow.up"))
     }
 }

@@ -36,6 +36,6 @@ public class PillButtonViewController: UIViewController {
         self.pillButton
             .constrainCenter()
             .setLabel(to: "Pill Button")
-            .setIcon(to: .init(systemName: "arrow.up", size: 16, weight: .bold))
+            .setIcon(to: .init(systemName: "arrow.up"))
     }
 }

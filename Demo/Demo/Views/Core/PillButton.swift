@@ -51,10 +51,11 @@ public class PillButton: View {
             .animateOnPress(self)
 
         self.icon
-            .setColor(to: Colors.textSecondary)
+            .setIcon(to: .init(size: 16, weight: .bold, color: Colors.textSecondary))
 
         self.label
             .setFont(to: UIFont.systemFont(ofSize: 15, weight: .semibold))
+            .setTextColor(to: Colors.textSecondary)
             .setTextAlignment(to: .center)
     }
 
