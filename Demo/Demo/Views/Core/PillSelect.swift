@@ -114,7 +114,7 @@ public class PillSelect<T: Any>: View {
         }
         return self
     }
-    
+
     @discardableResult
     public func setRequiredSelection(to state: Bool) -> Self {
         self.requireSelection = state
@@ -287,7 +287,7 @@ private class PillToggle: View {
         }
         return self
     }
-    
+
     @discardableResult
     public func setLocked(to state: Bool) -> Self {
         self.isLocked = state
