@@ -17,6 +17,8 @@ public class Button: UIButton {
     private var onMenuClose: (() -> Void)? = nil
     private var animateMenuOpen: (() -> Void)? = nil
     private var animateMenuClose: (() -> Void)? = nil
+    private var onPressAnimation: ((_: UIView) -> Void)? = nil
+    private var onReleaseAnimation: ((_: UIView) -> Void)? = nil
     private var animatedOnPress: UIView? = nil
 
     // MARK: Computed Properties
@@ -93,8 +95,14 @@ public class Button: UIButton {
     }
 
     @discardableResult
-    public func animateOnPress(_ target: UIView?) -> Self {
+    public func animateOnPress(
+        _ target: UIView?,
+        onPress: ((_ animated: UIView) -> Void)? = nil,
+        onRelease: ((_ animated: UIView) -> Void)? = nil
+    ) -> Self {
         self.animatedOnPress = target
+        self.onPressAnimation = onPress
+        self.onReleaseAnimation = onRelease
         return self
     }
 
@@ -137,25 +145,39 @@ public class Button: UIButton {
 
     @objc
     private func onPressCallback() {
-        self.animatedOnPress?.animatePressedOpacity()
+        if let animatedOnPress {
+            if let onPressAnimation {
+                onPressAnimation(animatedOnPress)
+            } else {
+                animatedOnPress.animatePressedOpacity()
+            }
+        }
         self.onPress?()
     }
 
     @objc
     private func onReleaseCallback() {
         self.onRelease?()
-        if !self.isDisabled {
-            // Only animate opacity if button didn't become disabled
-            self.animatedOnPress?.animateReleaseOpacity()
+        if let animatedOnPress, !self.isDisabled {
+            // Only animate if button didn't become disabled
+            if let onReleaseAnimation {
+                onReleaseAnimation(animatedOnPress)
+            } else {
+                animatedOnPress.animateReleaseOpacity()
+            }
         }
     }
 
     @objc
     private func onCancelCallback() {
         self.onCancel?()
-        if !self.isDisabled {
-            // Only animate opacity if button didn't become disabled
-            self.animatedOnPress?.animateReleaseOpacity()
+        if let animatedOnPress, !self.isDisabled {
+            // Only animate if button didn't become disabled
+            if let onReleaseAnimation {
+                onReleaseAnimation(animatedOnPress)
+            } else {
+                animatedOnPress.animateReleaseOpacity()
+            }
         }
     }
 }

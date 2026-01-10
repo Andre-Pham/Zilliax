@@ -8,6 +8,22 @@
 import UIKit
 
 public class SegmentedControl<T: Any>: View {
+    // MARK: Nested Types
+
+    public enum Distribution {
+        case fillEqually
+        case fillProportionally
+
+        fileprivate var stackDistribution: UIStackView.Distribution {
+            switch self {
+            case .fillEqually:
+                return .fillEqually
+            case .fillProportionally:
+                return .fillProportionally
+            }
+        }
+    }
+
     // MARK: Static Computed Properties
 
     private static var HEIGHT: Double { 50.0 }
@@ -87,9 +103,8 @@ public class SegmentedControl<T: Any>: View {
     }
 
     @discardableResult
-    public func setDistribution(to distribution: UIStackView.Distribution) -> Self {
-        // TODO: Can this only accept .fillEqually | .fillProportionally
-        self.segmentStack.setDistribution(to: distribution)
+    public func setDistribution(to distribution: Distribution) -> Self {
+        self.segmentStack.setDistribution(to: distribution.stackDistribution)
         return self
     }
 

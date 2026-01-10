@@ -24,6 +24,12 @@ public class Toggle: View {
     private var thumbLeftConstraint: NSLayoutConstraint? = nil
     private var onToggle: ((_ isOn: Bool) -> Void)? = nil
 
+    // MARK: Computed Properties
+
+    public var isOff: Bool {
+        return !self.isOn
+    }
+
     // MARK: Overridden Functions
 
     public override func setup() {

@@ -1,15 +1,15 @@
 //
-//  CapsuleButtonViewController.swift
+//  PillToggleViewController.swift
 //  Demo
 //
 
 import UIKit
 
-public class CapsuleButtonViewController: UIViewController {
+public class PillToggleViewController: UIViewController {
     // MARK: Properties
 
     private let header = HeaderView()
-    private let capsuleButton = CapsuleButton()
+    private let pillToggle = PillToggle()
 
     // MARK: Overridden Functions
 
@@ -18,13 +18,13 @@ public class CapsuleButtonViewController: UIViewController {
 
         self.view
             .add(self.header)
-            .add(self.capsuleButton)
+            .add(self.pillToggle)
 
         self.header
             .constrainTop()
             .constrainHorizontal(padding: Dimensions.screenContentPaddingHorizontal)
-            .setTitle(to: "CapsuleButton")
-            .setDescription(to: "A standard capsule-shaped button.")
+            .setTitle(to: "PillToggle")
+            .setDescription(to: "A pill that toggles on/off.")
             .setOnBack({
                 guard let nav = self.navigationController else {
                     assertionFailure("Expected navigation controller")
@@ -33,9 +33,9 @@ public class CapsuleButtonViewController: UIViewController {
                 nav.popViewController(animated: true)
             })
 
-        self.capsuleButton
+        self.pillToggle
             .constrainCenter()
-            .setLabel(to: "Capsule Button")
-            .setIcon(to: .init(systemName: "arrow.up"))
+            .setLabel(to: "Airplane Mode")
+            .setIcon(to: .init(systemName: "airplane"))
     }
 }
