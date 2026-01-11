@@ -13,25 +13,37 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
+
       - name: Setup Xcode
         uses: maxim-lobanov/setup-xcode@v1
         with:
           xcode-version: '26'
+
       - name: Install SwiftFormat
         run: brew install swiftformat
+
       - name: SwiftFormat Check
         working-directory: Demo
         run: swiftformat . --lint
+
       - name: Install SwiftLint
         run: brew install swiftlint
+
       - name: Generate Compiler Log
         working-directory: Demo
         run: |
           set -o pipefail
-          xcodebuild -project Demo.xcodeproj -scheme Demo -destination 'platform=iOS Simulator,name=iPhone 17,OS=latest' clean build > swift-build.log 2>&1
+          xcodebuild \
+            -project Demo.xcodeproj \
+            -scheme Demo \
+            -sdk iphonesimulator \
+            -destination 'generic/platform=iOS Simulator' \
+            clean build > swift-build.log 2>&1
+
       - name: SwiftLint
         working-directory: Demo
         run: swiftlint --strict --config ./Demo/.swiftlint.yml
+
       - name: SwiftLint Analyze
         working-directory: Demo
         run: swiftlint analyze --strict --config ./Demo/.swiftlint.yml --compiler-log-path swift-build.log
@@ -43,10 +55,18 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
+
       - name: Setup Xcode
         uses: maxim-lobanov/setup-xcode@v1
         with:
           xcode-version: '26'
+
       - name: Build
         working-directory: Demo
-        run: xcodebuild -project Demo.xcodeproj -scheme Demo -destination 'platform=iOS Simulator,name=iPhone 17,OS=latest' clean build
+        run: |
+          xcodebuild \
+            -project Demo.xcodeproj \
+            -scheme Demo \
+            -sdk iphonesimulator \
+            -destination 'generic/platform=iOS Simulator' \
+            clean build
