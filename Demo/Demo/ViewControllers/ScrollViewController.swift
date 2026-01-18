@@ -50,15 +50,15 @@ public class ScrollViewController: UIViewController {
         for index in 1...12 {
             let card = Card()
                 .setHeightConstraint(to: 50)
-            
+
             Text()
                 .addAsSubview(of: card)
                 .constrainCenter()
                 .setText(to: "Row \(index)")
                 .setTextColor(to: Colors.textMuted)
-            
+
             self.stack.append(card)
-            
+
             card.constrainHorizontal()
         }
     }
