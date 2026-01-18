@@ -7,7 +7,7 @@
 
 import UIKit
 
-public class PillToggle: View {
+public class PillToggle: View, UIGestureRecognizerDelegate {
     // MARK: Nested Types
 
     public enum IconAlignment {
@@ -27,6 +27,7 @@ public class PillToggle: View {
     private let button = Button()
     private let icon = IconImage()
     private let label = Text()
+    private let pressGesture = LongPressGesture()
     private var onToggle: ((_ isOn: Bool) -> Void)? = nil
     private var iconAdded = false
     private var iconAlignment = IconAlignment.left
@@ -78,6 +79,27 @@ public class PillToggle: View {
                 }
             )
 
+        self.pressGesture
+            .setMinimumPressDuration(to: 0)
+            .setCancelsTouchesInView(to: false)
+            .setDelaysTouchesBegan(to: false)
+            .setDelegate(to: self)
+            .setOnGesture({ [weak self] gesture in
+                guard let self = self else {
+                    return
+                }
+                // Allow this view to animate within a scroll view
+                switch gesture.state {
+                case .began:
+                    self.setTransformation(to: CGAffineTransform(scaleX: 0.95, y: 0.95), animated: true)
+                case .ended, .cancelled, .failed:
+                    self.setTransformation(to: .identity, animated: true)
+                default:
+                    break
+                }
+            })
+            .addGestureRecognizer(to: self)
+
         self.icon
             .setIcon(to: .init(size: 14, weight: .bold, color: Colors.textSecondary))
 
@@ -85,6 +107,14 @@ public class PillToggle: View {
             .setFont(to: UIFont.systemFont(ofSize: 15, weight: .semibold))
             .setTextColor(to: Colors.textSecondary)
             .setTextAlignment(to: .center)
+    }
+
+    public func gestureRecognizer(
+        _ gestureRecognizer: UIGestureRecognizer,
+        shouldRecognizeSimultaneouslyWith otherGestureRecognizer: UIGestureRecognizer
+    ) -> Bool {
+        // Allow gestures to be recognised whilst panning in a scroll view so this may still animate
+        return true
     }
 
     // MARK: Functions

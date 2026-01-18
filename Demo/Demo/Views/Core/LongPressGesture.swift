@@ -40,6 +40,24 @@ public class LongPressGesture: View {
         return self
     }
 
+    @discardableResult
+    public func setMinimumPressDuration(to duration: TimeInterval) -> Self {
+        self.gesture.minimumPressDuration = duration
+        return self
+    }
+
+    @discardableResult
+    public func setDelaysTouchesBegan(to state: Bool) -> Self {
+        self.gesture.delaysTouchesBegan = state
+        return self
+    }
+
+    @discardableResult
+    public func setDelegate(to delegate: UIGestureRecognizerDelegate?) -> Self {
+        self.gesture.delegate = delegate
+        return self
+    }
+
     @objc
     private func handleLongPressGesture(_ gesture: UILongPressGestureRecognizer) {
         self.onGesture?(gesture)
