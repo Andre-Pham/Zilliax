@@ -137,6 +137,12 @@ public class Scroll: View {
         self.scrollView.alwaysBounceHorizontal = state
         return self
     }
+    
+    @discardableResult
+    public func setDelaysContentTouches(to state: Bool) -> Self {
+        self.scrollView.delaysContentTouches = state
+        return self
+    }
 
     @discardableResult
     public func scrollToBottom() -> Self {
