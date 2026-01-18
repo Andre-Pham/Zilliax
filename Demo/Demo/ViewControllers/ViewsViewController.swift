@@ -32,6 +32,7 @@ public class ViewsViewController: UIViewController {
         "PillToggle": PillToggleViewController(),
         "PillX": PillXViewController(),
         "ProgressBar": ProgressBarViewController(),
+        "Scroll": ScrollViewController(),
         "SegmentedControl": SegmentedControlViewController(),
         "SegmentedSlider": SegmentedSliderViewController(),
         "Slider": SliderViewController(),
