@@ -8,6 +8,13 @@
 import UIKit
 
 public class PillButton: View {
+    // MARK: Nested Types
+
+    public enum IconAlignment {
+        case left
+        case right
+    }
+
     // MARK: Static Properties
 
     private static let HEIGHT = 42.0
@@ -20,6 +27,7 @@ public class PillButton: View {
     private let label = Text()
     private var onTap: (() -> Void)? = nil
     private var iconAdded = false
+    private var iconAlignment = IconAlignment.left
     private var labelAdded = false
 
     // MARK: Computed Properties
@@ -62,15 +70,20 @@ public class PillButton: View {
     // MARK: Functions
 
     @discardableResult
-    public func setIcon(to config: IconImage.Config) -> Self {
+    public func setIcon(to config: IconImage.Config, alignment: IconAlignment = .left) -> Self {
+        if self.iconAdded, self.iconAlignment != alignment {
+            self.contentStack.pop(self.icon)
+            self.iconAdded = false
+        }
         if !self.iconAdded {
-            if self.labelAdded {
+            if self.labelAdded, alignment == .left {
                 self.contentStack.insert(self.icon, at: self.contentStack.viewCount - 1)
             } else {
                 self.contentStack.append(self.icon)
             }
             self.iconAdded = true
         }
+        self.iconAlignment = alignment
         self.icon.setIcon(to: config)
         return self
     }
@@ -78,7 +91,11 @@ public class PillButton: View {
     @discardableResult
     public func setLabel(to label: String) -> Self {
         if !self.labelAdded {
-            self.contentStack.append(self.label)
+            if self.iconAdded, self.iconAlignment == .right {
+                self.contentStack.insert(self.label, at: self.contentStack.viewCount - 1)
+            } else {
+                self.contentStack.append(self.label)
+            }
             self.labelAdded = true
         }
         self.label.setText(to: label)
