@@ -48,7 +48,7 @@ public class PillX: View {
             .constrainMaxLeft(padding: 18)
             .constrainMaxRight(padding: 18)
             .append(self.iconX)
-        
+
         self.buttonX
             .constrainRight(respectSafeArea: false)
             .constrainVertical(respectSafeArea: false)
@@ -57,7 +57,7 @@ public class PillX: View {
 
         self.icon
             .setIcon(to: .init(size: 14, weight: .bold, color: Colors.textSecondary))
-        
+
         self.iconX
             .setIcon(to: .init(systemName: "xmark", size: 14, weight: .bold, color: Colors.textMuted))
 
@@ -122,7 +122,7 @@ public class PillX: View {
         self.label.setTextColor(to: color)
         return self
     }
-    
+
     @discardableResult
     public func onTapX(_ callback: (() -> Void)?) -> Self {
         self.buttonX.setOnPress(callback)
