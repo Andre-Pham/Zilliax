@@ -40,6 +40,7 @@ public class ViewsViewController: UIViewController {
         "Spinner": SpinnerViewController(),
         "Stepper": StepperViewController(),
         "TabBarButton": TabBarButtonViewController(),
+        "TapGesture": TapGestureViewController(),
         "Text": TextViewController(),
         "TextField": TextFieldViewController(),
         "Toggle": ToggleViewController(),
