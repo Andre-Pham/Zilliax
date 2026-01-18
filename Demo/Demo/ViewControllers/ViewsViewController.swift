@@ -24,6 +24,7 @@ public class ViewsViewController: UIViewController {
         "IconButton": IconButtonViewController(),
         "IconImage": IconImageViewController(),
         "Image": ImageViewController(),
+        "LongPressGesture": LongPressGestureViewController(),
         "PanGesture": PanGestureViewController(),
         "Pill": PillViewController(),
         "PillButton": PillButtonViewController(),
