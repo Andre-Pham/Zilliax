@@ -10,6 +10,7 @@ public class ClearableTextFieldViewController: UIViewController {
 
     private let header = HeaderView()
     private let clearableTextField = ClearableTextField()
+    private let tapGesture = TapGesture()
 
     // MARK: Overridden Functions
 
@@ -38,20 +39,16 @@ public class ClearableTextFieldViewController: UIViewController {
             .constrainCenterVertical()
             .setPlaceholder(to: "Placeholder")
 
-        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(self.onScreenTap))
-        tapGesture.cancelsTouchesInView = false
-        self.view.addGestureRecognizer(tapGesture)
-    }
-
-    // MARK: Functions
-
-    @objc
-    private func onScreenTap(gesture: UITapGestureRecognizer) {
-        let location = gesture.location(in: self.view)
-        let hitView = self.view.hitTest(location, with: nil)
-        if let hitView, hitView.existsWithinHierarchy(of: self.clearableTextField) {
-            return
-        }
-        self.view.endEditing(true)
+        self.tapGesture
+            .setCancelsTouchesInView(to: false)
+            .setOnGesture({ gesture in
+                let location = gesture.location(in: self.view)
+                let hitView = self.view.hitTest(location, with: nil)
+                if let hitView, hitView.existsWithinHierarchy(of: self.clearableTextField) {
+                    return
+                }
+                self.view.endEditing(true)
+            })
+            .addGestureRecognizer(to: self.view)
     }
 }

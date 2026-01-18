@@ -109,6 +109,8 @@ public class PillToggle: View, UIGestureRecognizerDelegate {
             .setTextAlignment(to: .center)
     }
 
+    // MARK: Functions
+
     public func gestureRecognizer(
         _ gestureRecognizer: UIGestureRecognizer,
         shouldRecognizeSimultaneouslyWith otherGestureRecognizer: UIGestureRecognizer
@@ -116,8 +118,6 @@ public class PillToggle: View, UIGestureRecognizerDelegate {
         // Allow gestures to be recognised whilst panning in a scroll view so this may still animate
         return true
     }
-
-    // MARK: Functions
 
     @discardableResult
     public func setIcon(to config: IconImage.Config, alignment: IconAlignment = .left) -> Self {
