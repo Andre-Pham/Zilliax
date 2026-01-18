@@ -51,7 +51,7 @@ public class PillButton: View {
             .animateOnPress(self)
 
         self.icon
-            .setIcon(to: .init(size: 16, weight: .bold, color: Colors.textSecondary))
+            .setIcon(to: .init(size: 14, weight: .bold, color: Colors.textSecondary))
 
         self.label
             .setFont(to: UIFont.systemFont(ofSize: 15, weight: .semibold))
