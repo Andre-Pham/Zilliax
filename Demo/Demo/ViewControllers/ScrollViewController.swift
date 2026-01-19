@@ -62,22 +62,4 @@ public class ScrollViewController: UIViewController {
             card.constrainHorizontal()
         }
     }
-
-    // MARK: Functions
-
-    private func buildCard(label: String) -> View {
-        let card = Card()
-            .setHeightConstraint(to: 60)
-
-        let text = Text()
-            .setText(to: label)
-            .setTextColor(to: Colors.textMuted)
-
-        card.add(text)
-        text
-            .constrainHorizontal(padding: 16)
-            .constrainCenterVertical()
-
-        return card
-    }
 }
