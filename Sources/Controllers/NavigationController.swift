@@ -38,6 +38,11 @@ public class NavigationController: UINavigationController, UINavigationControlle
         _ gestureRecognizer: UIGestureRecognizer,
         shouldRecognizeSimultaneouslyWith otherGestureRecognizer: UIGestureRecognizer
     ) -> Bool {
+        // Prevent edge-swipe back from also panning scroll views underneath.
+        if gestureRecognizer == self.interactivePopGestureRecognizer,
+           otherGestureRecognizer.view is UIScrollView {
+            return false
+        }
         // Allow pop gesture to work alongside other gestures when reasonable
         return true
     }

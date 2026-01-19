@@ -103,9 +103,9 @@ public class Stepper: View {
                             return
                         }
                         if let decreaseHoldTranslation = self.decreaseHoldTranslation {
-                            if decreaseHoldTranslation.x.isLess(than: -35.0) {
+                            if decreaseHoldTranslation.x.isLess(than: -10.0) {
                                 self.isDecreasing = true
-                            } else if decreaseHoldTranslation.x.isGreater(than: -20.0) {
+                            } else if decreaseHoldTranslation.x.isGreaterThanZero() {
                                 self.isDecreasing = false
                             }
                         }
@@ -139,9 +139,9 @@ public class Stepper: View {
                             return
                         }
                         if let increaseHoldTranslation = self.increaseHoldTranslation {
-                            if increaseHoldTranslation.x.isGreater(than: 35.0) {
+                            if increaseHoldTranslation.x.isGreater(than: 10.0) {
                                 self.isIncreasing = true
-                            } else if increaseHoldTranslation.x.isLess(than: 20.0) {
+                            } else if increaseHoldTranslation.x.isLessThanZero() {
                                 self.isIncreasing = false
                             }
                         }

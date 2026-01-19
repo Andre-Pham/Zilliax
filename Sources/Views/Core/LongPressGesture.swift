@@ -1,5 +1,5 @@
 //
-//  PanGesture.swift
+//  LongPressGesture.swift
 //  https://github.com/Andre-Pham/Zilliax
 //
 //  Created by Andre Pham.
@@ -7,11 +7,11 @@
 
 import UIKit
 
-public class PanGesture: View {
+public class LongPressGesture: View {
     // MARK: Properties
 
-    private lazy var gesture = UIPanGestureRecognizer(target: self, action: #selector(self.handlePanGesture(_:)))
-    private var onGesture: ((_ gesture: UIPanGestureRecognizer) -> Void)? = nil
+    private lazy var gesture = UILongPressGestureRecognizer(target: self, action: #selector(self.handleLongPressGesture(_:)))
+    private var onGesture: ((_ gesture: UILongPressGestureRecognizer) -> Void)? = nil
 
     // MARK: Overridden Functions
 
@@ -23,7 +23,7 @@ public class PanGesture: View {
     // MARK: Functions
 
     @discardableResult
-    public func setOnGesture(_ callback: ((_ gesture: UIPanGestureRecognizer) -> Void)?) -> Self {
+    public func setOnGesture(_ callback: ((_ gesture: UILongPressGestureRecognizer) -> Void)?) -> Self {
         self.onGesture = callback
         return self
     }
@@ -41,6 +41,12 @@ public class PanGesture: View {
     }
 
     @discardableResult
+    public func setMinimumPressDuration(to duration: TimeInterval) -> Self {
+        self.gesture.minimumPressDuration = duration
+        return self
+    }
+
+    @discardableResult
     public func setDelaysTouchesBegan(to state: Bool) -> Self {
         self.gesture.delaysTouchesBegan = state
         return self
@@ -53,7 +59,7 @@ public class PanGesture: View {
     }
 
     @objc
-    private func handlePanGesture(_ gesture: UIPanGestureRecognizer) {
+    private func handleLongPressGesture(_ gesture: UILongPressGestureRecognizer) {
         self.onGesture?(gesture)
     }
 }

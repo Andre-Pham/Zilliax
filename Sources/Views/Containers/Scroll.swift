@@ -139,6 +139,12 @@ public class Scroll: View {
     }
 
     @discardableResult
+    public func setDelaysContentTouches(to state: Bool) -> Self {
+        self.scrollView.delaysContentTouches = state
+        return self
+    }
+
+    @discardableResult
     public func scrollToBottom() -> Self {
         let bottomOffset = CGPoint(
             x: 0,
