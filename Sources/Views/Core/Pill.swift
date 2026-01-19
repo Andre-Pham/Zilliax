@@ -1,5 +1,5 @@
 //
-//  CapsuleButton.swift
+//  Pill.swift
 //  https://github.com/Andre-Pham/Zilliax
 //
 //  Created by Andre Pham.
@@ -7,7 +7,7 @@
 
 import UIKit
 
-public class CapsuleButton: View {
+public class Pill: View {
     // MARK: Nested Types
 
     public enum IconAlignment {
@@ -17,24 +17,16 @@ public class CapsuleButton: View {
 
     // MARK: Static Properties
 
-    private static let HEIGHT = 56.0
+    private static let HEIGHT = 36.0
 
     // MARK: Properties
 
     private let contentStack = HStack()
-    private let button = Button()
     private let icon = IconImage()
     private let label = Text()
-    private var onTap: (() -> Void)? = nil
     private var iconAdded = false
     private var iconAlignment = IconAlignment.left
     private var labelAdded = false
-
-    // MARK: Computed Properties
-
-    public var isDisabled: Bool {
-        return self.button.isDisabled
-    }
 
     // MARK: Overridden Functions
 
@@ -45,24 +37,19 @@ public class CapsuleButton: View {
             .setBackgroundColor(to: Colors.fillSecondary)
             .setCornerRadius(to: Self.HEIGHT / 2)
             .add(self.contentStack)
-            .add(self.button)
 
         self.contentStack
             .constrainVertical(respectSafeArea: false)
             .constrainCenterHorizontal(respectSafeArea: false)
             .setSpacing(to: 8)
-            .constrainMaxLeft(padding: 24)
-            .constrainMaxRight(padding: 24)
-
-        self.button
-            .constrainAllSides(respectSafeArea: false)
-            .animateOnPress(self)
+            .constrainMaxLeft(padding: 18)
+            .constrainMaxRight(padding: 18)
 
         self.icon
-            .setIcon(to: .init(size: 16, weight: .bold, color: Colors.textSecondary))
+            .setIcon(to: .init(size: 14, weight: .bold, color: Colors.textSecondary))
 
         self.label
-            .setFont(to: UIFont.systemFont(ofSize: 17, weight: .semibold))
+            .setFont(to: UIFont.systemFont(ofSize: 15, weight: .semibold))
             .setTextColor(to: Colors.textSecondary)
             .setTextAlignment(to: .center)
     }
@@ -118,23 +105,6 @@ public class CapsuleButton: View {
     public func setForegroundColor(to color: UIColor) -> Self {
         self.icon.setColor(to: color)
         self.label.setTextColor(to: color)
-        return self
-    }
-
-    @discardableResult
-    public func setOnTap(_ callback: (() -> Void)?) -> Self {
-        self.button.setOnRelease(callback)
-        return self
-    }
-
-    @discardableResult
-    public func setDisabled(to state: Bool) -> Self {
-        self.button.setDisabled(to: state)
-        if state {
-            self.setDisabledOpacity()
-        } else {
-            self.setOpacity(to: 1.0)
-        }
         return self
     }
 }

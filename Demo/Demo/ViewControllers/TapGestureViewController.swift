@@ -1,16 +1,17 @@
 //
-//  TextFieldViewController.swift
+//  TapGestureViewController.swift
 //  Demo
 //
 
 import UIKit
 
-public class TextFieldViewController: UIViewController {
+public class TapGestureViewController: UIViewController {
     // MARK: Properties
 
     private let header = HeaderView()
-    private let textField = TextField()
     private let tapGesture = TapGesture()
+    private let text = Text()
+    private var tapCount = 0
 
     // MARK: Overridden Functions
 
@@ -19,13 +20,13 @@ public class TextFieldViewController: UIViewController {
 
         self.view
             .add(self.header)
-            .add(self.textField)
+            .add(self.tapGesture)
 
         self.header
             .constrainTop()
             .constrainHorizontal(padding: Dimensions.screenContentPaddingHorizontal)
-            .setTitle(to: "TextField")
-            .setDescription(to: "A standard text field.")
+            .setTitle(to: "TapGesture")
+            .setDescription(to: "A base view for recognizing tap gestures.")
             .setOnBack({
                 guard let nav = self.navigationController else {
                     assertionFailure("Expected navigation controller")
@@ -34,27 +35,29 @@ public class TextFieldViewController: UIViewController {
                 nav.popViewController(animated: true)
             })
 
-        self.textField
-            .matchWidthConstrainCenter(padding: Dimensions.screenContentPaddingHorizontal, maxWidth: 400)
-            .constrainCenterVertical()
-            .setPlaceholder(to: "Placeholder")
-
         self.tapGesture
-            .setCancelsTouchesInView(to: false)
+            .constrainCenter()
+            .setWidthConstraint(to: 250)
+            .setHeightConstraint(to: 200)
+            .setBackgroundColor(to: Colors.fillSecondary)
+            .add(self.text)
             .setOnGesture({ [weak self] gesture in
                 self?.handleTap(gesture)
             })
-            .addGestureRecognizer(to: self.view)
+
+        self.text
+            .constrainCenter()
+            .setTextColor(to: Colors.textMuted)
+            .setText(to: "Tap count: 0")
     }
 
     // MARK: Functions
 
     private func handleTap(_ gesture: UITapGestureRecognizer) {
-        let location = gesture.location(in: self.view)
-        let hitView = self.view.hitTest(location, with: nil)
-        if let hitView, hitView.existsWithinHierarchy(of: self.textField) {
+        guard gesture.state == .ended else {
             return
         }
-        self.view.endEditing(true)
+        self.tapCount += 1
+        self.text.setText(to: "Tap count: \(self.tapCount)")
     }
 }

@@ -1,5 +1,5 @@
 //
-//  PanGesture.swift
+//  TapGesture.swift
 //  https://github.com/Andre-Pham/Zilliax
 //
 //  Created by Andre Pham.
@@ -7,11 +7,11 @@
 
 import UIKit
 
-public class PanGesture: View {
+public class TapGesture: View {
     // MARK: Properties
 
-    private lazy var gesture = UIPanGestureRecognizer(target: self, action: #selector(self.handlePanGesture(_:)))
-    private var onGesture: ((_ gesture: UIPanGestureRecognizer) -> Void)? = nil
+    private lazy var gesture = UITapGestureRecognizer(target: self, action: #selector(self.handleTapGesture(_:)))
+    private var onGesture: ((_ gesture: UITapGestureRecognizer) -> Void)? = nil
 
     // MARK: Overridden Functions
 
@@ -23,7 +23,7 @@ public class PanGesture: View {
     // MARK: Functions
 
     @discardableResult
-    public func setOnGesture(_ callback: ((_ gesture: UIPanGestureRecognizer) -> Void)?) -> Self {
+    public func setOnGesture(_ callback: ((_ gesture: UITapGestureRecognizer) -> Void)?) -> Self {
         self.onGesture = callback
         return self
     }
@@ -47,13 +47,31 @@ public class PanGesture: View {
     }
 
     @discardableResult
+    public func setDelaysTouchesEnded(to state: Bool) -> Self {
+        self.gesture.delaysTouchesEnded = state
+        return self
+    }
+
+    @discardableResult
+    public func setNumberOfTapsRequired(to count: Int) -> Self {
+        self.gesture.numberOfTapsRequired = count
+        return self
+    }
+
+    @discardableResult
+    public func setNumberOfTouchesRequired(to count: Int) -> Self {
+        self.gesture.numberOfTouchesRequired = count
+        return self
+    }
+
+    @discardableResult
     public func setDelegate(to delegate: UIGestureRecognizerDelegate?) -> Self {
         self.gesture.delegate = delegate
         return self
     }
 
     @objc
-    private func handlePanGesture(_ gesture: UIPanGestureRecognizer) {
+    private func handleTapGesture(_ gesture: UITapGestureRecognizer) {
         self.onGesture?(gesture)
     }
 }

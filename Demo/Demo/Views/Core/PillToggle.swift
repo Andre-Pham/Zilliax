@@ -7,7 +7,14 @@
 
 import UIKit
 
-public class PillToggle: View {
+public class PillToggle: View, UIGestureRecognizerDelegate {
+    // MARK: Nested Types
+
+    public enum IconAlignment {
+        case left
+        case right
+    }
+
     // MARK: Static Properties
 
     private static let HEIGHT = 36.0
@@ -20,8 +27,10 @@ public class PillToggle: View {
     private let button = Button()
     private let icon = IconImage()
     private let label = Text()
+    private let pressGesture = LongPressGesture()
     private var onToggle: ((_ isOn: Bool) -> Void)? = nil
     private var iconAdded = false
+    private var iconAlignment = IconAlignment.left
     private var labelAdded = false
     private var isLocked = false
     private var onColors: (background: UIColor, foreground: UIColor) = (Colors.fillPrimary, Colors.textPrimary)
@@ -70,6 +79,27 @@ public class PillToggle: View {
                 }
             )
 
+        self.pressGesture
+            .setMinimumPressDuration(to: 0)
+            .setCancelsTouchesInView(to: false)
+            .setDelaysTouchesBegan(to: false)
+            .setDelegate(to: self)
+            .setOnGesture({ [weak self] gesture in
+                guard let self = self else {
+                    return
+                }
+                // Allow this view to animate within a scroll view
+                switch gesture.state {
+                case .began:
+                    self.setTransformation(to: CGAffineTransform(scaleX: 0.95, y: 0.95), animated: true)
+                case .ended, .cancelled, .failed:
+                    self.setTransformation(to: .identity, animated: true)
+                default:
+                    break
+                }
+            })
+            .addGestureRecognizer(to: self)
+
         self.icon
             .setIcon(to: .init(size: 14, weight: .bold, color: Colors.textSecondary))
 
@@ -81,16 +111,29 @@ public class PillToggle: View {
 
     // MARK: Functions
 
+    public func gestureRecognizer(
+        _ gestureRecognizer: UIGestureRecognizer,
+        shouldRecognizeSimultaneouslyWith otherGestureRecognizer: UIGestureRecognizer
+    ) -> Bool {
+        // Allow gestures to be recognised whilst panning in a scroll view so this may still animate
+        return true
+    }
+
     @discardableResult
-    public func setIcon(to config: IconImage.Config) -> Self {
+    public func setIcon(to config: IconImage.Config, alignment: IconAlignment = .left) -> Self {
+        if self.iconAdded, self.iconAlignment != alignment {
+            self.contentStack.pop(self.icon)
+            self.iconAdded = false
+        }
         if !self.iconAdded {
-            if self.labelAdded {
+            if self.labelAdded, alignment == .left {
                 self.contentStack.insert(self.icon, at: self.contentStack.viewCount - 1)
             } else {
                 self.contentStack.append(self.icon)
             }
             self.iconAdded = true
         }
+        self.iconAlignment = alignment
         self.icon.setIcon(to: config)
         return self
     }
@@ -98,7 +141,11 @@ public class PillToggle: View {
     @discardableResult
     public func setLabel(to label: String) -> Self {
         if !self.labelAdded {
-            self.contentStack.append(self.label)
+            if self.iconAdded, self.iconAlignment == .right {
+                self.contentStack.insert(self.label, at: self.contentStack.viewCount - 1)
+            } else {
+                self.contentStack.append(self.label)
+            }
             self.labelAdded = true
         }
         self.label.setText(to: label)
