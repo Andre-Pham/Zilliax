@@ -44,8 +44,8 @@ public class PanGestureViewController: UIViewController {
             .setCornerRadius(to: 16)
             .setBackgroundColor(to: Colors.fillSecondary)
             .add(self.indicator)
-            .setOnGesture({ gesture in
-                self.handlePan(gesture)
+            .setOnGesture({ [weak self] gesture in
+                self?.handlePan(gesture)
             })
 
         self.indicator

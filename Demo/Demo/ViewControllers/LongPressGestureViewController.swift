@@ -40,8 +40,8 @@ public class LongPressGestureViewController: UIViewController {
             .setHeightConstraint(to: 200)
             .setBackgroundColor(to: Colors.fillSecondary)
             .add(self.text)
-            .setOnGesture({ gesture in
-                self.handleLongPress(gesture)
+            .setOnGesture({ [weak self] gesture in
+                self?.handleLongPress(gesture)
             })
 
         self.text

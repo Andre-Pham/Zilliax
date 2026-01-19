@@ -41,14 +41,20 @@ public class TextFieldViewController: UIViewController {
 
         self.tapGesture
             .setCancelsTouchesInView(to: false)
-            .setOnGesture({ gesture in
-                let location = gesture.location(in: self.view)
-                let hitView = self.view.hitTest(location, with: nil)
-                if let hitView, hitView.existsWithinHierarchy(of: self.textField) {
-                    return
-                }
-                self.view.endEditing(true)
+            .setOnGesture({ [weak self] gesture in
+                self?.handleTap(gesture)
             })
             .addGestureRecognizer(to: self.view)
+    }
+
+    // MARK: Functions
+
+    private func handleTap(_ gesture: UITapGestureRecognizer) {
+        let location = gesture.location(in: self.view)
+        let hitView = self.view.hitTest(location, with: nil)
+        if let hitView, hitView.existsWithinHierarchy(of: self.textField) {
+            return
+        }
+        self.view.endEditing(true)
     }
 }

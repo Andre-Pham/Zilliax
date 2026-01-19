@@ -41,16 +41,23 @@ public class TapGestureViewController: UIViewController {
             .setHeightConstraint(to: 200)
             .setBackgroundColor(to: Colors.fillSecondary)
             .add(self.text)
-            .setOnGesture({ gesture in
-                if gesture.state == .ended {
-                    self.tapCount += 1
-                    self.text.setText(to: "Tap count: \(self.tapCount)")
-                }
+            .setOnGesture({ [weak self] gesture in
+                self?.handleTap(gesture)
             })
 
         self.text
             .constrainCenter()
             .setTextColor(to: Colors.textMuted)
             .setText(to: "Tap count: 0")
+    }
+
+    // MARK: Functions
+
+    private func handleTap(_ gesture: UITapGestureRecognizer) {
+        guard gesture.state == .ended else {
+            return
+        }
+        self.tapCount += 1
+        self.text.setText(to: "Tap count: \(self.tapCount)")
     }
 }
