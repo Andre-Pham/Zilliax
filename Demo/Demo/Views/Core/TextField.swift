@@ -11,9 +11,10 @@ public class TextField: View {
     // MARK: Properties
 
     private let textField = InternalTextField()
-    private var onSubmit: (() -> Void)? = nil
+    private var onSubmit: ((String) -> Void)? = nil
     private var onFocus: (() -> Void)? = nil
     private var onUnfocus: (() -> Void)? = nil
+    private var onChange: ((String) -> Void)? = nil
 
     // MARK: Computed Properties
 
@@ -39,6 +40,7 @@ public class TextField: View {
             .setHeightConstraint(to: 50)
 
         self.textField.addTarget(self, action: #selector(self.handleSubmit), for: .editingDidEndOnExit)
+        self.textField.addTarget(self, action: #selector(self.handleTextChanged), for: .editingChanged)
 
         NotificationCenter.default.addObserver(
             self,
@@ -57,7 +59,7 @@ public class TextField: View {
     // MARK: Functions
 
     @discardableResult
-    public func setOnSubmit(_ callback: (() -> Void)?) -> Self {
+    public func setOnSubmit(_ callback: ((String) -> Void)?) -> Self {
         self.onSubmit = callback
         return self
     }
@@ -71,6 +73,12 @@ public class TextField: View {
     @discardableResult
     public func setOnUnfocus(_ callback: (() -> Void)?) -> Self {
         self.onUnfocus = callback
+        return self
+    }
+
+    @discardableResult
+    public func setOnChange(_ callback: ((String) -> Void)?) -> Self {
+        self.onChange = callback
         return self
     }
 
@@ -118,7 +126,12 @@ public class TextField: View {
 
     @objc
     private func handleSubmit() {
-        self.onSubmit?()
+        self.onSubmit?(self.text)
+    }
+
+    @objc
+    private func handleTextChanged() {
+        self.onChange?(self.text)
     }
 
     @objc

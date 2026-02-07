@@ -10,10 +10,21 @@ import UIKit
 public class SegmentedSlider<T: Any>: View {
     // MARK: Static Computed Properties
 
-    private static var SCRUBBER_DIAMETER: Double { 30.0 }
-    private static var DEFAULT_LABEL_WIDTH: Double { 50.0 }
-    private static var DEFAULT_LABEL_HEIGHT: Double { 35.0 }
-    private static var LABEL_CORNER_RADIUS_HEIGHT_MULTIPLIER: Double { 0.45 }
+    private static var SCRUBBER_DIAMETER: Double {
+        return 30.0
+    }
+
+    private static var DEFAULT_LABEL_WIDTH: Double {
+        return 50.0
+    }
+
+    private static var DEFAULT_LABEL_HEIGHT: Double {
+        return 35.0
+    }
+
+    private static var LABEL_CORNER_RADIUS_HEIGHT_MULTIPLIER: Double {
+        return 0.45
+    }
 
     // MARK: Properties
 

@@ -191,7 +191,7 @@ public class CollectionView<Section: Hashable, ItemID: Hashable & Sendable>: UIC
     }
 }
 
-private class CollectionReusableView<T>: UICollectionReusableView where T: UIView {
+private class CollectionReusableView<T: UIView>: UICollectionReusableView {
     // MARK: Static Computed Properties
 
     public static var reuseIdentifier: String {
@@ -225,7 +225,7 @@ private class CollectionReusableView<T>: UICollectionReusableView where T: UIVie
     }
 }
 
-private class CollectionViewCell<T>: UICollectionViewCell where T: UIView {
+private class CollectionViewCell<T: UIView>: UICollectionViewCell {
     // MARK: Static Computed Properties
 
     public static var reuseIdentifier: String {

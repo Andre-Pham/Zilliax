@@ -255,9 +255,17 @@ public struct DIFlowLayoutEngine {
 
         // MARK: Computed Properties
 
-        public var minY: Double { self.y }
-        public var minX: Double { self.x }
-        public var maxX: Double { self.width + self.x }
+        public var minY: Double {
+            return self.y
+        }
+
+        public var minX: Double {
+            return self.x
+        }
+
+        public var maxX: Double {
+            return self.width + self.x
+        }
 
         // MARK: Lifecycle
 
