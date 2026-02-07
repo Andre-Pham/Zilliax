@@ -26,8 +26,13 @@ public class SegmentedControl<T: Any>: View {
 
     // MARK: Static Computed Properties
 
-    private static var HEIGHT: Double { 50.0 }
-    private static var INNER_PADDING: Double { 5.0 }
+    private static var HEIGHT: Double {
+        return 50.0
+    }
+
+    private static var INNER_PADDING: Double {
+        return 5.0
+    }
 
     // MARK: Properties
 
