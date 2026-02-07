@@ -167,6 +167,16 @@ public class SegmentedSlider<T: Any>: View {
     }
 
     @discardableResult
+    public func setSegment(value: T, trigger: Bool = false, useHaptics: Bool = true, isStartingValue: Bool = false) -> Self
+        where T: Equatable {
+        guard let index = self.values.firstIndex(where: { $0 == value }) else {
+            assertionFailure("Attempted to select segment for non existent value: \(value)")
+            return self
+        }
+        return self.setSegment(index: index, trigger: trigger, useHaptics: useHaptics, isStartingValue: isStartingValue)
+    }
+
+    @discardableResult
     public func addSegment(value: T, label: String) -> Self {
         self.values.append(value)
         self.labels.append(label)
