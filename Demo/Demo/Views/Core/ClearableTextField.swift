@@ -14,9 +14,10 @@ public class ClearableTextField: View {
     private let textField = InternalTextField()
     private let textClearControl = Control()
     private let textClearIcon = Icon()
-    private var onSubmit: (() -> Void)? = nil
+    private var onSubmit: ((String) -> Void)? = nil
     private var onFocus: (() -> Void)? = nil
     private var onUnfocus: (() -> Void)? = nil
+    private var onChange: ((String) -> Void)? = nil
 
     // MARK: Computed Properties
 
@@ -47,6 +48,7 @@ public class ClearableTextField: View {
             .add(self.textClearIcon)
             .setOnRelease({
                 self.setText(to: nil)
+                self.onChange?("")
                 self.textField.becomeFirstResponder()
             })
 
@@ -62,6 +64,7 @@ public class ClearableTextField: View {
             .setTextColor(to: Colors.textDark)
 
         self.textField.addTarget(self, action: #selector(self.handleSubmit), for: .editingDidEndOnExit)
+        self.textField.addTarget(self, action: #selector(self.handleTextChanged), for: .editingChanged)
 
         NotificationCenter.default.addObserver(
             self,
@@ -80,7 +83,7 @@ public class ClearableTextField: View {
     // MARK: Functions
 
     @discardableResult
-    public func setOnSubmit(_ callback: (() -> Void)?) -> Self {
+    public func setOnSubmit(_ callback: ((String) -> Void)?) -> Self {
         self.onSubmit = callback
         return self
     }
@@ -94,6 +97,12 @@ public class ClearableTextField: View {
     @discardableResult
     public func setOnUnfocus(_ callback: (() -> Void)?) -> Self {
         self.onUnfocus = callback
+        return self
+    }
+
+    @discardableResult
+    public func setOnChange(_ callback: ((String) -> Void)?) -> Self {
+        self.onChange = callback
         return self
     }
 
@@ -141,7 +150,12 @@ public class ClearableTextField: View {
 
     @objc
     private func handleSubmit() {
-        self.onSubmit?()
+        self.onSubmit?(self.text)
+    }
+
+    @objc
+    private func handleTextChanged() {
+        self.onChange?(self.text)
     }
 
     @objc
