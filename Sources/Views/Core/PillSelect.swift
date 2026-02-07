@@ -112,6 +112,18 @@ public class PillSelect<T: Any>: View {
     }
 
     @discardableResult
+    public func setSelectedSegment(value: T?, trigger: Bool = false) -> Self where T: Equatable {
+        guard let value else {
+            return self.setSelectedSegment(index: nil, trigger: trigger)
+        }
+        guard let index = self.values.firstIndex(where: { $0 == value }) else {
+            assertionFailure("Attempted to select segment for non existent value: \(value)")
+            return self
+        }
+        return self.setSelectedSegment(index: index, trigger: trigger)
+    }
+
+    @discardableResult
     public func setRequiredSelection(to state: Bool) -> Self {
         self.requireSelection = state
         if self.requireSelection, self.selectedIndex == nil, !self.pills.isEmpty {

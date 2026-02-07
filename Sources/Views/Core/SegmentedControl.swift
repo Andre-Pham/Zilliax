@@ -197,6 +197,15 @@ public class SegmentedControl<T: Any>: View {
     }
 
     @discardableResult
+    public func setSelectedSegment(value: T, animated: Bool) -> Self where T: Equatable {
+        guard let index = self.values.firstIndex(where: { $0 == value }) else {
+            assertionFailure("Attempted to select segment for non existent value: \(value)")
+            return self
+        }
+        return self.setSelectedSegment(index: index, animated: animated)
+    }
+
+    @discardableResult
     private func redrawSelection() -> Self {
         if let selectedSegment {
             if let selectedConstraints {

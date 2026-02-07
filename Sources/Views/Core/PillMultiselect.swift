@@ -101,6 +101,14 @@ public class PillMultiselect<T: Any>: View {
     }
 
     @discardableResult
+    public func setSelectedSegment(value: T?, trigger: Bool = false) -> Self where T: Hashable {
+        guard let value else {
+            return self.setSelectedSegments(indices: [], trigger: trigger)
+        }
+        return self.setSelectedSegments(values: Set([value]), trigger: trigger)
+    }
+
+    @discardableResult
     public func setSelectedSegments(indices: Set<Int>, trigger: Bool = false) -> Self {
         if let invalidIndices = self.invalidIndices(from: indices) {
             assertionFailure("Invalid indices provided: \(invalidIndices)")
@@ -122,6 +130,21 @@ public class PillMultiselect<T: Any>: View {
             self.onChange?(self.selectedValues)
         }
         return self
+    }
+
+    @discardableResult
+    public func setSelectedSegments(values: Set<T>, trigger: Bool = false) -> Self where T: Hashable {
+        let indices = Set(values.compactMap({ value in
+            self.values.firstIndex(where: { $0 == value })
+        }))
+        if indices.count != values.count {
+            let missing = values.filter({ value in
+                !self.values.contains(where: { $0 == value })
+            })
+            assertionFailure("Attempted to select segments for non existent values: \(missing)")
+            return self
+        }
+        return self.setSelectedSegments(indices: indices, trigger: trigger)
     }
 
     @discardableResult
