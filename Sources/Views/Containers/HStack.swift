@@ -324,6 +324,12 @@ public class HStack: View {
     }
 
     @discardableResult
+    public func setCustomSpacing(after view: UIView, to spacing: CGFloat) -> Self {
+        self.stack.setCustomSpacing(spacing, after: view)
+        return self
+    }
+
+    @discardableResult
     public func setDistribution(to distribution: UIStackView.Distribution) -> Self {
         self.stack.distribution = distribution
         return self
