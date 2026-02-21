@@ -124,8 +124,8 @@ public class PillX: View {
     }
 
     @discardableResult
-    public func onTapX(_ callback: (() -> Void)?) -> Self {
-        self.buttonX.setOnPress(callback)
+    public func setOnTapX(_ callback: (() -> Void)?) -> Self {
+        self.buttonX.setOnRelease(callback)
         return self
     }
 
