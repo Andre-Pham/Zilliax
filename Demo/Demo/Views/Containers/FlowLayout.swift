@@ -199,7 +199,7 @@ public class FlowLayout: View {
         let view = self.arrangedViews[index]
         return self.pop(view)
     }
-    
+
     @discardableResult
     public func removeAll() -> Self {
         for view in self.arrangedViews {

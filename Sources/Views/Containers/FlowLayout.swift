@@ -37,8 +37,10 @@ public class FlowLayout: View {
     public override func layoutSubviews() {
         super.layoutSubviews()
         guard !self.arrangedViews.isEmpty else {
-            if !self.lastFittingHeight.isZero() {
-                self.lastFittingHeight = 0
+            let epsilon = 0.5
+            let newHeight = 0.0
+            if abs(newHeight - self.lastFittingHeight).isGreater(than: epsilon) {
+                self.lastFittingHeight = newHeight
                 self.invalidateIntrinsicContentSize()
             }
             return
@@ -67,8 +69,12 @@ public class FlowLayout: View {
                 height: size.height
             )
         }
-        self.lastFittingHeight = layout.fittingHeight
-        self.invalidateIntrinsicContentSize()
+        let epsilon = 0.5
+        let newHeight = layout.fittingHeight
+        if abs(newHeight - self.lastFittingHeight).isGreater(than: epsilon) {
+            self.lastFittingHeight = newHeight
+            self.invalidateIntrinsicContentSize()
+        }
     }
 
     public override func sizeThatFits(_ size: CGSize) -> CGSize {
@@ -144,8 +150,8 @@ public class FlowLayout: View {
     @discardableResult
     public func append(_ view: UIView) -> Self {
         self.add(view)
-        self.setNeedsLayout()
         self.arrangedViews.append(view)
+        self.setNeedsLayout()
         return self
     }
 
@@ -154,8 +160,8 @@ public class FlowLayout: View {
         for view in views {
             self.add(view)
         }
-        self.setNeedsLayout()
         self.arrangedViews.append(contentsOf: views)
+        self.setNeedsLayout()
         return self
     }
 
@@ -163,8 +169,8 @@ public class FlowLayout: View {
     public func insert(_ view: UIView, at position: Int) -> Self {
         let validPosition = max(min(position, self.arrangedViews.count), 0)
         self.insertSubview(view, at: validPosition)
-        self.setNeedsLayout()
         self.arrangedViews.insert(view, at: validPosition)
+        self.setNeedsLayout()
         return self
     }
 
@@ -174,8 +180,8 @@ public class FlowLayout: View {
             return self
         }
         view.remove()
-        self.setNeedsLayout()
         self.arrangedViews.remove(at: index)
+        self.setNeedsLayout()
         return self
     }
 
@@ -192,6 +198,18 @@ public class FlowLayout: View {
         }
         let view = self.arrangedViews[index]
         return self.pop(view)
+    }
+
+    @discardableResult
+    public func removeAll() -> Self {
+        for view in self.arrangedViews {
+            view.remove()
+        }
+        self.arrangedViews.removeAll()
+        self.lastFittingHeight = 0
+        self.setNeedsLayout()
+        self.invalidateIntrinsicContentSize()
+        return self
     }
 
     private func measureSize(of view: UIView) -> CGSize {
