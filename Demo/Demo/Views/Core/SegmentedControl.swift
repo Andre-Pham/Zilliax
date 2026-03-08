@@ -51,16 +51,6 @@ public class SegmentedControl<T: Any>: View {
 
     // MARK: Computed Properties
 
-    private var selectedSegment: View? {
-        guard let selectedIndex else {
-            return nil
-        }
-        guard selectedIndex < self.segments.count else {
-            return nil
-        }
-        return self.segments[selectedIndex]
-    }
-
     public var selectedValue: T? {
         guard let selectedIndex else {
             return nil
@@ -69,6 +59,16 @@ public class SegmentedControl<T: Any>: View {
             return nil
         }
         return self.values[selectedIndex]
+    }
+
+    private var selectedSegment: View? {
+        guard let selectedIndex else {
+            return nil
+        }
+        guard selectedIndex < self.segments.count else {
+            return nil
+        }
+        return self.segments[selectedIndex]
     }
 
     // MARK: Overridden Functions

@@ -2053,7 +2053,7 @@ extension UIView {
     }
 
     // MARK: - Animations
-    
+
     public static func animateSpring(
         duration: Double = 0.2,
         delay: Double = 0.0,
