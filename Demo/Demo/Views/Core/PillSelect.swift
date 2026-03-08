@@ -29,7 +29,7 @@ public class PillSelect<T: Any>: View {
         return self.pills[selectedIndex]
     }
 
-    private var selectedValue: T? {
+    public var selectedValue: T? {
         guard let selectedIndex else {
             return nil
         }
@@ -91,6 +91,15 @@ public class PillSelect<T: Any>: View {
             self.updateSelection()
         }
 
+        return self
+    }
+    
+    @discardableResult
+    public func removeAllSegments(trigger: Bool = false) -> Self {
+        self.flowLayout.removeAll()
+        self.setSelectedSegment(index: nil, trigger: trigger)
+        self.pills.removeAll()
+        self.values.removeAll()
         return self
     }
 

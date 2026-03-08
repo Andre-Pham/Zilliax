@@ -7,6 +7,10 @@
 
 import UIKit
 
+public protocol InteractivePopGestureConfigurable {
+    var allowsInteractivePop: Bool { get }
+}
+
 public class NavigationController: UINavigationController, UINavigationControllerDelegate, UIGestureRecognizerDelegate {
     // MARK: Overridden Functions
 
@@ -26,7 +30,11 @@ public class NavigationController: UINavigationController, UINavigationControlle
         willShow viewController: UIViewController,
         animated: Bool
     ) {
-        viewController.view.setBackgroundColor(to: Colors.fillForeground)
+        if viewController.view.backgroundColor == nil {
+            viewController.view.setBackgroundColor(to: Colors.fillForeground)
+        }
+        let allowsInteractivePop = (viewController as? InteractivePopGestureConfigurable)?.allowsInteractivePop ?? true
+        self.interactivePopGestureRecognizer?.isEnabled = allowsInteractivePop
     }
 
     public func gestureRecognizerShouldBegin(_ gestureRecognizer: UIGestureRecognizer) -> Bool {

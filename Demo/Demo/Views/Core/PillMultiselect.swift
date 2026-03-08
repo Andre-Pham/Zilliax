@@ -28,7 +28,7 @@ public class PillMultiselect<T: Any>: View {
         }
     }
 
-    private var selectedValues: [T] {
+    public var selectedValues: [T] {
         return self.sortedSelectedIndices().compactMap { index in
             guard index < self.values.count else {
                 return nil

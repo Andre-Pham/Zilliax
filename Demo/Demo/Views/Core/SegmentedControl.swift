@@ -61,7 +61,7 @@ public class SegmentedControl<T: Any>: View {
         return self.segments[selectedIndex]
     }
 
-    private var selectedValue: T? {
+    public var selectedValue: T? {
         guard let selectedIndex else {
             return nil
         }
