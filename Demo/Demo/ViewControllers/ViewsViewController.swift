@@ -20,9 +20,11 @@ public class ViewsViewController: UIViewController {
         "HStack": HStackViewController(),
         "ClearableTextField": ClearableTextFieldViewController(),
         "Control": ControlViewController(),
+        "Details": DetailsViewController(),
         "Icon": IconViewController(),
         "IconButton": IconButtonViewController(),
         "IconImage": IconImageViewController(),
+        "IconSpinner": IconSpinnerViewController(),
         "Image": ImageViewController(),
         "LongPressGesture": LongPressGestureViewController(),
         "PanGesture": PanGestureViewController(),
@@ -42,6 +44,7 @@ public class ViewsViewController: UIViewController {
         "TabBarButton": TabBarButtonViewController(),
         "TapGesture": TapGestureViewController(),
         "Text": TextViewController(),
+        "TextButton": TextButtonViewController(),
         "TextField": TextFieldViewController(),
         "Toggle": ToggleViewController(),
         "VStack": VStackViewController(),
@@ -71,8 +74,8 @@ public class ViewsViewController: UIViewController {
         for (name, viewController) in self.views.sorted(by: { $0.key < $1.key }) {
             let toAppend = OpenView()
                 .setText(to: name)
-                .setOnTap({
-                    guard let nav = self.navigationController else {
+                .setOnTap({ [weak self] in
+                    guard let nav = self?.navigationController else {
                         assertionFailure("Expected navigation controller")
                         return
                     }

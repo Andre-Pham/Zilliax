@@ -44,8 +44,8 @@ public class Slider: View {
             .add(self.scrubberBackground)
             .add(self.scrubberLine)
             .add(self.scrubberControl)
-            .setOnGesture({ gesture in
-                self.onDrag(gesture)
+            .setOnGesture({ [weak self] gesture in
+                self?.onDrag(gesture)
             })
 
         self.scrubberBackground

@@ -57,8 +57,8 @@ public class FlowLayoutViewController: UIViewController {
             .constrainHorizontal(padding: Dimensions.screenContentPaddingHorizontal)
             .setTitle(to: "FlowLayout")
             .setDescription(to: "A container whereby subviews are arranged horizontally and wrapped vertically.")
-            .setOnBack({
-                guard let nav = self.navigationController else {
+            .setOnBack({ [weak self] in
+                guard let nav = self?.navigationController else {
                     assertionFailure("Expected navigation controller")
                     return
                 }

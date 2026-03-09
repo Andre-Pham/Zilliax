@@ -11,8 +11,10 @@ public class IconButton: View {
     // MARK: Properties
 
     private let button = Button()
+    private let spinner = IconSpinner()
     private let icon = Icon()
     private var onTap: (() -> Void)? = nil
+    private var isLoading = false
 
     // MARK: Computed Properties
 
@@ -26,6 +28,7 @@ public class IconButton: View {
         super.setup()
 
         self.add(self.button)
+            .add(self.spinner)
             .add(self.icon)
 
         self.button
@@ -34,6 +37,11 @@ public class IconButton: View {
 
         self.icon
             .constrainCenter(respectSafeArea: false)
+
+        self.spinner
+            .constrainCenter(respectSafeArea: false)
+            .setHidden(to: true)
+            .setIcon(to: self.icon.config.with(systemName: "progress.indicator"))
     }
 
     public override func layoutSubviews() {
@@ -46,6 +54,8 @@ public class IconButton: View {
     @discardableResult
     public func setIcon(to config: Icon.Config) -> Self {
         self.icon.setIcon(to: config)
+        self.spinner.setIcon(to: config.with(systemName: self.spinner.config.systemName))
+        self.icon.setHidden(to: self.isLoading)
         return self
     }
 
@@ -89,6 +99,24 @@ public class IconButton: View {
             self.setDisabledOpacity()
         } else {
             self.setOpacity(to: 1.0)
+        }
+        return self
+    }
+
+    @discardableResult
+    public func setLoading(to state: Bool) -> Self {
+        guard self.isLoading != state else {
+            return self
+        }
+        self.isLoading = state
+        self.setDisabled(to: state)
+        self.spinner.setHidden(to: !state)
+        if state {
+            self.spinner.startAnimating()
+            self.icon.setHidden(to: true)
+        } else {
+            self.spinner.stopAnimating()
+            self.icon.setHidden(to: false)
         }
         return self
     }

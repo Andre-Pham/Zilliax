@@ -1,15 +1,15 @@
 //
-//  SpinnerViewController.swift
+//  IconSpinnerViewController.swift
 //  Demo
 //
 
 import UIKit
 
-public class SpinnerViewController: UIViewController {
+public class IconSpinnerViewController: UIViewController {
     // MARK: Properties
 
     private let header = HeaderView()
-    private let spinner = Spinner()
+    private let spinner = IconSpinner()
 
     // MARK: Overridden Functions
 
@@ -23,8 +23,8 @@ public class SpinnerViewController: UIViewController {
         self.header
             .constrainTop()
             .constrainHorizontal(padding: Dimensions.screenContentPaddingHorizontal)
-            .setTitle(to: "Spinner")
-            .setDescription(to: "A loading spinner.")
+            .setTitle(to: "IconSpinner")
+            .setDescription(to: "An icon spinner.")
             .setOnBack({ [weak self] in
                 guard let nav = self?.navigationController else {
                     assertionFailure("Expected navigation controller")

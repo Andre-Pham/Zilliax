@@ -1,15 +1,16 @@
 //
-//  PillMultiselectViewController.swift
+//  DetailsViewController.swift
 //  Demo
 //
 
 import UIKit
 
-public class PillMultiselectViewController: UIViewController {
+public class DetailsViewController: UIViewController {
     // MARK: Properties
 
     private let header = HeaderView()
-    private let pillMultiselect = PillMultiselect<Int>()
+    private let card = Card()
+    private let details = Details()
 
     // MARK: Overridden Functions
 
@@ -18,13 +19,13 @@ public class PillMultiselectViewController: UIViewController {
 
         self.view
             .add(self.header)
-            .add(self.pillMultiselect)
+            .add(self.card)
 
         self.header
             .constrainTop()
             .constrainHorizontal(padding: Dimensions.screenContentPaddingHorizontal)
-            .setTitle(to: "PillMultiselect")
-            .setDescription(to: "A collection of pills for selecting multiple options.")
+            .setTitle(to: "Details")
+            .setDescription(to: "A stacked list of title-value rows for compact detail summaries.")
             .setOnBack({ [weak self] in
                 guard let nav = self?.navigationController else {
                     assertionFailure("Expected navigation controller")
@@ -33,12 +34,17 @@ public class PillMultiselectViewController: UIViewController {
                 nav.popViewController(animated: true)
             })
 
-        self.pillMultiselect
+        self.card
             .matchWidthConstrainCenter(padding: Dimensions.screenContentPaddingHorizontal, maxWidth: 400)
             .constrainCenterVertical()
-            .setHorizontalAlignment(to: .center)
-            .addSegment(value: 1, label: "Sun", icon: .init(systemName: "sun.max"))
-            .addSegment(value: 2, label: "Moon", icon: .init(systemName: "moon.stars"))
-            .addSegment(value: 3, label: "Cloud", icon: .init(systemName: "cloud"))
+            .add(self.details)
+
+        self.details
+            .constrainAllSides(padding: 20, respectSafeArea: false)
+            .addRow(title: "Order", value: "#4812")
+            .addRow(title: "Status", value: "Processing")
+            .addRow(title: "Placed", value: "Mar 9, 2026")
+            .addDivider()
+            .addRow(title: "Total", value: "$128.00")
     }
 }

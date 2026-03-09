@@ -19,6 +19,16 @@ public class PillSelect<T: Any>: View {
 
     // MARK: Computed Properties
 
+    public var selectedValue: T? {
+        guard let selectedIndex else {
+            return nil
+        }
+        guard selectedIndex < self.values.count else {
+            return nil
+        }
+        return self.values[selectedIndex]
+    }
+
     private var selectedPill: PillToggle? {
         guard let selectedIndex else {
             return nil
@@ -27,16 +37,6 @@ public class PillSelect<T: Any>: View {
             return nil
         }
         return self.pills[selectedIndex]
-    }
-
-    private var selectedValue: T? {
-        guard let selectedIndex else {
-            return nil
-        }
-        guard selectedIndex < self.values.count else {
-            return nil
-        }
-        return self.values[selectedIndex]
     }
 
     // MARK: Overridden Functions
@@ -91,6 +91,15 @@ public class PillSelect<T: Any>: View {
             self.updateSelection()
         }
 
+        return self
+    }
+
+    @discardableResult
+    public func removeAllSegments(trigger: Bool = false) -> Self {
+        self.flowLayout.removeAll()
+        self.setSelectedSegment(index: nil, trigger: trigger)
+        self.pills.removeAll()
+        self.values.removeAll()
         return self
     }
 

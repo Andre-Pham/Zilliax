@@ -25,8 +25,8 @@ public class SegmentedSliderViewController: UIViewController {
             .constrainHorizontal(padding: Dimensions.screenContentPaddingHorizontal)
             .setTitle(to: "SegmentedSlider")
             .setDescription(to: "A segmented slider. Allows the selection of a discrete value.")
-            .setOnBack({
-                guard let nav = self.navigationController else {
+            .setOnBack({ [weak self] in
+                guard let nav = self?.navigationController else {
                     assertionFailure("Expected navigation controller")
                     return
                 }

@@ -23,12 +23,14 @@ public class CapsuleButton: View {
 
     private let contentStack = HStack()
     private let button = Button()
+    private let spinner = IconSpinner()
     private let icon = IconImage()
     private let label = Text()
     private var onTap: (() -> Void)? = nil
     private var iconAdded = false
     private var iconAlignment = IconAlignment.left
     private var labelAdded = false
+    private var isLoading = false
 
     // MARK: Computed Properties
 
@@ -61,6 +63,9 @@ public class CapsuleButton: View {
         self.icon
             .setIcon(to: .init(size: 16, weight: .bold, color: Colors.textSecondary))
 
+        self.spinner
+            .setIcon(to: self.icon.config.with(systemName: "progress.indicator"))
+
         self.label
             .setFont(to: UIFont.systemFont(ofSize: 17, weight: .semibold))
             .setTextColor(to: Colors.textSecondary)
@@ -85,6 +90,8 @@ public class CapsuleButton: View {
         }
         self.iconAlignment = alignment
         self.icon.setIcon(to: config)
+        self.spinner.setIcon(to: config.with(systemName: self.spinner.config.systemName))
+        self.icon.setHidden(to: self.isLoading && alignment == .left)
         return self
     }
 
@@ -117,6 +124,7 @@ public class CapsuleButton: View {
     @discardableResult
     public func setForegroundColor(to color: UIColor) -> Self {
         self.icon.setColor(to: color)
+        self.spinner.setColor(to: color)
         self.label.setTextColor(to: color)
         return self
     }
@@ -134,6 +142,33 @@ public class CapsuleButton: View {
             self.setDisabledOpacity()
         } else {
             self.setOpacity(to: 1.0)
+        }
+        return self
+    }
+
+    @discardableResult
+    public func setLoading(to state: Bool) -> Self {
+        guard self.isLoading != state else {
+            return self
+        }
+        self.isLoading = state
+        self.setDisabled(to: state)
+        if state {
+            if !self.spinner.hasSuperView {
+                self.contentStack.insert(self.spinner, at: 0)
+            }
+            self.spinner.startAnimating()
+            if self.iconAdded, self.iconAlignment == .left {
+                self.icon.setHidden(to: true)
+            }
+        } else {
+            if self.spinner.hasSuperView {
+                self.contentStack.pop(self.spinner)
+            }
+            self.spinner.stopAnimating()
+            if self.iconAdded, self.iconAlignment == .left {
+                self.icon.setHidden(to: false)
+            }
         }
         return self
     }

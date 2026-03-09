@@ -1,15 +1,15 @@
 //
-//  SpinnerViewController.swift
+//  TextButtonViewController.swift
 //  Demo
 //
 
 import UIKit
 
-public class SpinnerViewController: UIViewController {
+public class TextButtonViewController: UIViewController {
     // MARK: Properties
 
     private let header = HeaderView()
-    private let spinner = Spinner()
+    private let textButton = TextButton()
 
     // MARK: Overridden Functions
 
@@ -18,13 +18,13 @@ public class SpinnerViewController: UIViewController {
 
         self.view
             .add(self.header)
-            .add(self.spinner)
+            .add(self.textButton)
 
         self.header
             .constrainTop()
             .constrainHorizontal(padding: Dimensions.screenContentPaddingHorizontal)
-            .setTitle(to: "Spinner")
-            .setDescription(to: "A loading spinner.")
+            .setTitle(to: "TextButton")
+            .setDescription(to: "A text button.")
             .setOnBack({ [weak self] in
                 guard let nav = self?.navigationController else {
                     assertionFailure("Expected navigation controller")
@@ -33,7 +33,9 @@ public class SpinnerViewController: UIViewController {
                 nav.popViewController(animated: true)
             })
 
-        self.spinner
+        self.textButton
             .constrainCenter()
+            .setLabel(to: "Text Button")
+            .setIcon(to: .init(systemName: "arrow.up"))
     }
 }

@@ -19,21 +19,21 @@ public class PillMultiselect<T: Any>: View {
 
     // MARK: Computed Properties
 
+    public var selectedValues: [T] {
+        return self.sortedSelectedIndices().compactMap { index in
+            guard index < self.values.count else {
+                return nil
+            }
+            return self.values[index]
+        }
+    }
+
     private var selectedPills: [PillToggle] {
         return self.sortedSelectedIndices().compactMap { index in
             guard index < self.pills.count else {
                 return nil
             }
             return self.pills[index]
-        }
-    }
-
-    private var selectedValues: [T] {
-        return self.sortedSelectedIndices().compactMap { index in
-            guard index < self.values.count else {
-                return nil
-            }
-            return self.values[index]
         }
     }
 
@@ -89,6 +89,18 @@ public class PillMultiselect<T: Any>: View {
             self.updateSelection()
         }
 
+        return self
+    }
+
+    @discardableResult
+    public func removeAllSegments(trigger: Bool = false) -> Self {
+        self.flowLayout.removeAll()
+        self.selectedIndices.removeAll()
+        self.pills.removeAll()
+        self.values.removeAll()
+        if trigger {
+            self.onChange?(self.selectedValues)
+        }
         return self
     }
 

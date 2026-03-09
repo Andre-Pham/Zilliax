@@ -25,8 +25,8 @@ public class TabBarButton: View {
         self.button
             .addAsSubview(of: self)
             .constrainAllSides()
-            .setOnRelease({
-                self.onTap?()
+            .setOnRelease({ [weak self] in
+                self?.onTap?()
             })
 
         self.icon
