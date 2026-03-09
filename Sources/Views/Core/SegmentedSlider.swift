@@ -84,8 +84,8 @@ public class SegmentedSlider<T: Any>: View {
             .add(self.scrubberBackground)
             .add(self.scrubberLine)
             .add(self.scrubberControl)
-            .setOnGesture({ gesture in
-                self.onDrag(gesture)
+            .setOnGesture({ [weak self] gesture in
+                self?.onDrag(gesture)
             })
 
         self.scrubberBackground
@@ -135,8 +135,8 @@ public class SegmentedSlider<T: Any>: View {
         // Otherwise the position is reset
         // Includes: device rotation, size class change (on iPad), light/dark mode changes, moving app to background then foreground, etc.
         // Must occur on the main thread to update (layout callbacks can trigger off the main thread, e.g. size changes on iPad)
-        DispatchQueue.main.async {
-            self.updateCirclePosition(overrideAnimationDuration: 0.0)
+        DispatchQueue.main.async { [weak self] in
+            self?.updateCirclePosition(overrideAnimationDuration: 0.0)
         }
     }
 

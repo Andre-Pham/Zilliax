@@ -2054,6 +2054,28 @@ extension UIView {
 
     // MARK: - Animations
 
+    public static func animateSpring(
+        duration: Double = 0.2,
+        delay: Double = 0.0,
+        usingSpringDampening: Double = 1.0,
+        initialSpringVelocity: Double = 2.0,
+        options: AnimationOptions = [.curveEaseOut, .allowUserInteraction],
+        animations: @escaping () -> Void = {},
+        onCompletion: @escaping () -> Void = {}
+    ) {
+        UIView.animate(
+            withDuration: duration,
+            delay: delay,
+            usingSpringWithDamping: usingSpringDampening,
+            initialSpringVelocity: initialSpringVelocity,
+            options: options,
+            animations: animations,
+            completion: { _ in
+                onCompletion()
+            }
+        )
+    }
+
     @discardableResult
     public func animateOpacityInteraction() -> Self {
         UIView.animate(

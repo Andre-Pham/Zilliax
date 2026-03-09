@@ -46,10 +46,10 @@ public class ClearableTextField: View {
         self.textClearControl
             .setSizeConstraint(to: 50)
             .add(self.textClearIcon)
-            .setOnRelease({
-                self.setText(to: nil)
-                self.onChange?("")
-                self.textField.becomeFirstResponder()
+            .setOnRelease({ [weak self] in
+                self?.setText(to: nil)
+                self?.onChange?("")
+                self?.textField.becomeFirstResponder()
             })
 
         self.textClearIcon

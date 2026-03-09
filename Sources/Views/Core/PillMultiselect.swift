@@ -19,21 +19,21 @@ public class PillMultiselect<T: Any>: View {
 
     // MARK: Computed Properties
 
+    public var selectedValues: [T] {
+        return self.sortedSelectedIndices().compactMap { index in
+            guard index < self.values.count else {
+                return nil
+            }
+            return self.values[index]
+        }
+    }
+
     private var selectedPills: [PillToggle] {
         return self.sortedSelectedIndices().compactMap { index in
             guard index < self.pills.count else {
                 return nil
             }
             return self.pills[index]
-        }
-    }
-
-    private var selectedValues: [T] {
-        return self.sortedSelectedIndices().compactMap { index in
-            guard index < self.values.count else {
-                return nil
-            }
-            return self.values[index]
         }
     }
 

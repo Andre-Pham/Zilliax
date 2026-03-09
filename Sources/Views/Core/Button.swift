@@ -8,6 +8,12 @@
 import UIKit
 
 public class Button: UIButton {
+    // MARK: Overridden Properties
+
+    public override var intrinsicContentSize: CGSize {
+        return .init(width: UIView.noIntrinsicMetric, height: UIView.noIntrinsicMetric)
+    }
+
     // MARK: Properties
 
     private var onPress: (() -> Void)? = nil

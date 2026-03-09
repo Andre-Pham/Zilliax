@@ -51,6 +51,16 @@ public class SegmentedControl<T: Any>: View {
 
     // MARK: Computed Properties
 
+    public var selectedValue: T? {
+        guard let selectedIndex else {
+            return nil
+        }
+        guard selectedIndex < self.segments.count else {
+            return nil
+        }
+        return self.values[selectedIndex]
+    }
+
     private var selectedSegment: View? {
         guard let selectedIndex else {
             return nil
@@ -59,16 +69,6 @@ public class SegmentedControl<T: Any>: View {
             return nil
         }
         return self.segments[selectedIndex]
-    }
-
-    private var selectedValue: T? {
-        guard let selectedIndex else {
-            return nil
-        }
-        guard selectedIndex < self.segments.count else {
-            return nil
-        }
-        return self.values[selectedIndex]
     }
 
     // MARK: Overridden Functions
@@ -93,8 +93,8 @@ public class SegmentedControl<T: Any>: View {
 
         self.panGesture
             .addGestureRecognizer(to: self)
-            .setOnGesture({ gesture in
-                self.handlePan(gesture)
+            .setOnGesture({ [weak self] gesture in
+                self?.handlePan(gesture)
             })
             .setCancelsTouchesInView(to: false)
     }
@@ -138,12 +138,12 @@ public class SegmentedControl<T: Any>: View {
         Control()
             .addAsSubview(of: segment)
             .constrainAllSides()
-            .setOnPress({
-                self.setSelectedSegment(index: segmentIndex, animated: true)
-                self.selection.setTransformation(to: CGAffineTransform(scaleX: 0.95, y: 0.95), animated: true)
+            .setOnPress({ [weak self] in
+                self?.setSelectedSegment(index: segmentIndex, animated: true)
+                self?.selection.setTransformation(to: CGAffineTransform(scaleX: 0.95, y: 0.95), animated: true)
             })
-            .setOnRelease({
-                self.selection.setTransformation(to: .identity, animated: true)
+            .setOnRelease({ [weak self] in
+                self?.selection.setTransformation(to: .identity, animated: true)
             })
 
         if let icon {

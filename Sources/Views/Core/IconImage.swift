@@ -10,100 +10,11 @@ import UIKit
 public class IconImage: UIImageView {
     // MARK: Nested Types
 
-    public struct Config {
-        // MARK: Properties
-
-        public let image: UIImage?
-        public let systemName: String?
-        public let weight: UIImage.SymbolWeight?
-        public let color: UIColor?
-        public let size: Double?
-
-        // MARK: Lifecycle
-
-        public init(
-            image: UIImage? = nil,
-            size: Double? = nil
-        ) {
-            self.image = image
-            self.systemName = nil
-            self.size = size
-            self.weight = nil
-            self.color = nil
-        }
-
-        public init(
-            systemName: String? = nil,
-            size: Double? = nil,
-            weight: UIImage.SymbolWeight? = nil,
-            color: UIColor? = nil
-        ) {
-            self.image = nil
-            self.systemName = systemName
-            self.size = size
-            self.weight = weight
-            self.color = color
-        }
-
-        private init(
-            image: UIImage?,
-            systemName: String?,
-            size: Double?,
-            weight: UIImage.SymbolWeight?,
-            color: UIColor?
-        ) {
-            self.image = image
-            self.systemName = systemName
-            self.size = size
-            self.weight = weight
-            self.color = color
-        }
-
-        // MARK: Functions
-
-        @discardableResult
-        public func merge(_ config: Self) -> Self {
-            return Self(
-                image: config.systemName == nil ? (config.image ?? self.image) : nil,
-                systemName: config.image == nil ? (config.systemName ?? self.systemName) : nil,
-                size: config.size ?? self.size,
-                weight: config.weight ?? self.weight,
-                color: config.color ?? self.color
-            )
-        }
-
-        public func with(
-            image: UIImage? = nil,
-            size: Double? = nil
-        ) -> Self {
-            return Self(
-                image: image ?? self.image,
-                systemName: image == nil ? self.systemName : nil,
-                size: size ?? self.size,
-                weight: self.weight,
-                color: self.color
-            )
-        }
-
-        public func with(
-            systemName: String? = nil,
-            size: Double? = nil,
-            weight: UIImage.SymbolWeight? = nil,
-            color: UIColor? = nil
-        ) -> Self {
-            return Self(
-                image: systemName == nil ? self.image : nil,
-                systemName: systemName ?? self.systemName,
-                size: size ?? self.size,
-                weight: weight ?? self.weight,
-                color: color ?? self.color
-            )
-        }
-    }
+    public typealias Config = Icon.Config
 
     // MARK: Properties
 
-    private var config = Config(size: 26.0, color: Colors.black)
+    public private(set) var config = Config(size: 26.0, color: Colors.black)
 
     // MARK: Lifecycle
 

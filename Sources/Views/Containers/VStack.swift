@@ -318,6 +318,14 @@ public class VStack: View {
     }
 
     @discardableResult
+    public func removeAll() -> Self {
+        for view in self.stack.arrangedSubviews where view != self.startSpacer && view != self.endSpacer {
+            view.remove()
+        }
+        return self
+    }
+
+    @discardableResult
     public func setSpacing(to spacing: CGFloat) -> Self {
         self.stack.spacing = spacing
         return self

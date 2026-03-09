@@ -155,8 +155,8 @@ public class TabBarController: UITabBarController, UITabBarControllerDelegate {
                 .setIcon(to: self.itemIconConfigs[index])
                 .setColor(to: Colors.fillForeground)
                 .constrainVertical(respectSafeArea: false)
-                .setOnTap({
-                    self.tabBarOptionSelected(index: index)
+                .setOnTap({ [weak self] in
+                    self?.tabBarOptionSelected(index: index)
                 })
                 .setLabel(to: self.tabBarItemLabels[index])
         }

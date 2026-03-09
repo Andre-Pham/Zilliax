@@ -1,5 +1,5 @@
 //
-//  PillButton.swift
+//  TextButton.swift
 //  https://github.com/Andre-Pham/Zilliax
 //
 //  Created by Andre Pham.
@@ -7,17 +7,13 @@
 
 import UIKit
 
-public class PillButton: View {
+public class TextButton: View {
     // MARK: Nested Types
 
     public enum IconAlignment {
         case left
         case right
     }
-
-    // MARK: Static Properties
-
-    private static let HEIGHT = 42.0
 
     // MARK: Properties
 
@@ -43,21 +39,17 @@ public class PillButton: View {
     public override func setup() {
         super.setup()
 
-        self.setHeightConstraint(to: Self.HEIGHT)
-            .setBackgroundColor(to: Colors.fillSecondary)
-            .setCornerRadius(to: Self.HEIGHT / 2)
-            .add(self.contentStack)
+        self.add(self.contentStack)
             .add(self.button)
 
         self.contentStack
-            .constrainVertical(respectSafeArea: false)
-            .constrainCenterHorizontal(respectSafeArea: false)
+            .constrainAllSides(respectSafeArea: false)
             .setSpacing(to: 8)
-            .constrainMaxLeft(padding: 18)
-            .constrainMaxRight(padding: 18)
 
         self.button
-            .constrainAllSides(respectSafeArea: false)
+            .constrainCenter(respectSafeArea: false)
+            .matchWidthConstraint(adjust: 12, respectSafeArea: false)
+            .matchHeightConstraint(adjust: 12, respectSafeArea: false)
             .animateOnPress(self)
 
         self.icon
@@ -70,6 +62,13 @@ public class PillButton: View {
             .setFont(to: UIFont.systemFont(ofSize: 15, weight: .semibold))
             .setTextColor(to: Colors.textSecondary)
             .setTextAlignment(to: .center)
+    }
+
+    public override func point(inside point: CGPoint, with event: UIEvent?) -> Bool {
+        if super.point(inside: point, with: event) {
+            return true
+        }
+        return self.button.frame.contains(point)
     }
 
     // MARK: Functions
@@ -92,6 +91,7 @@ public class PillButton: View {
         self.icon.setIcon(to: config)
         self.spinner.setIcon(to: config.with(systemName: self.spinner.config.systemName))
         self.icon.setHidden(to: self.isLoading && alignment == .left)
+        self.invalidateIntrinsicContentSize()
         return self
     }
 
@@ -106,18 +106,14 @@ public class PillButton: View {
             self.labelAdded = true
         }
         self.label.setText(to: label)
+        self.invalidateIntrinsicContentSize()
         return self
     }
 
     @discardableResult
     public func setFont(to font: UIFont) -> Self {
         self.label.setFont(to: font)
-        return self
-    }
-
-    @discardableResult
-    public func setColor(to color: UIColor) -> Self {
-        self.setBackgroundColor(to: color)
+        self.invalidateIntrinsicContentSize()
         return self
     }
 
@@ -170,6 +166,7 @@ public class PillButton: View {
                 self.icon.setHidden(to: false)
             }
         }
+        self.invalidateIntrinsicContentSize()
         return self
     }
 }
