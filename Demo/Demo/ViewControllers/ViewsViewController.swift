@@ -20,6 +20,7 @@ public class ViewsViewController: UIViewController {
         "HStack": HStackViewController(),
         "ClearableTextField": ClearableTextFieldViewController(),
         "Control": ControlViewController(),
+        "Details": DetailsViewController(),
         "Icon": IconViewController(),
         "IconButton": IconButtonViewController(),
         "IconImage": IconImageViewController(),
