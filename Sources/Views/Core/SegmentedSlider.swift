@@ -53,18 +53,18 @@ public class SegmentedSlider<T: Any>: View {
 
     // MARK: Computed Properties
 
-    public var activeValue: T {
+    public var selectedValue: T {
         return self.values[self.segmentIndex]
     }
 
-    private var activeLabel: String? {
+    private var selectedLabel: String? {
         guard self.labels.count - 1 >= self.segmentIndex else {
             return nil
         }
         return self.labels[self.segmentIndex]
     }
 
-    private var activeValueProgressProportion: CGFloat {
+    private var selectedValueProgressProportion: CGFloat {
         guard !self.values.isEmpty else {
             return 0.0
         }
@@ -150,9 +150,9 @@ public class SegmentedSlider<T: Any>: View {
         }
         let triggerHaptics = useHaptics && index != self.segmentIndex
         self.segmentIndex = index
-        self.setProgress(to: self.activeValueProgressProportion)
+        self.setProgress(to: self.selectedValueProgressProportion)
         if trigger {
-            self.onChange?(self.activeValue)
+            self.onChange?(self.selectedValue)
         }
         if triggerHaptics {
             self.hapticFeedback.impactOccurred()
@@ -227,7 +227,7 @@ public class SegmentedSlider<T: Any>: View {
     }
 
     private func redrawScrubberLabel() {
-        guard let labelText = self.activeLabel else {
+        guard let labelText = self.selectedLabel else {
             assertionFailure("Failed to retrieve label - something has gone very wrong")
             return
         }
@@ -340,7 +340,7 @@ public class SegmentedSlider<T: Any>: View {
         case .ended, .cancelled, .failed:
             self.isTracking = false
             self.disableScrubberLabel()
-            self.onEndTracking?(self.activeValue)
+            self.onEndTracking?(self.selectedValue)
         default:
             break
         }
