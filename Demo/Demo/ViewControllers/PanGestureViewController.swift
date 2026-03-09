@@ -30,8 +30,8 @@ public class PanGestureViewController: UIViewController {
             .constrainHorizontal(padding: Dimensions.screenContentPaddingHorizontal)
             .setTitle(to: "PanGesture")
             .setDescription(to: "A base view for recognizing panning gestures.")
-            .setOnBack({
-                guard let nav = self.navigationController else {
+            .setOnBack({ [weak self] in
+                guard let nav = self?.navigationController else {
                     assertionFailure("Expected navigation controller")
                     return
                 }

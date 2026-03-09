@@ -57,8 +57,8 @@ public class HStackViewController: UIViewController {
             .constrainHorizontal(padding: Dimensions.screenContentPaddingHorizontal)
             .setTitle(to: "HStack")
             .setDescription(to: "A container whereby subviews are arranged horizontally.")
-            .setOnBack({
-                guard let nav = self.navigationController else {
+            .setOnBack({ [weak self] in
+                guard let nav = self?.navigationController else {
                     assertionFailure("Expected navigation controller")
                     return
                 }

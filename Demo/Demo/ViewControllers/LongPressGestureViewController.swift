@@ -26,8 +26,8 @@ public class LongPressGestureViewController: UIViewController {
             .constrainHorizontal(padding: Dimensions.screenContentPaddingHorizontal)
             .setTitle(to: "LongPressGesture")
             .setDescription(to: "A base view for recognizing long press gestures.")
-            .setOnBack({
-                guard let nav = self.navigationController else {
+            .setOnBack({ [weak self] in
+                guard let nav = self?.navigationController else {
                     assertionFailure("Expected navigation controller")
                     return
                 }

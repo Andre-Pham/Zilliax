@@ -27,8 +27,8 @@ public class TapGestureViewController: UIViewController {
             .constrainHorizontal(padding: Dimensions.screenContentPaddingHorizontal)
             .setTitle(to: "TapGesture")
             .setDescription(to: "A base view for recognizing tap gestures.")
-            .setOnBack({
-                guard let nav = self.navigationController else {
+            .setOnBack({ [weak self] in
+                guard let nav = self?.navigationController else {
                     assertionFailure("Expected navigation controller")
                     return
                 }

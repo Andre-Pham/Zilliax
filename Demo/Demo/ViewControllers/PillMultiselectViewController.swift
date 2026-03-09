@@ -25,8 +25,8 @@ public class PillMultiselectViewController: UIViewController {
             .constrainHorizontal(padding: Dimensions.screenContentPaddingHorizontal)
             .setTitle(to: "PillMultiselect")
             .setDescription(to: "A collection of pills for selecting multiple options.")
-            .setOnBack({
-                guard let nav = self.navigationController else {
+            .setOnBack({ [weak self] in
+                guard let nav = self?.navigationController else {
                     assertionFailure("Expected navigation controller")
                     return
                 }

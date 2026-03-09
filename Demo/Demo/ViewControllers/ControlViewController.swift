@@ -26,8 +26,8 @@ public class ControlViewController: UIViewController {
             .constrainHorizontal(padding: Dimensions.screenContentPaddingHorizontal)
             .setTitle(to: "Control")
             .setDescription(to: "The base view for controls. Allows press and release interactions and animations.")
-            .setOnBack({
-                guard let nav = self.navigationController else {
+            .setOnBack({ [weak self] in
+                guard let nav = self?.navigationController else {
                     assertionFailure("Expected navigation controller")
                     return
                 }
@@ -40,14 +40,14 @@ public class ControlViewController: UIViewController {
             .setHeightConstraint(to: 200)
             .setBackgroundColor(to: Colors.fillSecondary)
             .add(self.text)
-            .setOnPress({
-                self.control.setTransformation(to: CGAffineTransform(scaleX: 0.8, y: 0.8), animated: true)
+            .setOnPress({ [weak self] in
+                self?.control.setTransformation(to: CGAffineTransform(scaleX: 0.8, y: 0.8), animated: true)
             })
-            .setOnRelease({
-                self.control.setTransformation(to: .identity, animated: true)
+            .setOnRelease({ [weak self] in
+                self?.control.setTransformation(to: .identity, animated: true)
             })
-            .setOnCancel({
-                self.control.setTransformation(to: .identity, animated: true)
+            .setOnCancel({ [weak self] in
+                self?.control.setTransformation(to: .identity, animated: true)
             })
 
         self.text

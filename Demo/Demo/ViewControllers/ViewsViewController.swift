@@ -72,8 +72,8 @@ public class ViewsViewController: UIViewController {
         for (name, viewController) in self.views.sorted(by: { $0.key < $1.key }) {
             let toAppend = OpenView()
                 .setText(to: name)
-                .setOnTap({
-                    guard let nav = self.navigationController else {
+                .setOnTap({ [weak self] in
+                    guard let nav = self?.navigationController else {
                         assertionFailure("Expected navigation controller")
                         return
                     }

@@ -29,8 +29,8 @@ public class ButtonViewController: UIViewController {
             .setDescription(
                 to: "The base view for buttons. Allows tap interactions, press and release animations, and context menu triggers."
             )
-            .setOnBack({
-                guard let nav = self.navigationController else {
+            .setOnBack({ [weak self] in
+                guard let nav = self?.navigationController else {
                     assertionFailure("Expected navigation controller")
                     return
                 }
@@ -44,9 +44,9 @@ public class ButtonViewController: UIViewController {
             .setBackgroundColor(to: Colors.fillSecondary)
             .add(self.text)
             .animateOnPress(self.button)
-            .setOnRelease({
-                self.count += 1
-                self.updateText()
+            .setOnRelease({ [weak self] in
+                self?.count += 1
+                self?.updateText()
             })
 
         self.text
