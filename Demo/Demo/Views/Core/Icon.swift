@@ -103,8 +103,9 @@ public class Icon: View {
 
     // MARK: Properties
 
+    public private(set) var config = Config(size: 26.0, color: Colors.black)
+
     private let image = Image()
-    private var config = Config(size: 26.0, color: Colors.black)
 
     // MARK: Overridden Functions
 
