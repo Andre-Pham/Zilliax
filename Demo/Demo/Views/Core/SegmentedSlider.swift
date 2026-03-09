@@ -185,6 +185,18 @@ public class SegmentedSlider<T: Any>: View {
     }
 
     @discardableResult
+    public func removeAllSegments() -> Self {
+        self.segmentIndex = 0
+        self.values.removeAll()
+        self.labels.removeAll()
+        self.isTracking = false
+        self.disableScrubberLabel()
+        self.redrawIndicators()
+        self.setProgress(to: 0.0)
+        return self
+    }
+
+    @discardableResult
     public func setOnStartTracking(_ callback: (() -> Void)?) -> Self {
         self.onStartTracking = callback
         return self

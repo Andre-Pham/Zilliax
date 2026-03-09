@@ -93,6 +93,18 @@ public class PillMultiselect<T: Any>: View {
     }
 
     @discardableResult
+    public func removeAllSegments(trigger: Bool = false) -> Self {
+        self.flowLayout.removeAll()
+        self.selectedIndices.removeAll()
+        self.pills.removeAll()
+        self.values.removeAll()
+        if trigger {
+            self.onChange?(self.selectedValues)
+        }
+        return self
+    }
+
+    @discardableResult
     public func setSelectedSegment(index: Int?, trigger: Bool = false) -> Self {
         if let index {
             return self.setSelectedSegments(indices: [index], trigger: trigger)

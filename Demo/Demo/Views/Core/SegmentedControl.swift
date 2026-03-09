@@ -168,6 +168,16 @@ public class SegmentedControl<T: Any>: View {
     }
 
     @discardableResult
+    public func removeAllSegments() -> Self {
+        self.segmentStack.removeAll()
+        self.selectedIndex = nil
+        self.segments.removeAll()
+        self.values.removeAll()
+        self.redrawSelection()
+        return self
+    }
+
+    @discardableResult
     public func setSelectedSegment(index: Int, animated: Bool) -> Self {
         guard index >= 0, index < self.segments.count else {
             assertionFailure("Invalid index provided: \(index)")
