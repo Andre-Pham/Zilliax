@@ -33,13 +33,17 @@ public class NavigationController: UINavigationController, UINavigationControlle
         if viewController.view.backgroundColor == nil {
             viewController.view.setBackgroundColor(to: Colors.fillForeground)
         }
-        let allowsInteractivePop = (viewController as? InteractivePopGestureConfigurable)?.allowsInteractivePop ?? true
-        self.interactivePopGestureRecognizer?.isEnabled = allowsInteractivePop
     }
 
     public func gestureRecognizerShouldBegin(_ gestureRecognizer: UIGestureRecognizer) -> Bool {
-        // Only allow the pop gesture when there's something to pop
-        return self.viewControllers.count > 1
+        guard gestureRecognizer == self.interactivePopGestureRecognizer else {
+            return true
+        }
+        guard self.viewControllers.count > 1 else {
+            return false
+        }
+        let topViewController = self.topViewController
+        return (topViewController as? InteractivePopGestureConfigurable)?.allowsInteractivePop ?? true
     }
 
     public func gestureRecognizer(
