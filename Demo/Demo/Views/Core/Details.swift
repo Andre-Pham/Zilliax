@@ -21,21 +21,30 @@ public class Details: View {
 
         self.stack
             .constrainAllSides(respectSafeArea: false)
-            .setSpacing(to: 12)
+            .setSpacing(to: 8)
             .setAlignment(to: .fill)
     }
 
     // MARK: Functions
 
     @discardableResult
+    public func addTitleRow(title: String) -> Self {
+        let titleText = Text()
+            .setText(to: title)
+            .setFont(to: UIFont.systemFont(ofSize: 16, weight: .semibold))
+        self.stack.append(titleText)
+        return self
+    }
+
+    @discardableResult
     public func addRow(title: String, value: String) -> Self {
         let titleText = Text()
             .setText(to: title)
-            .setFont(to: UIFont.systemFont(ofSize: 17, weight: .medium))
+            .setFont(to: UIFont.systemFont(ofSize: 16, weight: .medium))
             .setTextColor(to: Colors.textMuted)
         let valueText = Text()
             .setText(to: value)
-            .setFont(to: UIFont.systemFont(ofSize: 17, weight: .semibold))
+            .setFont(to: UIFont.systemFont(ofSize: 16, weight: .semibold))
             .setTextAlignment(to: .right)
         let row = HStack()
             .setAlignment(to: .firstBaseline)
@@ -50,17 +59,17 @@ public class Details: View {
     public func addStackedRow(title: String, value: String) -> Self {
         let titleText = Text()
             .setText(to: title)
-            .setFont(to: UIFont.systemFont(ofSize: 17, weight: .medium))
+            .setFont(to: UIFont.systemFont(ofSize: 16, weight: .medium))
             .setTextColor(to: Colors.textMuted)
             .setTextAlignment(to: .left)
         let valueText = Text()
             .setText(to: value)
-            .setFont(to: UIFont.systemFont(ofSize: 17, weight: .semibold))
+            .setFont(to: UIFont.systemFont(ofSize: 16, weight: .semibold))
             .setTextAlignment(to: .left)
         let row = VStack()
             .setAlignment(to: .fill)
             .append(titleText)
-            .appendGap(size: 1)
+            .appendGap(size: 4)
             .append(valueText)
         self.stack.append(row)
         return self
@@ -72,7 +81,11 @@ public class Details: View {
             .setHeightConstraint(to: Dimensions.dividerLineWidth)
             .setBackgroundColor(to: Colors.textDark)
             .setOpacity(to: 0.1)
+        if let previousView = self.stack.arrangedSubviews.last {
+            self.stack.setCustomSpacing(after: previousView, to: 12)
+        }
         self.stack.append(divider)
+        self.stack.setCustomSpacing(after: divider, to: 12)
         return self
     }
 }

@@ -17,6 +17,10 @@ public class VStack: View {
 
     // MARK: Computed Properties
 
+    public var arrangedSubviews: [UIView] {
+        return self.stack.arrangedSubviews
+    }
+
     public var viewCount: Int {
         var result = self.stack.arrangedSubviews.count
         if self.hasStartSpacer {
