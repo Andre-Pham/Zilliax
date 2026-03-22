@@ -37,9 +37,9 @@ public class IconImage: UIImageView {
     public func setup() {
         self.useAutoLayout()
         self.contentMode = .scaleAspectFit
-        self.setContentCompressionResistancePriority(.required, for: .horizontal)
-        self.setContentCompressionResistancePriority(.required, for: .vertical)
-        self.setIcon(to: self.config)
+        self.setContentPriority(to: .required, for: .horizontal)
+            .setContentPriority(to: .required, for: .vertical)
+            .setIcon(to: self.config)
     }
 
     @discardableResult
