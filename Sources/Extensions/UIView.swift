@@ -109,6 +109,13 @@ extension UIView {
     }
 
     @discardableResult
+    public func setContentPriority(to priority: UILayoutPriority, for axis: NSLayoutConstraint.Axis) -> Self {
+        self.setContentHuggingPriority(priority, for: axis)
+        self.setContentCompressionResistancePriority(priority, for: axis)
+        return self
+    }
+
+    @discardableResult
     public func renderToUIImage() -> UIImage? {
         UIGraphicsBeginImageContextWithOptions(self.bounds.size, false, WindowContext.screenScale)
         guard let context = UIGraphicsGetCurrentContext() else {
