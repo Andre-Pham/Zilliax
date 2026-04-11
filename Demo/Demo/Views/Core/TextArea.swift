@@ -19,6 +19,7 @@ public class TextArea: View, UITextViewDelegate {
     private var onUnfocus: (() -> Void)? = nil
     private var onChange: ((String) -> Void)? = nil
     private var placeholderHiddenOnFocus = false
+    private var scrollButtonsEnabled = true
 
     // MARK: Computed Properties
 
@@ -180,6 +181,18 @@ public class TextArea: View, UITextViewDelegate {
     }
 
     @discardableResult
+    public func setScrollButtons(enabled: Bool) -> Self {
+        self.scrollButtonsEnabled = enabled
+        if !enabled {
+            self.scrollUpButton.setHidden(to: true)
+            self.scrollDownButton.setHidden(to: true)
+        } else {
+            self.updateScrollIndicators()
+        }
+        return self
+    }
+
+    @discardableResult
     public func setPlaceholderHiddenOnFocus(to hidden: Bool) -> Self {
         self.placeholderHiddenOnFocus = hidden
         return self
@@ -244,7 +257,7 @@ public class TextArea: View, UITextViewDelegate {
         let offset = self.textView.contentOffset.y
         let contentHeight = self.textView.contentSize.height
         let visibleHeight = self.textView.bounds.height
-        guard contentHeight.isGreater(than: visibleHeight) else {
+        guard self.scrollButtonsEnabled, contentHeight.isGreater(than: visibleHeight) else {
             self.scrollUpButton.setHidden(to: true)
             self.scrollDownButton.setHidden(to: true)
             return
