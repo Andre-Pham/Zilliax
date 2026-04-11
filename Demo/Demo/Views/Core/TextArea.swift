@@ -10,12 +10,13 @@ import UIKit
 public class TextArea: View, UITextViewDelegate {
     // MARK: Properties
 
-    private let textView = InternalTextView()
+    private let textView = UITextView()
     private let placeholderText = Text()
     private var onSubmit: ((String) -> Void)? = nil
     private var onFocus: (() -> Void)? = nil
     private var onUnfocus: (() -> Void)? = nil
     private var onChange: ((String) -> Void)? = nil
+    private var placeholderHiddenOnFocus = false
 
     // MARK: Computed Properties
 
@@ -42,13 +43,21 @@ public class TextArea: View, UITextViewDelegate {
 
         self.textView.add(self.placeholderText)
 
+        let textContainer = self.textView.textContainer
+        let textContainerInset = self.textView.textContainerInset
+        
+        let horizontalPadding = textContainerInset.left + textContainer.lineFragmentPadding
+        self.placeholderText.leadingAnchor.constraint(
+            equalTo: self.textView.frameLayoutGuide.leadingAnchor,
+            constant: horizontalPadding
+        ).isActive = true
+        self.placeholderText.trailingAnchor.constraint(
+            equalTo: self.textView.frameLayoutGuide.trailingAnchor,
+            constant: -horizontalPadding
+        ).isActive = true
         self.placeholderText
-            .constrainLeft(
-                padding: self.textView.textContainerInset.left + self.textView.textContainer.lineFragmentPadding,
-                respectSafeArea: false
-            )
-            .constrainTop(padding: self.textView.textContainerInset.top, respectSafeArea: false)
-        self.placeholderText.textColor = UIColor.placeholderText
+            .constrainTop(padding: textContainerInset.top, respectSafeArea: false)
+            .setTextColor(to: .placeholderText)
 
         self.setFont(to: UIFont.systemFont(ofSize: 56, weight: .bold))
             .setTextColor(to: Colors.textDark)
@@ -101,15 +110,22 @@ public class TextArea: View, UITextViewDelegate {
 
     @discardableResult
     public func setPlaceholder(to text: String?) -> Self {
-        self.placeholderText.setText(to: text)
-        self.placeholderText.isHidden = !self.textView.text.isEmpty
+        self.placeholderText
+            .setText(to: text)
+            .setHidden(to: !self.textView.text.isEmpty)
+        return self
+    }
+    
+    @discardableResult
+    public func setPlaceholderHiddenOnFocus(to hidden: Bool) -> Self {
+        self.placeholderHiddenOnFocus = hidden
         return self
     }
 
     @discardableResult
     public func setText(to text: String?) -> Self {
         self.textView.text = text
-        self.placeholderText.isHidden = !(text ?? "").isEmpty
+        self.placeholderText.setHidden(to: !(text ?? "").isEmpty)
         return self
     }
 
@@ -136,38 +152,29 @@ public class TextArea: View, UITextViewDelegate {
     @discardableResult
     public func setTextAlignment(to alignment: NSTextAlignment) -> Self {
         self.textView.textAlignment = alignment
+        self.placeholderText.setTextAlignment(to: alignment)
         return self
     }
 
     public func textViewDidChange(_ textView: UITextView) {
-        self.placeholderText.isHidden = !textView.text.isEmpty
+        let hidePlaceholder = !textView.text.isEmpty || (self.placeholderHiddenOnFocus && textView.isFirstResponder)
+        self.placeholderText.setHidden(to: hidePlaceholder)
         self.onChange?(self.text)
     }
 
     @objc
     private func textViewDidBeginEditing(notification: NSNotification) {
+        if self.placeholderHiddenOnFocus {
+            self.placeholderText.setHidden(to: true)
+        }
         self.onFocus?()
     }
 
     @objc
     private func textViewDidEndEditing(notification: NSNotification) {
+        if self.placeholderHiddenOnFocus {
+            self.placeholderText.setHidden(to: !self.textView.text.isEmpty)
+        }
         self.onUnfocus?()
-    }
-}
-
-/// Auto-sizes to fit its content when no height constraint is set, while still supporting scroll when a height constraint is applied.
-/// `UITextView` with `isScrollEnabled = true` has no intrinsic content size by default, so this subclass reports `contentSize` as its intrinsic content size.
-private class InternalTextView: UITextView {
-    // MARK: Overridden Properties
-
-    public override var intrinsicContentSize: CGSize {
-        return self.contentSize
-    }
-
-    // MARK: Overridden Functions
-
-    public override func layoutSubviews() {
-        super.layoutSubviews()
-        self.invalidateIntrinsicContentSize()
     }
 }

@@ -36,15 +36,11 @@ public class TextAreaViewController: UIViewController {
 
         self.textArea
             .matchWidthConstrainCenter(padding: Dimensions.screenContentPaddingHorizontal, maxWidth: 400)
-            .constrainToUnderneath(of: self.header)
-            .constrainBottom(padding: 100)
-//            .constrainVertical(padding: 100)
-//            .constrainToUnderneath(of: self.header)
-//            .constrainBottom()
-//            .constrainCenterVertical()
+            .constrainToUnderneath(of: self.header, padding: 36)
+            .setHeightConstraint(proportion: 0.25)
             .setPlaceholder(to: "Placeholder")
-            .addBorder()
-//            .setHeightConstraint(to: 200)
+            .setPlaceholderHiddenOnFocus(to: true)
+            .setTextAlignment(to: .center)
 
         self.tapGesture
             .setCancelsTouchesInView(to: false)
