@@ -45,6 +45,7 @@ public class ViewsViewController: UIViewController {
         "TapGesture": TapGestureViewController(),
         "Text": TextViewController(),
         "TextButton": TextButtonViewController(),
+        "TextArea": TextAreaViewController(),
         "TextField": TextFieldViewController(),
         "Toggle": ToggleViewController(),
         "VStack": VStackViewController(),
