@@ -12,6 +12,8 @@ public class TextArea: View, UITextViewDelegate {
 
     private let textView = UITextView()
     private let placeholderText = Text()
+    private let scrollUpButton = IconButton()
+    private let scrollDownButton = IconButton()
     private var onSubmit: ((String) -> Void)? = nil
     private var onFocus: (() -> Void)? = nil
     private var onUnfocus: (() -> Void)? = nil
@@ -32,11 +34,13 @@ public class TextArea: View, UITextViewDelegate {
 
     public override func setup() {
         super.setup()
-        
+
         self.textView.delegate = self
 
         self.configure(isScrollEnabled: true, maxLines: 0, lineBreakMode: .byWordWrapping)
             .add(self.textView)
+            .add(self.scrollUpButton)
+            .add(self.scrollDownButton)
 
         self.textView
             .useAutoLayout()
@@ -75,10 +79,60 @@ public class TextArea: View, UITextViewDelegate {
             name: UITextView.textDidEndEditingNotification,
             object: self.textView
         )
+
+        for button in [self.scrollUpButton, self.scrollDownButton] {
+            if #available(iOS 26.0, *) {
+                UIVisualEffectView(effect: UIGlassEffect())
+                    .useAutoLayout()
+                    .addAsSubview(of: button, at: 0)
+                    .constrainAllSides(respectSafeArea: false)
+                    .setInteractions(enabled: false)
+            } else {
+                UIVisualEffectView(effect: UIBlurEffect(style: .regular))
+                    .useAutoLayout()
+                    .addAsSubview(of: button, at: 0)
+                    .constrainAllSides(respectSafeArea: false)
+                    .setInteractions(enabled: false)
+                    .setOpacity(to: 0.75)
+            }
+            button.setClipsToBounds(to: true)
+        }
+
+        self.scrollUpButton
+            .constrainTop(padding: 8, respectSafeArea: false)
+            .constrainRight(padding: 12, respectSafeArea: false)
+            .setSizeConstraint(to: 36)
+            .setIcon(to: Icon.Config(systemName: "chevron.up", size: 16, weight: .bold, color: Colors.textDark))
+            .setOnTap { [weak self] in
+                self?.textView.setContentOffset(.zero, animated: true)
+            }
+            .setHidden(to: true)
+
+        self.scrollDownButton
+            .constrainBottom(padding: 8, respectSafeArea: false)
+            .constrainRight(padding: 12, respectSafeArea: false)
+            .setSizeConstraint(to: 36)
+            .setIcon(to: Icon.Config(systemName: "chevron.down", size: 16, weight: .bold, color: Colors.textDark))
+            .setOnTap { [weak self] in
+                guard let self else {
+                    return
+                }
+                let bottomOffset = CGPoint(
+                    x: 0,
+                    y: self.textView.contentSize.height - self.textView.bounds.height + self.textView.contentInset.bottom
+                )
+                self.textView.setContentOffset(bottomOffset, animated: true)
+            }
+            .setHidden(to: true)
+    }
+
+    public override func layoutSubviews() {
+        super.layoutSubviews()
+        self.updateScrollIndicators()
     }
 
     // MARK: Functions
-    
+
     @discardableResult
     public func configure(isScrollEnabled: Bool, maxLines: Int, lineBreakMode: NSLineBreakMode) -> Self {
         self.textView.isScrollEnabled = isScrollEnabled
@@ -170,6 +224,10 @@ public class TextArea: View, UITextViewDelegate {
         self.onChange?(self.text)
     }
 
+    public func scrollViewDidScroll(_ scrollView: UIScrollView) {
+        self.updateScrollIndicators()
+    }
+
     @objc
     private func textViewDidBeginEditing(notification: NSNotification) {
         self.placeholderText.setHidden(to: self.isPlaceholderHidden)
@@ -180,5 +238,19 @@ public class TextArea: View, UITextViewDelegate {
     private func textViewDidEndEditing(notification: NSNotification) {
         self.placeholderText.setHidden(to: self.isPlaceholderHidden)
         self.onUnfocus?()
+    }
+
+    private func updateScrollIndicators() {
+        let offset = self.textView.contentOffset.y
+        let contentHeight = self.textView.contentSize.height
+        let visibleHeight = self.textView.bounds.height
+        guard contentHeight.isGreater(than: visibleHeight) else {
+            self.scrollUpButton.setHidden(to: true)
+            self.scrollDownButton.setHidden(to: true)
+            return
+        }
+        let maxOffset = contentHeight - visibleHeight
+        self.scrollUpButton.setHidden(to: offset.isLessOrEqualZero())
+        self.scrollDownButton.setHidden(to: offset.isGreaterOrEqual(to: maxOffset))
     }
 }
