@@ -24,6 +24,10 @@ public class TextArea: View, UITextViewDelegate {
         return self.textView.text ?? ""
     }
 
+    private var isPlaceholderHidden: Bool {
+        return !self.textView.text.isEmpty || (self.placeholderHiddenOnFocus && self.textView.isFirstResponder)
+    }
+
     // MARK: Overridden Functions
 
     public override func setup() {
@@ -112,7 +116,7 @@ public class TextArea: View, UITextViewDelegate {
     public func setPlaceholder(to text: String?) -> Self {
         self.placeholderText
             .setText(to: text)
-            .setHidden(to: !self.textView.text.isEmpty)
+            .setHidden(to: self.isPlaceholderHidden)
         return self
     }
 
@@ -125,7 +129,7 @@ public class TextArea: View, UITextViewDelegate {
     @discardableResult
     public func setText(to text: String?) -> Self {
         self.textView.text = text
-        self.placeholderText.setHidden(to: !(text ?? "").isEmpty)
+        self.placeholderText.setHidden(to: self.isPlaceholderHidden)
         return self
     }
 
@@ -157,24 +161,19 @@ public class TextArea: View, UITextViewDelegate {
     }
 
     public func textViewDidChange(_ textView: UITextView) {
-        let hidePlaceholder = !textView.text.isEmpty || (self.placeholderHiddenOnFocus && textView.isFirstResponder)
-        self.placeholderText.setHidden(to: hidePlaceholder)
+        self.placeholderText.setHidden(to: self.isPlaceholderHidden)
         self.onChange?(self.text)
     }
 
     @objc
     private func textViewDidBeginEditing(notification: NSNotification) {
-        if self.placeholderHiddenOnFocus {
-            self.placeholderText.setHidden(to: true)
-        }
+        self.placeholderText.setHidden(to: self.isPlaceholderHidden)
         self.onFocus?()
     }
 
     @objc
     private func textViewDidEndEditing(notification: NSNotification) {
-        if self.placeholderHiddenOnFocus {
-            self.placeholderText.setHidden(to: !self.textView.text.isEmpty)
-        }
+        self.placeholderText.setHidden(to: self.isPlaceholderHidden)
         self.onUnfocus?()
     }
 }
