@@ -25,7 +25,7 @@ public class TextAreaViewController: UIViewController {
             .constrainTop()
             .constrainHorizontal(padding: Dimensions.screenContentPaddingHorizontal)
             .setTitle(to: "TextArea")
-            .setDescription(to: "A standard text area.")
+            .setDescription(to: "An area for entering text.")
             .setOnBack({ [weak self] in
                 guard let nav = self?.navigationController else {
                     assertionFailure("Expected navigation controller")
