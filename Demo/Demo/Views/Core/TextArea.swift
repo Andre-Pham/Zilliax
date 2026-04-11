@@ -32,20 +32,17 @@ public class TextArea: View, UITextViewDelegate {
 
     public override func setup() {
         super.setup()
+        
+        self.textView.delegate = self
 
-        self.add(self.textView)
+        self.configure(isScrollEnabled: true, maxLines: 0, lineBreakMode: .byWordWrapping)
+            .add(self.textView)
 
         self.textView
             .useAutoLayout()
             .constrainAllSides(respectSafeArea: false)
-
-        self.textView.delegate = self
-        self.textView.backgroundColor = .clear
-        self.textView.isScrollEnabled = true
-        self.textView.textContainer.maximumNumberOfLines = 0
-        self.textView.textContainer.lineBreakMode = .byWordWrapping
-
-        self.textView.add(self.placeholderText)
+            .setBackgroundColor(to: .clear)
+            .add(self.placeholderText)
 
         let textContainer = self.textView.textContainer
         let textContainerInset = self.textView.textContainerInset
@@ -81,6 +78,14 @@ public class TextArea: View, UITextViewDelegate {
     }
 
     // MARK: Functions
+    
+    @discardableResult
+    public func configure(isScrollEnabled: Bool, maxLines: Int, lineBreakMode: NSLineBreakMode) -> Self {
+        self.textView.isScrollEnabled = isScrollEnabled
+        self.textView.textContainer.maximumNumberOfLines = maxLines
+        self.textView.textContainer.lineBreakMode = lineBreakMode
+        return self
+    }
 
     @discardableResult
     public func setOnSubmit(_ callback: ((String) -> Void)?) -> Self {
