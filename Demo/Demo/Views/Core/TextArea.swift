@@ -45,7 +45,7 @@ public class TextArea: View, UITextViewDelegate {
 
         let textContainer = self.textView.textContainer
         let textContainerInset = self.textView.textContainerInset
-        
+
         let horizontalPadding = textContainerInset.left + textContainer.lineFragmentPadding
         self.placeholderText.leadingAnchor.constraint(
             equalTo: self.textView.frameLayoutGuide.leadingAnchor,
@@ -115,7 +115,7 @@ public class TextArea: View, UITextViewDelegate {
             .setHidden(to: !self.textView.text.isEmpty)
         return self
     }
-    
+
     @discardableResult
     public func setPlaceholderHiddenOnFocus(to hidden: Bool) -> Self {
         self.placeholderHiddenOnFocus = hidden
