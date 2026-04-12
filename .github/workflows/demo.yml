@@ -24,9 +24,13 @@ jobs:
 
       - name: Version Log
         run: |
+          echo "### Xcode"
           xcodebuild -version
+          echo "### SwiftFormat"
           swiftformat --version
+          echo "### SwiftLint"
           swiftlint version
+          echo "### xcbeautify"
           xcbeautify --version
 
       - name: SwiftFormat Check
@@ -59,7 +63,9 @@ jobs:
 
       - name: Version Log
         run: |
+          echo "### Xcode"
           xcodebuild -version
+          echo "### xcbeautify"
           xcbeautify --version
 
       - name: Build
