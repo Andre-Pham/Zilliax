@@ -1,10 +1,10 @@
-.PHONY: clean build build-release build-issues test format format-check lint lint-fix lint-analyze
+.PHONY: clean build build-release build-issues format format-check lint lint-fix lint-analyze
 
 # Cleans the build cache
 clean:
 	@set -o pipefail; \
 	xcodebuild \
-		-project ../Demo.xcodeproj \
+		-project ./Demo.xcodeproj \
 		-scheme Demo \
 		-sdk iphonesimulator \
 		-destination 'generic/platform=iOS Simulator' \
@@ -16,7 +16,7 @@ clean:
 build:
 	@set -o pipefail; \
 	xcodebuild \
-		-project ../Demo.xcodeproj \
+		-project ./Demo.xcodeproj \
 		-scheme Demo \
 		-sdk iphonesimulator \
 		-destination 'generic/platform=iOS Simulator' \
@@ -28,8 +28,8 @@ build:
 build-release:
 	@set -o pipefail; \
 	xcodebuild \
-		-project ./Lime/Lime.xcodeproj \
-		-scheme Lime-Release \
+		-project ./Demo.xcodeproj \
+		-scheme Demo-Release \
 		-sdk iphonesimulator \
 		-destination 'generic/platform=iOS Simulator' \
 		-configuration Debug \
@@ -40,27 +40,13 @@ build-release:
 build-issues:
 	@set -o pipefail; \
 	xcodebuild \
-		-project ../Demo.xcodeproj \
+		-project ./Demo.xcodeproj \
 		-scheme Demo \
 		-sdk iphonesimulator \
 		-destination 'generic/platform=iOS Simulator' \
 		-configuration Debug \
 		-derivedDataPath .build \
 		clean build-for-testing 2>&1 | xcbeautify --quiet
-
-# Runs tests
-test:
-	@set -o pipefail; \
-	NSUnbufferedIO=YES xcrun xcodebuild \
-		-project ../Demo.xcodeproj \
-		-scheme Demo \
-		-testPlan Demo \
-		-sdk iphonesimulator \
-		-destination 'platform=iOS Simulator,name=iPhone 17' \
-		-configuration Debug \
-		-derivedDataPath .build \
-		-skip-testing:DemoUITests \
-		test 2>&1 | xcbeautify
 
 # Formats swift files
 format:
@@ -83,7 +69,7 @@ lint-analyze:
 	@set -o pipefail; \
 	  trap 'rm -f swift-build.log' EXIT; \
 	  xcodebuild \
-		-project ../Demo.xcodeproj \
+		-project ./Demo.xcodeproj \
 		-scheme Demo \
 		-sdk iphonesimulator \
 		-destination 'generic/platform=iOS Simulator' \
