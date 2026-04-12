@@ -19,8 +19,16 @@ jobs:
         with:
           xcode-version: '26.2'
 
+      - name: Install Mint
+        run: |
+          brew install mint
+          echo "$HOME/.mint/bin" >> "$GITHUB_PATH"
+
       - name: Install Tools
-        run: brew install swiftformat swiftlint xcbeautify
+        run: |
+          mint install nicklockwood/SwiftFormat@0.60.1
+          mint install realm/SwiftLint@0.63.2
+          mint install cpisciotta/xcbeautify@3.2.1
 
       - name: Version Log
         run: |
@@ -58,10 +66,16 @@ jobs:
       - name: Setup Xcode
         uses: maxim-lobanov/setup-xcode@v1
         with:
-          xcode-version: '26'
+          xcode-version: '26.2'
+
+      - name: Install Mint
+        run: |
+          brew install mint
+          echo "$HOME/.mint/bin" >> "$GITHUB_PATH"
 
       - name: Install Tools
-        run: brew install xcbeautify
+        run: |
+          mint install cpisciotta/xcbeautify@3.2.1
 
       - name: Version Log
         run: |
