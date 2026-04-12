@@ -26,6 +26,12 @@ jobs:
         run: |
           echo "### Xcode"
           xcodebuild -version
+          echo "### DEVELOPER_DIR"
+          echo "${DEVELOPER_DIR:-<not set>}"
+          echo "### Swift path"
+          xcrun --find swift
+          echo "### Swift version"
+          xcrun swift --version
           echo "### SwiftFormat"
           swiftformat --version
           echo "### SwiftLint"
