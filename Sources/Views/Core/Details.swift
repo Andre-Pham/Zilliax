@@ -20,7 +20,7 @@ public class Details: View {
         self.add(self.stack)
 
         self.stack
-            .constrainAllSides(respectSafeArea: false)
+            .constrainAllSides(layoutGuide: .view)
             .setSpacing(to: 8)
             .setAlignment(to: .fill)
     }

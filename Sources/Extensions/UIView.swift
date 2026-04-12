@@ -8,6 +8,32 @@
 import UIKit
 
 extension UIView {
+    public enum LayoutGuide {
+        case view
+        case safeArea
+        case content
+        case frame
+
+        internal func resolve(_ target: UIView) -> UILayoutGuide? {
+            switch self {
+            case .view:
+                return nil
+            case .safeArea:
+                return target.safeAreaLayoutGuide
+            case .content:
+                guard let scrollView = target as? UIScrollView else {
+                    fatalError("contentLayoutGuide requires target to be a UIScrollView")
+                }
+                return scrollView.contentLayoutGuide
+            case .frame:
+                guard let scrollView = target as? UIScrollView else {
+                    fatalError("frameLayoutGuide requires target to be a UIScrollView")
+                }
+                return scrollView.frameLayoutGuide
+            }
+        }
+    }
+
     public var opacity: Double {
         return self.alpha
     }
@@ -238,42 +264,50 @@ extension UIView {
     public func matchWidthConstraintValue(
         to other: UIView? = nil,
         adjust: CGFloat = 0.0,
-        respectSafeArea: Bool = true
+        layoutGuide: LayoutGuide = .safeArea
     ) -> NSLayoutConstraint {
         assert(!self.translatesAutoresizingMaskIntoConstraints, "Constraints requirement failed")
         guard let target = other ?? self.superview else {
             fatalError("No constraint target found")
         }
-        let anchor = respectSafeArea ? target.safeAreaLayoutGuide.widthAnchor : target.widthAnchor
+        let anchor = layoutGuide.resolve(target)?.widthAnchor ?? target.widthAnchor
         let constraint = self.widthAnchor.constraint(equalTo: anchor, constant: adjust)
         constraint.isActive = true
         return constraint
     }
 
     @discardableResult
-    public func matchWidthConstraint(to other: UIView? = nil, adjust: CGFloat = 0.0, respectSafeArea: Bool = true) -> Self {
-        _ = self.matchWidthConstraintValue(to: other, adjust: adjust, respectSafeArea: respectSafeArea)
+    public func matchWidthConstraint(
+        to other: UIView? = nil,
+        adjust: CGFloat = 0.0,
+        layoutGuide: LayoutGuide = .safeArea
+    ) -> Self {
+        _ = self.matchWidthConstraintValue(to: other, adjust: adjust, layoutGuide: layoutGuide)
         return self
     }
 
     public func matchHeightConstraintValue(
         to other: UIView? = nil,
         adjust: CGFloat = 0.0,
-        respectSafeArea: Bool = true
+        layoutGuide: LayoutGuide = .safeArea
     ) -> NSLayoutConstraint {
         assert(!self.translatesAutoresizingMaskIntoConstraints, "Constraints requirement failed")
         guard let target = other ?? self.superview else {
             fatalError("No constraint target found")
         }
-        let anchor = respectSafeArea ? target.safeAreaLayoutGuide.heightAnchor : target.heightAnchor
+        let anchor = layoutGuide.resolve(target)?.heightAnchor ?? target.heightAnchor
         let constraint = self.heightAnchor.constraint(equalTo: anchor, constant: adjust)
         constraint.isActive = true
         return constraint
     }
 
     @discardableResult
-    public func matchHeightConstraint(to other: UIView? = nil, adjust: CGFloat = 0.0, respectSafeArea: Bool = true) -> Self {
-        _ = self.matchHeightConstraintValue(to: other, adjust: adjust, respectSafeArea: respectSafeArea)
+    public func matchHeightConstraint(
+        to other: UIView? = nil,
+        adjust: CGFloat = 0.0,
+        layoutGuide: LayoutGuide = .safeArea
+    ) -> Self {
+        _ = self.matchHeightConstraintValue(to: other, adjust: adjust, layoutGuide: layoutGuide)
         return self
     }
 
@@ -371,18 +405,13 @@ extension UIView {
     public func constrainLeftValue(
         to other: UIView? = nil,
         padding: CGFloat = 0.0,
-        respectSafeArea: Bool = true,
-        toContentLayoutGuide: Bool = false
+        layoutGuide: LayoutGuide = .safeArea
     ) -> NSLayoutConstraint {
         assert(!self.translatesAutoresizingMaskIntoConstraints, "Constraints requirement failed")
         guard let target = other ?? self.superview else {
             fatalError("No constraint target found")
         }
-        let anchor: NSLayoutXAxisAnchor = if toContentLayoutGuide, let scrollView = target as? UIScrollView {
-            scrollView.contentLayoutGuide.leadingAnchor
-        } else {
-            respectSafeArea ? target.safeAreaLayoutGuide.leadingAnchor : target.leadingAnchor
-        }
+        let anchor = layoutGuide.resolve(target)?.leadingAnchor ?? target.leadingAnchor
         let constraint = self.leadingAnchor.constraint(equalTo: anchor, constant: padding)
         constraint.isActive = true
         return constraint
@@ -392,14 +421,12 @@ extension UIView {
     public func constrainLeft(
         to other: UIView? = nil,
         padding: CGFloat = 0.0,
-        respectSafeArea: Bool = true,
-        toContentLayoutGuide: Bool = false
+        layoutGuide: LayoutGuide = .safeArea
     ) -> Self {
         _ = self.constrainLeftValue(
             to: other,
             padding: padding,
-            respectSafeArea: respectSafeArea,
-            toContentLayoutGuide: toContentLayoutGuide
+            layoutGuide: layoutGuide
         )
         return self
     }
@@ -407,18 +434,13 @@ extension UIView {
     public func constrainRightValue(
         to other: UIView? = nil,
         padding: CGFloat = 0.0,
-        respectSafeArea: Bool = true,
-        toContentLayoutGuide: Bool = false
+        layoutGuide: LayoutGuide = .safeArea
     ) -> NSLayoutConstraint {
         assert(!self.translatesAutoresizingMaskIntoConstraints, "Constraints requirement failed")
         guard let target = other ?? self.superview else {
             fatalError("No constraint target found")
         }
-        let anchor: NSLayoutXAxisAnchor = if toContentLayoutGuide, let scrollView = target as? UIScrollView {
-            scrollView.contentLayoutGuide.trailingAnchor
-        } else {
-            respectSafeArea ? target.safeAreaLayoutGuide.trailingAnchor : target.trailingAnchor
-        }
+        let anchor = layoutGuide.resolve(target)?.trailingAnchor ?? target.trailingAnchor
         let constraint = self.trailingAnchor.constraint(equalTo: anchor, constant: -padding)
         constraint.isActive = true
         return constraint
@@ -428,14 +450,12 @@ extension UIView {
     public func constrainRight(
         to other: UIView? = nil,
         padding: CGFloat = 0.0,
-        respectSafeArea: Bool = true,
-        toContentLayoutGuide: Bool = false
+        layoutGuide: LayoutGuide = .safeArea
     ) -> Self {
         _ = self.constrainRightValue(
             to: other,
             padding: padding,
-            respectSafeArea: respectSafeArea,
-            toContentLayoutGuide: toContentLayoutGuide
+            layoutGuide: layoutGuide
         )
         return self
     }
@@ -443,18 +463,13 @@ extension UIView {
     public func constrainTopValue(
         to other: UIView? = nil,
         padding: CGFloat = 0.0,
-        respectSafeArea: Bool = true,
-        toContentLayoutGuide: Bool = false
+        layoutGuide: LayoutGuide = .safeArea
     ) -> NSLayoutConstraint {
         assert(!self.translatesAutoresizingMaskIntoConstraints, "Constraints requirement failed")
         guard let target = other ?? self.superview else {
             fatalError("No constraint target found")
         }
-        let anchor: NSLayoutYAxisAnchor = if toContentLayoutGuide, let scrollView = target as? UIScrollView {
-            scrollView.contentLayoutGuide.topAnchor
-        } else {
-            respectSafeArea ? target.safeAreaLayoutGuide.topAnchor : target.topAnchor
-        }
+        let anchor = layoutGuide.resolve(target)?.topAnchor ?? target.topAnchor
         let constraint = self.topAnchor.constraint(equalTo: anchor, constant: padding)
         constraint.isActive = true
         return constraint
@@ -464,14 +479,12 @@ extension UIView {
     public func constrainTop(
         to other: UIView? = nil,
         padding: CGFloat = 0.0,
-        respectSafeArea: Bool = true,
-        toContentLayoutGuide: Bool = false
+        layoutGuide: LayoutGuide = .safeArea
     ) -> Self {
         _ = self.constrainTopValue(
             to: other,
             padding: padding,
-            respectSafeArea: respectSafeArea,
-            toContentLayoutGuide: toContentLayoutGuide
+            layoutGuide: layoutGuide
         )
         return self
     }
@@ -479,18 +492,13 @@ extension UIView {
     public func constrainBottomValue(
         to other: UIView? = nil,
         padding: CGFloat = 0.0,
-        respectSafeArea: Bool = true,
-        toContentLayoutGuide: Bool = false
+        layoutGuide: LayoutGuide = .safeArea
     ) -> NSLayoutConstraint {
         assert(!self.translatesAutoresizingMaskIntoConstraints, "Constraints requirement failed")
         guard let target = other ?? self.superview else {
             fatalError("No constraint target found")
         }
-        let anchor: NSLayoutYAxisAnchor = if toContentLayoutGuide, let scrollView = target as? UIScrollView {
-            scrollView.contentLayoutGuide.bottomAnchor
-        } else {
-            respectSafeArea ? target.safeAreaLayoutGuide.bottomAnchor : target.bottomAnchor
-        }
+        let anchor = layoutGuide.resolve(target)?.bottomAnchor ?? target.bottomAnchor
         let constraint = self.bottomAnchor.constraint(equalTo: anchor, constant: -padding)
         constraint.isActive = true
         return constraint
@@ -500,14 +508,12 @@ extension UIView {
     public func constrainBottom(
         to other: UIView? = nil,
         padding: CGFloat = 0.0,
-        respectSafeArea: Bool = true,
-        toContentLayoutGuide: Bool = false
+        layoutGuide: LayoutGuide = .safeArea
     ) -> Self {
         _ = self.constrainBottomValue(
             to: other,
             padding: padding,
-            respectSafeArea: respectSafeArea,
-            toContentLayoutGuide: toContentLayoutGuide
+            layoutGuide: layoutGuide
         )
         return self
     }
@@ -515,20 +521,17 @@ extension UIView {
     public func constrainHorizontalValue(
         to other: UIView? = nil,
         padding: CGFloat = 0.0,
-        respectSafeArea: Bool = true,
-        toContentLayoutGuide: Bool = false
+        layoutGuide: LayoutGuide = .safeArea
     ) -> (left: NSLayoutConstraint, right: NSLayoutConstraint) {
         let left = self.constrainLeftValue(
             to: other,
             padding: padding,
-            respectSafeArea: respectSafeArea,
-            toContentLayoutGuide: toContentLayoutGuide
+            layoutGuide: layoutGuide
         )
         let right = self.constrainRightValue(
             to: other,
             padding: padding,
-            respectSafeArea: respectSafeArea,
-            toContentLayoutGuide: toContentLayoutGuide
+            layoutGuide: layoutGuide
         )
         return (left: left, right: right)
     }
@@ -537,14 +540,12 @@ extension UIView {
     public func constrainHorizontal(
         to other: UIView? = nil,
         padding: CGFloat = 0.0,
-        respectSafeArea: Bool = true,
-        toContentLayoutGuide: Bool = false
+        layoutGuide: LayoutGuide = .safeArea
     ) -> Self {
         _ = self.constrainHorizontalValue(
             to: other,
             padding: padding,
-            respectSafeArea: respectSafeArea,
-            toContentLayoutGuide: toContentLayoutGuide
+            layoutGuide: layoutGuide
         )
         return self
     }
@@ -552,20 +553,17 @@ extension UIView {
     public func constrainVerticalValue(
         to other: UIView? = nil,
         padding: CGFloat = 0.0,
-        respectSafeArea: Bool = true,
-        toContentLayoutGuide: Bool = false
+        layoutGuide: LayoutGuide = .safeArea
     ) -> (top: NSLayoutConstraint, bottom: NSLayoutConstraint) {
         let top = self.constrainTopValue(
             to: other,
             padding: padding,
-            respectSafeArea: respectSafeArea,
-            toContentLayoutGuide: toContentLayoutGuide
+            layoutGuide: layoutGuide
         )
         let bottom = self.constrainBottomValue(
             to: other,
             padding: padding,
-            respectSafeArea: respectSafeArea,
-            toContentLayoutGuide: toContentLayoutGuide
+            layoutGuide: layoutGuide
         )
         return (top: top, bottom: bottom)
     }
@@ -574,14 +572,12 @@ extension UIView {
     public func constrainVertical(
         to other: UIView? = nil,
         padding: CGFloat = 0.0,
-        respectSafeArea: Bool = true,
-        toContentLayoutGuide: Bool = false
+        layoutGuide: LayoutGuide = .safeArea
     ) -> Self {
         _ = self.constrainVerticalValue(
             to: other,
             padding: padding,
-            respectSafeArea: respectSafeArea,
-            toContentLayoutGuide: toContentLayoutGuide
+            layoutGuide: layoutGuide
         )
         return self
     }
@@ -589,20 +585,17 @@ extension UIView {
     public func constrainAllSidesValue(
         to other: UIView? = nil,
         padding: CGFloat = 0.0,
-        respectSafeArea: Bool = true,
-        toContentLayoutGuide: Bool = false
+        layoutGuide: LayoutGuide = .safeArea
     ) -> (left: NSLayoutConstraint, right: NSLayoutConstraint, top: NSLayoutConstraint, bottom: NSLayoutConstraint) {
         let horizontal = self.constrainHorizontalValue(
             to: other,
             padding: padding,
-            respectSafeArea: respectSafeArea,
-            toContentLayoutGuide: toContentLayoutGuide
+            layoutGuide: layoutGuide
         )
         let vertical = self.constrainVerticalValue(
             to: other,
             padding: padding,
-            respectSafeArea: respectSafeArea,
-            toContentLayoutGuide: toContentLayoutGuide
+            layoutGuide: layoutGuide
         )
         return (left: horizontal.left, right: horizontal.right, top: vertical.top, bottom: vertical.bottom)
     }
@@ -611,14 +604,12 @@ extension UIView {
     public func constrainAllSides(
         to other: UIView? = nil,
         padding: CGFloat = 0.0,
-        respectSafeArea: Bool = true,
-        toContentLayoutGuide: Bool = false
+        layoutGuide: LayoutGuide = .safeArea
     ) -> Self {
         _ = self.constrainAllSidesValue(
             to: other,
             padding: padding,
-            respectSafeArea: respectSafeArea,
-            toContentLayoutGuide: toContentLayoutGuide
+            layoutGuide: layoutGuide
         )
         return self
     }
@@ -626,213 +617,255 @@ extension UIView {
     public func constrainToUnderneathValue(
         of other: UIView? = nil,
         padding: CGFloat = 0.0,
-        respectSafeArea: Bool = true
+        layoutGuide: LayoutGuide = .safeArea
     ) -> NSLayoutConstraint {
         assert(!self.translatesAutoresizingMaskIntoConstraints, "Constraints requirement failed")
         guard let target = other ?? self.superview else {
             fatalError("No constraint target found")
         }
-        let anchor = respectSafeArea ? target.safeAreaLayoutGuide.bottomAnchor : target.bottomAnchor
+        let anchor = layoutGuide.resolve(target)?.bottomAnchor ?? target.bottomAnchor
         let constraint = self.topAnchor.constraint(equalTo: anchor, constant: padding)
         constraint.isActive = true
         return constraint
     }
 
     @discardableResult
-    public func constrainToUnderneath(of other: UIView? = nil, padding: CGFloat = 0.0, respectSafeArea: Bool = true) -> Self {
-        _ = self.constrainToUnderneathValue(of: other, padding: padding, respectSafeArea: respectSafeArea)
+    public func constrainToUnderneath(
+        of other: UIView? = nil,
+        padding: CGFloat = 0.0,
+        layoutGuide: LayoutGuide = .safeArea
+    ) -> Self {
+        _ = self.constrainToUnderneathValue(of: other, padding: padding, layoutGuide: layoutGuide)
         return self
     }
 
-    public func constrainToOnTopValue(of other: UIView? = nil, padding: CGFloat = 0.0, respectSafeArea: Bool = true) -> NSLayoutConstraint {
+    public func constrainToOnTopValue(
+        of other: UIView? = nil,
+        padding: CGFloat = 0.0,
+        layoutGuide: LayoutGuide = .safeArea
+    ) -> NSLayoutConstraint {
         assert(!self.translatesAutoresizingMaskIntoConstraints, "Constraints requirement failed")
         guard let target = other ?? self.superview else {
             fatalError("No constraint target found")
         }
-        let anchor = respectSafeArea ? target.safeAreaLayoutGuide.topAnchor : target.topAnchor
+        let anchor = layoutGuide.resolve(target)?.topAnchor ?? target.topAnchor
         let constraint = self.bottomAnchor.constraint(equalTo: anchor, constant: -padding)
         constraint.isActive = true
         return constraint
     }
 
     @discardableResult
-    public func constrainToOnTop(of other: UIView? = nil, padding: CGFloat = 0.0, respectSafeArea: Bool = true) -> Self {
-        _ = self.constrainToOnTopValue(of: other, padding: padding, respectSafeArea: respectSafeArea)
+    public func constrainToOnTop(
+        of other: UIView? = nil,
+        padding: CGFloat = 0.0,
+        layoutGuide: LayoutGuide = .safeArea
+    ) -> Self {
+        _ = self.constrainToOnTopValue(of: other, padding: padding, layoutGuide: layoutGuide)
         return self
     }
 
     public func constrainToRightSideValue(
         of other: UIView? = nil,
         padding: CGFloat = 0.0,
-        respectSafeArea: Bool = true
+        layoutGuide: LayoutGuide = .safeArea
     ) -> NSLayoutConstraint {
         assert(!self.translatesAutoresizingMaskIntoConstraints, "Constraints requirement failed")
         guard let target = other ?? self.superview else {
             fatalError("No constraint target found")
         }
-        let anchor = respectSafeArea ? target.safeAreaLayoutGuide.rightAnchor : target.rightAnchor
+        let anchor = layoutGuide.resolve(target)?.rightAnchor ?? target.rightAnchor
         let constraint = self.leftAnchor.constraint(equalTo: anchor, constant: padding)
         constraint.isActive = true
         return constraint
     }
 
     @discardableResult
-    public func constrainToRightSide(of other: UIView? = nil, padding: CGFloat = 0.0, respectSafeArea: Bool = true) -> Self {
-        _ = self.constrainToRightSideValue(of: other, padding: padding, respectSafeArea: respectSafeArea)
+    public func constrainToRightSide(
+        of other: UIView? = nil,
+        padding: CGFloat = 0.0,
+        layoutGuide: LayoutGuide = .safeArea
+    ) -> Self {
+        _ = self.constrainToRightSideValue(of: other, padding: padding, layoutGuide: layoutGuide)
         return self
     }
 
     public func constrainToLeftSideValue(
         of other: UIView? = nil,
         padding: CGFloat = 0.0,
-        respectSafeArea: Bool = true
+        layoutGuide: LayoutGuide = .safeArea
     ) -> NSLayoutConstraint {
         assert(!self.translatesAutoresizingMaskIntoConstraints, "Constraints requirement failed")
         guard let target = other ?? self.superview else {
             fatalError("No constraint target found")
         }
-        let anchor = respectSafeArea ? target.safeAreaLayoutGuide.leftAnchor : target.leftAnchor
+        let anchor = layoutGuide.resolve(target)?.leftAnchor ?? target.leftAnchor
         let constraint = self.rightAnchor.constraint(equalTo: anchor, constant: -padding)
         constraint.isActive = true
         return constraint
     }
 
     @discardableResult
-    public func constrainToLeftSide(of other: UIView? = nil, padding: CGFloat = 0.0, respectSafeArea: Bool = true) -> Self {
-        _ = self.constrainToLeftSideValue(of: other, padding: padding, respectSafeArea: respectSafeArea)
+    public func constrainToLeftSide(
+        of other: UIView? = nil,
+        padding: CGFloat = 0.0,
+        layoutGuide: LayoutGuide = .safeArea
+    ) -> Self {
+        _ = self.constrainToLeftSideValue(of: other, padding: padding, layoutGuide: layoutGuide)
         return self
     }
 
-    public func constrainCenterVerticalValue(to other: UIView? = nil, respectSafeArea: Bool = true) -> NSLayoutConstraint {
+    public func constrainCenterVerticalValue(
+        to other: UIView? = nil,
+        layoutGuide: LayoutGuide = .safeArea
+    ) -> NSLayoutConstraint {
         assert(!self.translatesAutoresizingMaskIntoConstraints, "Constraints requirement failed")
         guard let target = other ?? self.superview else {
             fatalError("No constraint target found")
         }
-        let anchor = respectSafeArea ? target.safeAreaLayoutGuide.centerYAnchor : target.centerYAnchor
+        let anchor = layoutGuide.resolve(target)?.centerYAnchor ?? target.centerYAnchor
         let constraint = self.centerYAnchor.constraint(equalTo: anchor)
         constraint.isActive = true
         return constraint
     }
 
     @discardableResult
-    public func constrainCenterVertical(to other: UIView? = nil, respectSafeArea: Bool = true) -> Self {
-        _ = self.constrainCenterVerticalValue(to: other, respectSafeArea: respectSafeArea)
+    public func constrainCenterVertical(to other: UIView? = nil, layoutGuide: LayoutGuide = .safeArea) -> Self {
+        _ = self.constrainCenterVerticalValue(to: other, layoutGuide: layoutGuide)
         return self
     }
 
-    public func constrainCenterHorizontalValue(to other: UIView? = nil, respectSafeArea: Bool = true) -> NSLayoutConstraint {
+    public func constrainCenterHorizontalValue(
+        to other: UIView? = nil,
+        layoutGuide: LayoutGuide = .safeArea
+    ) -> NSLayoutConstraint {
         assert(!self.translatesAutoresizingMaskIntoConstraints, "Constraints requirement failed")
         guard let target = other ?? self.superview else {
             fatalError("No constraint target found")
         }
-        let anchor = respectSafeArea ? target.safeAreaLayoutGuide.centerXAnchor : target.centerXAnchor
+        let anchor = layoutGuide.resolve(target)?.centerXAnchor ?? target.centerXAnchor
         let constraint = self.centerXAnchor.constraint(equalTo: anchor)
         constraint.isActive = true
         return constraint
     }
 
     @discardableResult
-    public func constrainCenterHorizontal(to other: UIView? = nil, respectSafeArea: Bool = true) -> Self {
-        _ = self.constrainCenterHorizontalValue(to: other, respectSafeArea: respectSafeArea)
+    public func constrainCenterHorizontal(to other: UIView? = nil, layoutGuide: LayoutGuide = .safeArea) -> Self {
+        _ = self.constrainCenterHorizontalValue(to: other, layoutGuide: layoutGuide)
         return self
     }
 
     public func constrainCenterValue(
         to other: UIView? = nil,
-        respectSafeArea: Bool = true
+        layoutGuide: LayoutGuide = .safeArea
     ) -> (vertical: NSLayoutConstraint, horizontal: NSLayoutConstraint) {
-        let vertical = self.constrainCenterVerticalValue(to: other, respectSafeArea: respectSafeArea)
-        let horizontal = self.constrainCenterHorizontalValue(to: other, respectSafeArea: respectSafeArea)
+        let vertical = self.constrainCenterVerticalValue(to: other, layoutGuide: layoutGuide)
+        let horizontal = self.constrainCenterHorizontalValue(to: other, layoutGuide: layoutGuide)
         return (vertical: vertical, horizontal: horizontal)
     }
 
     @discardableResult
-    public func constrainCenter(to other: UIView? = nil, respectSafeArea: Bool = true) -> Self {
-        _ = self.constrainCenterValue(to: other, respectSafeArea: respectSafeArea)
+    public func constrainCenter(to other: UIView? = nil, layoutGuide: LayoutGuide = .safeArea) -> Self {
+        _ = self.constrainCenterValue(to: other, layoutGuide: layoutGuide)
         return self
     }
 
     public func constrainCenterLeftValue(
         to other: UIView? = nil,
         padding: CGFloat = 0.0,
-        respectSafeArea: Bool = true
+        layoutGuide: LayoutGuide = .safeArea
     ) -> NSLayoutConstraint {
         assert(!self.translatesAutoresizingMaskIntoConstraints, "Constraints requirement failed")
         guard let target = other ?? self.superview else {
             fatalError("No constraint target found")
         }
-        let anchor = respectSafeArea ? target.safeAreaLayoutGuide.leftAnchor : target.leftAnchor
+        let anchor = layoutGuide.resolve(target)?.leftAnchor ?? target.leftAnchor
         let constraint = self.centerXAnchor.constraint(equalTo: anchor, constant: padding)
         constraint.isActive = true
         return constraint
     }
 
     @discardableResult
-    public func constrainCenterLeft(to other: UIView? = nil, padding: CGFloat = 0.0, respectSafeArea: Bool = true) -> Self {
-        _ = self.constrainCenterLeftValue(to: other, padding: padding, respectSafeArea: respectSafeArea)
+    public func constrainCenterLeft(
+        to other: UIView? = nil,
+        padding: CGFloat = 0.0,
+        layoutGuide: LayoutGuide = .safeArea
+    ) -> Self {
+        _ = self.constrainCenterLeftValue(to: other, padding: padding, layoutGuide: layoutGuide)
         return self
     }
 
     public func constrainCenterRightValue(
         to other: UIView? = nil,
         padding: CGFloat = 0.0,
-        respectSafeArea: Bool = true
+        layoutGuide: LayoutGuide = .safeArea
     ) -> NSLayoutConstraint {
         assert(!self.translatesAutoresizingMaskIntoConstraints, "Constraints requirement failed")
         guard let target = other ?? self.superview else {
             fatalError("No constraint target found")
         }
-        let anchor = respectSafeArea ? target.safeAreaLayoutGuide.rightAnchor : target.rightAnchor
+        let anchor = layoutGuide.resolve(target)?.rightAnchor ?? target.rightAnchor
         let constraint = self.centerXAnchor.constraint(equalTo: anchor, constant: -padding)
         constraint.isActive = true
         return constraint
     }
 
     @discardableResult
-    public func constrainCenterRight(to other: UIView? = nil, padding: CGFloat = 0.0, respectSafeArea: Bool = true) -> Self {
-        _ = self.constrainCenterRightValue(to: other, padding: padding, respectSafeArea: respectSafeArea)
+    public func constrainCenterRight(
+        to other: UIView? = nil,
+        padding: CGFloat = 0.0,
+        layoutGuide: LayoutGuide = .safeArea
+    ) -> Self {
+        _ = self.constrainCenterRightValue(to: other, padding: padding, layoutGuide: layoutGuide)
         return self
     }
 
     public func constrainCenterTopValue(
         to other: UIView? = nil,
         padding: CGFloat = 0.0,
-        respectSafeArea: Bool = true
+        layoutGuide: LayoutGuide = .safeArea
     ) -> NSLayoutConstraint {
         assert(!self.translatesAutoresizingMaskIntoConstraints, "Constraints requirement failed")
         guard let target = other ?? self.superview else {
             fatalError("No constraint target found")
         }
-        let anchor = respectSafeArea ? target.safeAreaLayoutGuide.topAnchor : target.topAnchor
+        let anchor = layoutGuide.resolve(target)?.topAnchor ?? target.topAnchor
         let constraint = self.centerYAnchor.constraint(equalTo: anchor, constant: padding)
         constraint.isActive = true
         return constraint
     }
 
     @discardableResult
-    public func constrainCenterTop(to other: UIView? = nil, padding: CGFloat = 0.0, respectSafeArea: Bool = true) -> Self {
-        _ = self.constrainCenterTopValue(to: other, padding: padding, respectSafeArea: respectSafeArea)
+    public func constrainCenterTop(
+        to other: UIView? = nil,
+        padding: CGFloat = 0.0,
+        layoutGuide: LayoutGuide = .safeArea
+    ) -> Self {
+        _ = self.constrainCenterTopValue(to: other, padding: padding, layoutGuide: layoutGuide)
         return self
     }
 
     public func constrainCenterBottomValue(
         to other: UIView? = nil,
         padding: CGFloat = 0.0,
-        respectSafeArea: Bool = true
+        layoutGuide: LayoutGuide = .safeArea
     ) -> NSLayoutConstraint {
         assert(!self.translatesAutoresizingMaskIntoConstraints, "Constraints requirement failed")
         guard let target = other ?? self.superview else {
             fatalError("No constraint target found")
         }
-        let anchor = respectSafeArea ? target.safeAreaLayoutGuide.bottomAnchor : target.bottomAnchor
+        let anchor = layoutGuide.resolve(target)?.bottomAnchor ?? target.bottomAnchor
         let constraint = self.centerYAnchor.constraint(equalTo: anchor, constant: -padding)
         constraint.isActive = true
         return constraint
     }
 
     @discardableResult
-    public func constrainCenterBottom(to other: UIView? = nil, padding: CGFloat = 0.0, respectSafeArea: Bool = true) -> Self {
-        _ = self.constrainCenterBottomValue(to: other, padding: padding, respectSafeArea: respectSafeArea)
+    public func constrainCenterBottom(
+        to other: UIView? = nil,
+        padding: CGFloat = 0.0,
+        layoutGuide: LayoutGuide = .safeArea
+    ) -> Self {
+        _ = self.constrainCenterBottomValue(to: other, padding: padding, layoutGuide: layoutGuide)
         return self
     }
 
@@ -843,7 +876,7 @@ extension UIView {
         isAboveBottomView: Bool = true,
         topPadding: Double = 0.0,
         bottomPadding: Double = 0.0,
-        respectSafeArea: Bool = true
+        layoutGuide: LayoutGuide = .safeArea
     ) -> NSLayoutConstraint {
         assert(!self.translatesAutoresizingMaskIntoConstraints, "Constraints requirement failed")
         guard let topView = topView ?? self.superview else {
@@ -858,16 +891,16 @@ extension UIView {
         let guide = UIView().useAutoLayout()
         superview.add(guide)
         if isBeneathTopView {
-            guide.constrainToUnderneath(of: topView, padding: topPadding, respectSafeArea: respectSafeArea)
+            guide.constrainToUnderneath(of: topView, padding: topPadding, layoutGuide: layoutGuide)
         } else {
-            guide.constrainTop(to: topView, padding: topPadding, respectSafeArea: respectSafeArea)
+            guide.constrainTop(to: topView, padding: topPadding, layoutGuide: layoutGuide)
         }
         if isAboveBottomView {
-            guide.constrainToOnTop(of: bottomView, padding: bottomPadding, respectSafeArea: respectSafeArea)
+            guide.constrainToOnTop(of: bottomView, padding: bottomPadding, layoutGuide: layoutGuide)
         } else {
-            guide.constrainBottom(to: bottomView, padding: bottomPadding, respectSafeArea: respectSafeArea)
+            guide.constrainBottom(to: bottomView, padding: bottomPadding, layoutGuide: layoutGuide)
         }
-        return self.constrainCenterVerticalValue(to: guide, respectSafeArea: respectSafeArea)
+        return self.constrainCenterVerticalValue(to: guide, layoutGuide: .view)
     }
 
     @discardableResult
@@ -878,7 +911,7 @@ extension UIView {
         isAboveBottomView: Bool = true,
         topPadding: Double = 0.0,
         bottomPadding: Double = 0.0,
-        respectSafeArea: Bool = true
+        layoutGuide: LayoutGuide = .safeArea
     ) -> Self {
         _ = self.constrainBetweenVerticalValue(
             topView: topView,
@@ -887,7 +920,7 @@ extension UIView {
             isAboveBottomView: isAboveBottomView,
             topPadding: topPadding,
             bottomPadding: bottomPadding,
-            respectSafeArea: respectSafeArea
+            layoutGuide: layoutGuide
         )
         return self
     }
@@ -899,7 +932,7 @@ extension UIView {
         isBesideRightView: Bool = true,
         leftPadding: Double = 0.0,
         rightPadding: Double = 0.0,
-        respectSafeArea: Bool = true
+        layoutGuide: LayoutGuide = .safeArea
     ) -> NSLayoutConstraint {
         assert(!self.translatesAutoresizingMaskIntoConstraints, "Constraints requirement failed")
         guard let leftView = leftView ?? self.superview else {
@@ -914,16 +947,16 @@ extension UIView {
         let guide = UIView().useAutoLayout()
         superview.add(guide)
         if isBesideLeftView {
-            guide.constrainToRightSide(of: leftView, padding: leftPadding, respectSafeArea: respectSafeArea)
+            guide.constrainToRightSide(of: leftView, padding: leftPadding, layoutGuide: layoutGuide)
         } else {
-            guide.constrainLeft(to: leftView, padding: leftPadding, respectSafeArea: respectSafeArea)
+            guide.constrainLeft(to: leftView, padding: leftPadding, layoutGuide: layoutGuide)
         }
         if isBesideRightView {
-            guide.constrainToLeftSide(of: rightView, padding: rightPadding, respectSafeArea: respectSafeArea)
+            guide.constrainToLeftSide(of: rightView, padding: rightPadding, layoutGuide: layoutGuide)
         } else {
-            guide.constrainRight(to: rightView, padding: rightPadding, respectSafeArea: respectSafeArea)
+            guide.constrainRight(to: rightView, padding: rightPadding, layoutGuide: layoutGuide)
         }
-        return self.constrainCenterHorizontalValue(to: guide, respectSafeArea: respectSafeArea)
+        return self.constrainCenterHorizontalValue(to: guide, layoutGuide: .view)
     }
 
     @discardableResult
@@ -934,7 +967,7 @@ extension UIView {
         isBesideRightView: Bool = true,
         leftPadding: Double = 0.0,
         rightPadding: Double = 0.0,
-        respectSafeArea: Bool = true
+        layoutGuide: LayoutGuide = .safeArea
     ) -> Self {
         _ = self.constrainBetweenHorizontalValue(
             leftView: leftView,
@@ -943,7 +976,7 @@ extension UIView {
             isBesideRightView: isBesideRightView,
             leftPadding: leftPadding,
             rightPadding: rightPadding,
-            respectSafeArea: respectSafeArea
+            layoutGuide: layoutGuide
         )
         return self
     }
@@ -960,9 +993,9 @@ extension UIView {
         let guide = UIView().useAutoLayout()
         target.add(guide)
         guide
-            .constrainLeft(respectSafeArea: false)
+            .constrainLeft(layoutGuide: .view)
             .setWidthConstraint(proportion: proportionFromLeft)
-        return self.constrainCenterRightValue(to: guide, padding: padding, respectSafeArea: false)
+        return self.constrainCenterRightValue(to: guide, padding: padding, layoutGuide: .view)
     }
 
     @discardableResult
@@ -991,9 +1024,9 @@ extension UIView {
         let guide = UIView().useAutoLayout()
         target.add(guide)
         guide
-            .constrainTop(respectSafeArea: false)
+            .constrainTop(layoutGuide: .view)
             .setHeightConstraint(proportion: proportionFromTop)
-        return self.constrainCenterBottomValue(to: guide, padding: padding, respectSafeArea: false)
+        return self.constrainCenterBottomValue(to: guide, padding: padding, layoutGuide: .view)
     }
 
     @discardableResult
@@ -1014,8 +1047,7 @@ extension UIView {
         to other: UIView? = nil,
         padding: CGFloat = 0.0,
         maxWidth: CGFloat,
-        respectSafeArea: Bool = true,
-        toContentLayoutGuide: Bool = false
+        layoutGuide: LayoutGuide = .safeArea
     ) -> (
         maxLeft: NSLayoutConstraint,
         maxRight: NSLayoutConstraint,
@@ -1026,21 +1058,19 @@ extension UIView {
         let maxLeftConstraint = self.constrainMaxLeftValue(
             to: other,
             padding: padding,
-            respectSafeArea: respectSafeArea,
-            toContentLayoutGuide: toContentLayoutGuide
+            layoutGuide: layoutGuide
         )
         let maxRightConstraint = self.constrainMaxRightValue(
             to: other,
             padding: padding,
-            respectSafeArea: respectSafeArea,
-            toContentLayoutGuide: toContentLayoutGuide
+            layoutGuide: layoutGuide
         )
-        let centerConstraint = self.constrainCenterHorizontalValue(to: other, respectSafeArea: respectSafeArea)
+        let centerConstraint = self.constrainCenterHorizontalValue(to: other, layoutGuide: layoutGuide)
         let maxWidthConstraint = self.setMaxWidthConstraintValue(to: maxWidth)
         guard let target = other ?? self.superview else {
             fatalError("No constraint target found")
         }
-        let anchor = respectSafeArea ? target.safeAreaLayoutGuide.widthAnchor : target.widthAnchor
+        let anchor = layoutGuide.resolve(target)?.widthAnchor ?? target.widthAnchor
         let matchWidthConstraint = self.widthAnchor.constraint(equalTo: anchor)
         matchWidthConstraint.priority = .defaultHigh
         matchWidthConstraint.isActive = true
@@ -1058,15 +1088,13 @@ extension UIView {
         to other: UIView? = nil,
         padding: CGFloat = 0.0,
         maxWidth: CGFloat,
-        respectSafeArea: Bool = true,
-        toContentLayoutGuide: Bool = false
+        layoutGuide: LayoutGuide = .safeArea
     ) -> Self {
         _ = self.matchWidthConstrainCenterValue(
             to: other,
             padding: padding,
             maxWidth: maxWidth,
-            respectSafeArea: respectSafeArea,
-            toContentLayoutGuide: toContentLayoutGuide
+            layoutGuide: layoutGuide
         )
         return self
     }
@@ -1075,8 +1103,7 @@ extension UIView {
         to other: UIView? = nil,
         padding: CGFloat = 0.0,
         maxWidth: CGFloat,
-        respectSafeArea: Bool = true,
-        toContentLayoutGuide: Bool = false
+        layoutGuide: LayoutGuide = .safeArea
     ) -> (
         left: NSLayoutConstraint,
         maxRight: NSLayoutConstraint,
@@ -1086,20 +1113,18 @@ extension UIView {
         let leftConstraint = self.constrainLeftValue(
             to: other,
             padding: padding,
-            respectSafeArea: respectSafeArea,
-            toContentLayoutGuide: toContentLayoutGuide
+            layoutGuide: layoutGuide
         )
         let maxRightConstraint = self.constrainMaxRightValue(
             to: other,
             padding: padding,
-            respectSafeArea: respectSafeArea,
-            toContentLayoutGuide: toContentLayoutGuide
+            layoutGuide: layoutGuide
         )
         let maxWidthConstraint = self.setMaxWidthConstraintValue(to: maxWidth)
         guard let target = other ?? self.superview else {
             fatalError("No constraint target found")
         }
-        let anchor = respectSafeArea ? target.safeAreaLayoutGuide.widthAnchor : target.widthAnchor
+        let anchor = layoutGuide.resolve(target)?.widthAnchor ?? target.widthAnchor
         let matchWidthConstraint = self.widthAnchor.constraint(equalTo: anchor)
         matchWidthConstraint.priority = .defaultHigh
         matchWidthConstraint.isActive = true
@@ -1116,15 +1141,13 @@ extension UIView {
         to other: UIView? = nil,
         padding: CGFloat = 0.0,
         maxWidth: CGFloat,
-        respectSafeArea: Bool = true,
-        toContentLayoutGuide: Bool = false
+        layoutGuide: LayoutGuide = .safeArea
     ) -> Self {
         _ = self.matchWidthConstrainLeftValue(
             to: other,
             padding: padding,
             maxWidth: maxWidth,
-            respectSafeArea: respectSafeArea,
-            toContentLayoutGuide: toContentLayoutGuide
+            layoutGuide: layoutGuide
         )
         return self
     }
@@ -1133,8 +1156,7 @@ extension UIView {
         to other: UIView? = nil,
         padding: CGFloat = 0.0,
         maxWidth: CGFloat,
-        respectSafeArea: Bool = true,
-        toContentLayoutGuide: Bool = false
+        layoutGuide: LayoutGuide = .safeArea
     ) -> (
         maxLeft: NSLayoutConstraint,
         right: NSLayoutConstraint,
@@ -1144,20 +1166,18 @@ extension UIView {
         let maxLeftConstraint = self.constrainMaxLeftValue(
             to: other,
             padding: padding,
-            respectSafeArea: respectSafeArea,
-            toContentLayoutGuide: toContentLayoutGuide
+            layoutGuide: layoutGuide
         )
         let rightConstraint = self.constrainRightValue(
             to: other,
             padding: padding,
-            respectSafeArea: respectSafeArea,
-            toContentLayoutGuide: toContentLayoutGuide
+            layoutGuide: layoutGuide
         )
         let maxWidthConstraint = self.setMaxWidthConstraintValue(to: maxWidth)
         guard let target = other ?? self.superview else {
             fatalError("No constraint target found")
         }
-        let anchor = respectSafeArea ? target.safeAreaLayoutGuide.widthAnchor : target.widthAnchor
+        let anchor = layoutGuide.resolve(target)?.widthAnchor ?? target.widthAnchor
         let matchWidthConstraint = self.widthAnchor.constraint(equalTo: anchor)
         matchWidthConstraint.priority = .defaultHigh
         matchWidthConstraint.isActive = true
@@ -1174,15 +1194,13 @@ extension UIView {
         to other: UIView? = nil,
         padding: CGFloat = 0.0,
         maxWidth: CGFloat,
-        respectSafeArea: Bool = true,
-        toContentLayoutGuide: Bool = false
+        layoutGuide: LayoutGuide = .safeArea
     ) -> Self {
         _ = self.matchWidthConstrainRightValue(
             to: other,
             padding: padding,
             maxWidth: maxWidth,
-            respectSafeArea: respectSafeArea,
-            toContentLayoutGuide: toContentLayoutGuide
+            layoutGuide: layoutGuide
         )
         return self
     }
@@ -1191,8 +1209,7 @@ extension UIView {
         to other: UIView? = nil,
         padding: CGFloat = 0.0,
         maxHeight: CGFloat,
-        respectSafeArea: Bool = true,
-        toContentLayoutGuide: Bool = false
+        layoutGuide: LayoutGuide = .safeArea
     ) -> (
         maxTop: NSLayoutConstraint,
         maxBottom: NSLayoutConstraint,
@@ -1203,21 +1220,19 @@ extension UIView {
         let maxTopConstraint = self.constrainMaxTopValue(
             to: other,
             padding: padding,
-            respectSafeArea: respectSafeArea,
-            toContentLayoutGuide: toContentLayoutGuide
+            layoutGuide: layoutGuide
         )
         let maxBottomConstraint = self.constrainMaxBottomValue(
             to: other,
             padding: padding,
-            respectSafeArea: respectSafeArea,
-            toContentLayoutGuide: toContentLayoutGuide
+            layoutGuide: layoutGuide
         )
-        let centerConstraint = self.constrainCenterVerticalValue(to: other, respectSafeArea: respectSafeArea)
+        let centerConstraint = self.constrainCenterVerticalValue(to: other, layoutGuide: layoutGuide)
         let maxHeightConstraint = self.setMaxHeightConstraintValue(to: maxHeight)
         guard let target = other ?? self.superview else {
             fatalError("No constraint target found")
         }
-        let anchor = respectSafeArea ? target.safeAreaLayoutGuide.heightAnchor : target.heightAnchor
+        let anchor = layoutGuide.resolve(target)?.heightAnchor ?? target.heightAnchor
         let matchHeightConstraint = self.heightAnchor.constraint(equalTo: anchor)
         matchHeightConstraint.priority = .defaultHigh
         matchHeightConstraint.isActive = true
@@ -1235,15 +1250,13 @@ extension UIView {
         to other: UIView? = nil,
         padding: CGFloat = 0.0,
         maxHeight: CGFloat,
-        respectSafeArea: Bool = true,
-        toContentLayoutGuide: Bool = false
+        layoutGuide: LayoutGuide = .safeArea
     ) -> Self {
         _ = self.matchHeightConstrainCenterValue(
             to: other,
             padding: padding,
             maxHeight: maxHeight,
-            respectSafeArea: respectSafeArea,
-            toContentLayoutGuide: toContentLayoutGuide
+            layoutGuide: layoutGuide
         )
         return self
     }
@@ -1252,8 +1265,7 @@ extension UIView {
         to other: UIView? = nil,
         padding: CGFloat = 0.0,
         maxHeight: CGFloat,
-        respectSafeArea: Bool = true,
-        toContentLayoutGuide: Bool = false
+        layoutGuide: LayoutGuide = .safeArea
     ) -> (
         top: NSLayoutConstraint,
         maxBottom: NSLayoutConstraint,
@@ -1263,20 +1275,18 @@ extension UIView {
         let topConstraint = self.constrainTopValue(
             to: other,
             padding: padding,
-            respectSafeArea: respectSafeArea,
-            toContentLayoutGuide: toContentLayoutGuide
+            layoutGuide: layoutGuide
         )
         let maxBottomConstraint = self.constrainMaxBottomValue(
             to: other,
             padding: padding,
-            respectSafeArea: respectSafeArea,
-            toContentLayoutGuide: toContentLayoutGuide
+            layoutGuide: layoutGuide
         )
         let maxHeightConstraint = self.setMaxHeightConstraintValue(to: maxHeight)
         guard let target = other ?? self.superview else {
             fatalError("No constraint target found")
         }
-        let anchor = respectSafeArea ? target.safeAreaLayoutGuide.heightAnchor : target.heightAnchor
+        let anchor = layoutGuide.resolve(target)?.heightAnchor ?? target.heightAnchor
         let matchHeightConstraint = self.heightAnchor.constraint(equalTo: anchor)
         matchHeightConstraint.priority = .defaultHigh
         matchHeightConstraint.isActive = true
@@ -1293,15 +1303,13 @@ extension UIView {
         to other: UIView? = nil,
         padding: CGFloat = 0.0,
         maxHeight: CGFloat,
-        respectSafeArea: Bool = true,
-        toContentLayoutGuide: Bool = false
+        layoutGuide: LayoutGuide = .safeArea
     ) -> Self {
         _ = self.matchHeightConstrainTopValue(
             to: other,
             padding: padding,
             maxHeight: maxHeight,
-            respectSafeArea: respectSafeArea,
-            toContentLayoutGuide: toContentLayoutGuide
+            layoutGuide: layoutGuide
         )
         return self
     }
@@ -1310,8 +1318,7 @@ extension UIView {
         to other: UIView? = nil,
         padding: CGFloat = 0.0,
         maxHeight: CGFloat,
-        respectSafeArea: Bool = true,
-        toContentLayoutGuide: Bool = false
+        layoutGuide: LayoutGuide = .safeArea
     ) -> (
         maxTop: NSLayoutConstraint,
         bottom: NSLayoutConstraint,
@@ -1321,20 +1328,18 @@ extension UIView {
         let maxTopConstraint = self.constrainMaxTopValue(
             to: other,
             padding: padding,
-            respectSafeArea: respectSafeArea,
-            toContentLayoutGuide: toContentLayoutGuide
+            layoutGuide: layoutGuide
         )
         let bottomConstraint = self.constrainBottomValue(
             to: other,
             padding: padding,
-            respectSafeArea: respectSafeArea,
-            toContentLayoutGuide: toContentLayoutGuide
+            layoutGuide: layoutGuide
         )
         let maxHeightConstraint = self.setMaxHeightConstraintValue(to: maxHeight)
         guard let target = other ?? self.superview else {
             fatalError("No constraint target found")
         }
-        let anchor = respectSafeArea ? target.safeAreaLayoutGuide.heightAnchor : target.heightAnchor
+        let anchor = layoutGuide.resolve(target)?.heightAnchor ?? target.heightAnchor
         let matchHeightConstraint = self.heightAnchor.constraint(equalTo: anchor)
         matchHeightConstraint.priority = .defaultHigh
         matchHeightConstraint.isActive = true
@@ -1351,15 +1356,13 @@ extension UIView {
         to other: UIView? = nil,
         padding: CGFloat = 0.0,
         maxHeight: CGFloat,
-        respectSafeArea: Bool = true,
-        toContentLayoutGuide: Bool = false
+        layoutGuide: LayoutGuide = .safeArea
     ) -> Self {
         _ = self.matchHeightConstrainBottomValue(
             to: other,
             padding: padding,
             maxHeight: maxHeight,
-            respectSafeArea: respectSafeArea,
-            toContentLayoutGuide: toContentLayoutGuide
+            layoutGuide: layoutGuide
         )
         return self
     }
@@ -1419,18 +1422,13 @@ extension UIView {
     public func constrainMinLeftValue(
         to other: UIView? = nil,
         padding: CGFloat = 0.0,
-        respectSafeArea: Bool = true,
-        toContentLayoutGuide: Bool = false
+        layoutGuide: LayoutGuide = .safeArea
     ) -> NSLayoutConstraint {
         assert(!self.translatesAutoresizingMaskIntoConstraints, "Constraints requirement failed")
         guard let target = other ?? self.superview else {
             fatalError("No constraint target found")
         }
-        let anchor: NSLayoutXAxisAnchor = if toContentLayoutGuide, let scrollView = target as? UIScrollView {
-            scrollView.contentLayoutGuide.leadingAnchor
-        } else {
-            respectSafeArea ? target.safeAreaLayoutGuide.leadingAnchor : target.leadingAnchor
-        }
+        let anchor = layoutGuide.resolve(target)?.leadingAnchor ?? target.leadingAnchor
         let constraint = self.leadingAnchor.constraint(lessThanOrEqualTo: anchor, constant: padding)
         constraint.isActive = true
         return constraint
@@ -1440,14 +1438,12 @@ extension UIView {
     public func constrainMinLeft(
         to other: UIView? = nil,
         padding: CGFloat = 0.0,
-        respectSafeArea: Bool = true,
-        toContentLayoutGuide: Bool = false
+        layoutGuide: LayoutGuide = .safeArea
     ) -> Self {
         _ = self.constrainMinLeftValue(
             to: other,
             padding: padding,
-            respectSafeArea: respectSafeArea,
-            toContentLayoutGuide: toContentLayoutGuide
+            layoutGuide: layoutGuide
         )
         return self
     }
@@ -1455,18 +1451,13 @@ extension UIView {
     public func constrainMaxLeftValue(
         to other: UIView? = nil,
         padding: CGFloat = 0.0,
-        respectSafeArea: Bool = true,
-        toContentLayoutGuide: Bool = false
+        layoutGuide: LayoutGuide = .safeArea
     ) -> NSLayoutConstraint {
         assert(!self.translatesAutoresizingMaskIntoConstraints, "Constraints requirement failed")
         guard let target = other ?? self.superview else {
             fatalError("No constraint target found")
         }
-        let anchor: NSLayoutXAxisAnchor = if toContentLayoutGuide, let scrollView = target as? UIScrollView {
-            scrollView.contentLayoutGuide.leadingAnchor
-        } else {
-            respectSafeArea ? target.safeAreaLayoutGuide.leadingAnchor : target.leadingAnchor
-        }
+        let anchor = layoutGuide.resolve(target)?.leadingAnchor ?? target.leadingAnchor
         let constraint = self.leadingAnchor.constraint(greaterThanOrEqualTo: anchor, constant: padding)
         constraint.isActive = true
         return constraint
@@ -1476,14 +1467,12 @@ extension UIView {
     public func constrainMaxLeft(
         to other: UIView? = nil,
         padding: CGFloat = 0.0,
-        respectSafeArea: Bool = true,
-        toContentLayoutGuide: Bool = false
+        layoutGuide: LayoutGuide = .safeArea
     ) -> Self {
         _ = self.constrainMaxLeftValue(
             to: other,
             padding: padding,
-            respectSafeArea: respectSafeArea,
-            toContentLayoutGuide: toContentLayoutGuide
+            layoutGuide: layoutGuide
         )
         return self
     }
@@ -1491,18 +1480,13 @@ extension UIView {
     public func constrainMinRightValue(
         to other: UIView? = nil,
         padding: CGFloat = 0.0,
-        respectSafeArea: Bool = true,
-        toContentLayoutGuide: Bool = false
+        layoutGuide: LayoutGuide = .safeArea
     ) -> NSLayoutConstraint {
         assert(!self.translatesAutoresizingMaskIntoConstraints, "Constraints requirement failed")
         guard let target = other ?? self.superview else {
             fatalError("No constraint target found")
         }
-        let anchor: NSLayoutXAxisAnchor = if toContentLayoutGuide, let scrollView = target as? UIScrollView {
-            scrollView.contentLayoutGuide.trailingAnchor
-        } else {
-            respectSafeArea ? target.safeAreaLayoutGuide.trailingAnchor : target.trailingAnchor
-        }
+        let anchor = layoutGuide.resolve(target)?.trailingAnchor ?? target.trailingAnchor
         let constraint = self.trailingAnchor.constraint(greaterThanOrEqualTo: anchor, constant: -padding)
         constraint.isActive = true
         return constraint
@@ -1512,14 +1496,12 @@ extension UIView {
     public func constrainMinRight(
         to other: UIView? = nil,
         padding: CGFloat = 0.0,
-        respectSafeArea: Bool = true,
-        toContentLayoutGuide: Bool = false
+        layoutGuide: LayoutGuide = .safeArea
     ) -> Self {
         _ = self.constrainMinRightValue(
             to: other,
             padding: padding,
-            respectSafeArea: respectSafeArea,
-            toContentLayoutGuide: toContentLayoutGuide
+            layoutGuide: layoutGuide
         )
         return self
     }
@@ -1527,18 +1509,13 @@ extension UIView {
     public func constrainMaxRightValue(
         to other: UIView? = nil,
         padding: CGFloat = 0.0,
-        respectSafeArea: Bool = true,
-        toContentLayoutGuide: Bool = false
+        layoutGuide: LayoutGuide = .safeArea
     ) -> NSLayoutConstraint {
         assert(!self.translatesAutoresizingMaskIntoConstraints, "Constraints requirement failed")
         guard let target = other ?? self.superview else {
             fatalError("No constraint target found")
         }
-        let anchor: NSLayoutXAxisAnchor = if toContentLayoutGuide, let scrollView = target as? UIScrollView {
-            scrollView.contentLayoutGuide.trailingAnchor
-        } else {
-            respectSafeArea ? target.safeAreaLayoutGuide.trailingAnchor : target.trailingAnchor
-        }
+        let anchor = layoutGuide.resolve(target)?.trailingAnchor ?? target.trailingAnchor
         let constraint = self.trailingAnchor.constraint(lessThanOrEqualTo: anchor, constant: -padding)
         constraint.isActive = true
         return constraint
@@ -1548,14 +1525,12 @@ extension UIView {
     public func constrainMaxRight(
         to other: UIView? = nil,
         padding: CGFloat = 0.0,
-        respectSafeArea: Bool = true,
-        toContentLayoutGuide: Bool = false
+        layoutGuide: LayoutGuide = .safeArea
     ) -> Self {
         _ = self.constrainMaxRightValue(
             to: other,
             padding: padding,
-            respectSafeArea: respectSafeArea,
-            toContentLayoutGuide: toContentLayoutGuide
+            layoutGuide: layoutGuide
         )
         return self
     }
@@ -1563,18 +1538,13 @@ extension UIView {
     public func constrainMinTopValue(
         to other: UIView? = nil,
         padding: CGFloat = 0.0,
-        respectSafeArea: Bool = true,
-        toContentLayoutGuide: Bool = false
+        layoutGuide: LayoutGuide = .safeArea
     ) -> NSLayoutConstraint {
         assert(!self.translatesAutoresizingMaskIntoConstraints, "Constraints requirement failed")
         guard let target = other ?? self.superview else {
             fatalError("No constraint target found")
         }
-        let anchor: NSLayoutYAxisAnchor = if toContentLayoutGuide, let scrollView = target as? UIScrollView {
-            scrollView.contentLayoutGuide.topAnchor
-        } else {
-            respectSafeArea ? target.safeAreaLayoutGuide.topAnchor : target.topAnchor
-        }
+        let anchor = layoutGuide.resolve(target)?.topAnchor ?? target.topAnchor
         let constraint = self.topAnchor.constraint(lessThanOrEqualTo: anchor, constant: padding)
         constraint.isActive = true
         return constraint
@@ -1584,14 +1554,12 @@ extension UIView {
     public func constrainMinTop(
         to other: UIView? = nil,
         padding: CGFloat = 0.0,
-        respectSafeArea: Bool = true,
-        toContentLayoutGuide: Bool = false
+        layoutGuide: LayoutGuide = .safeArea
     ) -> Self {
         _ = self.constrainMinTopValue(
             to: other,
             padding: padding,
-            respectSafeArea: respectSafeArea,
-            toContentLayoutGuide: toContentLayoutGuide
+            layoutGuide: layoutGuide
         )
         return self
     }
@@ -1599,18 +1567,13 @@ extension UIView {
     public func constrainMaxTopValue(
         to other: UIView? = nil,
         padding: CGFloat = 0.0,
-        respectSafeArea: Bool = true,
-        toContentLayoutGuide: Bool = false
+        layoutGuide: LayoutGuide = .safeArea
     ) -> NSLayoutConstraint {
         assert(!self.translatesAutoresizingMaskIntoConstraints, "Constraints requirement failed")
         guard let target = other ?? self.superview else {
             fatalError("No constraint target found")
         }
-        let anchor: NSLayoutYAxisAnchor = if toContentLayoutGuide, let scrollView = target as? UIScrollView {
-            scrollView.contentLayoutGuide.topAnchor
-        } else {
-            respectSafeArea ? target.safeAreaLayoutGuide.topAnchor : target.topAnchor
-        }
+        let anchor = layoutGuide.resolve(target)?.topAnchor ?? target.topAnchor
         let constraint = self.topAnchor.constraint(greaterThanOrEqualTo: anchor, constant: padding)
         constraint.isActive = true
         return constraint
@@ -1620,14 +1583,12 @@ extension UIView {
     public func constrainMaxTop(
         to other: UIView? = nil,
         padding: CGFloat = 0.0,
-        respectSafeArea: Bool = true,
-        toContentLayoutGuide: Bool = false
+        layoutGuide: LayoutGuide = .safeArea
     ) -> Self {
         _ = self.constrainMaxTopValue(
             to: other,
             padding: padding,
-            respectSafeArea: respectSafeArea,
-            toContentLayoutGuide: toContentLayoutGuide
+            layoutGuide: layoutGuide
         )
         return self
     }
@@ -1635,18 +1596,13 @@ extension UIView {
     public func constrainMinBottomValue(
         to other: UIView? = nil,
         padding: CGFloat = 0.0,
-        respectSafeArea: Bool = true,
-        toContentLayoutGuide: Bool = false
+        layoutGuide: LayoutGuide = .safeArea
     ) -> NSLayoutConstraint {
         assert(!self.translatesAutoresizingMaskIntoConstraints, "Constraints requirement failed")
         guard let target = other ?? self.superview else {
             fatalError("No constraint target found")
         }
-        let anchor: NSLayoutYAxisAnchor = if toContentLayoutGuide, let scrollView = target as? UIScrollView {
-            scrollView.contentLayoutGuide.bottomAnchor
-        } else {
-            respectSafeArea ? target.safeAreaLayoutGuide.bottomAnchor : target.bottomAnchor
-        }
+        let anchor = layoutGuide.resolve(target)?.bottomAnchor ?? target.bottomAnchor
         let constraint = self.bottomAnchor.constraint(greaterThanOrEqualTo: anchor, constant: -padding)
         constraint.isActive = true
         return constraint
@@ -1656,14 +1612,12 @@ extension UIView {
     public func constrainMinBottom(
         to other: UIView? = nil,
         padding: CGFloat = 0.0,
-        respectSafeArea: Bool = true,
-        toContentLayoutGuide: Bool = false
+        layoutGuide: LayoutGuide = .safeArea
     ) -> Self {
         _ = self.constrainMinBottomValue(
             to: other,
             padding: padding,
-            respectSafeArea: respectSafeArea,
-            toContentLayoutGuide: toContentLayoutGuide
+            layoutGuide: layoutGuide
         )
         return self
     }
@@ -1671,18 +1625,13 @@ extension UIView {
     public func constrainMaxBottomValue(
         to other: UIView? = nil,
         padding: CGFloat = 0.0,
-        respectSafeArea: Bool = true,
-        toContentLayoutGuide: Bool = false
+        layoutGuide: LayoutGuide = .safeArea
     ) -> NSLayoutConstraint {
         assert(!self.translatesAutoresizingMaskIntoConstraints, "Constraints requirement failed")
         guard let target = other ?? self.superview else {
             fatalError("No constraint target found")
         }
-        let anchor: NSLayoutYAxisAnchor = if toContentLayoutGuide, let scrollView = target as? UIScrollView {
-            scrollView.contentLayoutGuide.bottomAnchor
-        } else {
-            respectSafeArea ? target.safeAreaLayoutGuide.bottomAnchor : target.bottomAnchor
-        }
+        let anchor = layoutGuide.resolve(target)?.bottomAnchor ?? target.bottomAnchor
         let constraint = self.bottomAnchor.constraint(lessThanOrEqualTo: anchor, constant: -padding)
         constraint.isActive = true
         return constraint
@@ -1692,14 +1641,12 @@ extension UIView {
     public func constrainMaxBottom(
         to other: UIView? = nil,
         padding: CGFloat = 0.0,
-        respectSafeArea: Bool = true,
-        toContentLayoutGuide: Bool = false
+        layoutGuide: LayoutGuide = .safeArea
     ) -> Self {
         _ = self.constrainMaxBottomValue(
             to: other,
             padding: padding,
-            respectSafeArea: respectSafeArea,
-            toContentLayoutGuide: toContentLayoutGuide
+            layoutGuide: layoutGuide
         )
         return self
     }
@@ -1707,20 +1654,17 @@ extension UIView {
     public func constrainMinHorizontalValue(
         to other: UIView? = nil,
         padding: CGFloat = 0.0,
-        respectSafeArea: Bool = true,
-        toContentLayoutGuide: Bool = false
+        layoutGuide: LayoutGuide = .safeArea
     ) -> (left: NSLayoutConstraint, right: NSLayoutConstraint) {
         let left = self.constrainMinLeftValue(
             to: other,
             padding: padding,
-            respectSafeArea: respectSafeArea,
-            toContentLayoutGuide: toContentLayoutGuide
+            layoutGuide: layoutGuide
         )
         let right = self.constrainMinRightValue(
             to: other,
             padding: padding,
-            respectSafeArea: respectSafeArea,
-            toContentLayoutGuide: toContentLayoutGuide
+            layoutGuide: layoutGuide
         )
         return (left: left, right: right)
     }
@@ -1729,14 +1673,12 @@ extension UIView {
     public func constrainMinHorizontal(
         to other: UIView? = nil,
         padding: CGFloat = 0.0,
-        respectSafeArea: Bool = true,
-        toContentLayoutGuide: Bool = false
+        layoutGuide: LayoutGuide = .safeArea
     ) -> Self {
         _ = self.constrainMinHorizontalValue(
             to: other,
             padding: padding,
-            respectSafeArea: respectSafeArea,
-            toContentLayoutGuide: toContentLayoutGuide
+            layoutGuide: layoutGuide
         )
         return self
     }
@@ -1744,20 +1686,17 @@ extension UIView {
     public func constrainMaxHorizontalValue(
         to other: UIView? = nil,
         padding: CGFloat = 0.0,
-        respectSafeArea: Bool = true,
-        toContentLayoutGuide: Bool = false
+        layoutGuide: LayoutGuide = .safeArea
     ) -> (left: NSLayoutConstraint, right: NSLayoutConstraint) {
         let left = self.constrainMaxLeftValue(
             to: other,
             padding: padding,
-            respectSafeArea: respectSafeArea,
-            toContentLayoutGuide: toContentLayoutGuide
+            layoutGuide: layoutGuide
         )
         let right = self.constrainMaxRightValue(
             to: other,
             padding: padding,
-            respectSafeArea: respectSafeArea,
-            toContentLayoutGuide: toContentLayoutGuide
+            layoutGuide: layoutGuide
         )
         return (left: left, right: right)
     }
@@ -1766,14 +1705,12 @@ extension UIView {
     public func constrainMaxHorizontal(
         to other: UIView? = nil,
         padding: CGFloat = 0.0,
-        respectSafeArea: Bool = true,
-        toContentLayoutGuide: Bool = false
+        layoutGuide: LayoutGuide = .safeArea
     ) -> Self {
         _ = self.constrainMaxHorizontalValue(
             to: other,
             padding: padding,
-            respectSafeArea: respectSafeArea,
-            toContentLayoutGuide: toContentLayoutGuide
+            layoutGuide: layoutGuide
         )
         return self
     }
@@ -1781,20 +1718,17 @@ extension UIView {
     public func constrainMinVerticalValue(
         to other: UIView? = nil,
         padding: CGFloat = 0.0,
-        respectSafeArea: Bool = true,
-        toContentLayoutGuide: Bool = false
+        layoutGuide: LayoutGuide = .safeArea
     ) -> (top: NSLayoutConstraint, bottom: NSLayoutConstraint) {
         let top = self.constrainMinTopValue(
             to: other,
             padding: padding,
-            respectSafeArea: respectSafeArea,
-            toContentLayoutGuide: toContentLayoutGuide
+            layoutGuide: layoutGuide
         )
         let bottom = self.constrainMinBottomValue(
             to: other,
             padding: padding,
-            respectSafeArea: respectSafeArea,
-            toContentLayoutGuide: toContentLayoutGuide
+            layoutGuide: layoutGuide
         )
         return (top: top, bottom: bottom)
     }
@@ -1803,14 +1737,12 @@ extension UIView {
     public func constrainMinVertical(
         to other: UIView? = nil,
         padding: CGFloat = 0.0,
-        respectSafeArea: Bool = true,
-        toContentLayoutGuide: Bool = false
+        layoutGuide: LayoutGuide = .safeArea
     ) -> Self {
         _ = self.constrainMinVerticalValue(
             to: other,
             padding: padding,
-            respectSafeArea: respectSafeArea,
-            toContentLayoutGuide: toContentLayoutGuide
+            layoutGuide: layoutGuide
         )
         return self
     }
@@ -1818,20 +1750,17 @@ extension UIView {
     public func constrainMaxVerticalValue(
         to other: UIView? = nil,
         padding: CGFloat = 0.0,
-        respectSafeArea: Bool = true,
-        toContentLayoutGuide: Bool = false
+        layoutGuide: LayoutGuide = .safeArea
     ) -> (top: NSLayoutConstraint, bottom: NSLayoutConstraint) {
         let top = self.constrainMaxTopValue(
             to: other,
             padding: padding,
-            respectSafeArea: respectSafeArea,
-            toContentLayoutGuide: toContentLayoutGuide
+            layoutGuide: layoutGuide
         )
         let bottom = self.constrainMaxBottomValue(
             to: other,
             padding: padding,
-            respectSafeArea: respectSafeArea,
-            toContentLayoutGuide: toContentLayoutGuide
+            layoutGuide: layoutGuide
         )
         return (top: top, bottom: bottom)
     }
@@ -1840,14 +1769,12 @@ extension UIView {
     public func constrainMaxVertical(
         to other: UIView? = nil,
         padding: CGFloat = 0.0,
-        respectSafeArea: Bool = true,
-        toContentLayoutGuide: Bool = false
+        layoutGuide: LayoutGuide = .safeArea
     ) -> Self {
         _ = self.constrainMaxVerticalValue(
             to: other,
             padding: padding,
-            respectSafeArea: respectSafeArea,
-            toContentLayoutGuide: toContentLayoutGuide
+            layoutGuide: layoutGuide
         )
         return self
     }
@@ -1855,20 +1782,17 @@ extension UIView {
     public func constrainMinAllSidesValue(
         to other: UIView? = nil,
         padding: CGFloat = 0.0,
-        respectSafeArea: Bool = true,
-        toContentLayoutGuide: Bool = false
+        layoutGuide: LayoutGuide = .safeArea
     ) -> (left: NSLayoutConstraint, right: NSLayoutConstraint, top: NSLayoutConstraint, bottom: NSLayoutConstraint) {
         let horizontal = self.constrainMinHorizontalValue(
             to: other,
             padding: padding,
-            respectSafeArea: respectSafeArea,
-            toContentLayoutGuide: toContentLayoutGuide
+            layoutGuide: layoutGuide
         )
         let vertical = self.constrainMinVerticalValue(
             to: other,
             padding: padding,
-            respectSafeArea: respectSafeArea,
-            toContentLayoutGuide: toContentLayoutGuide
+            layoutGuide: layoutGuide
         )
         return (left: horizontal.left, right: horizontal.right, top: vertical.top, bottom: vertical.bottom)
     }
@@ -1877,14 +1801,12 @@ extension UIView {
     public func constrainMinAllSides(
         to other: UIView? = nil,
         padding: CGFloat = 0.0,
-        respectSafeArea: Bool = true,
-        toContentLayoutGuide: Bool = false
+        layoutGuide: LayoutGuide = .safeArea
     ) -> Self {
         _ = self.constrainMinAllSidesValue(
             to: other,
             padding: padding,
-            respectSafeArea: respectSafeArea,
-            toContentLayoutGuide: toContentLayoutGuide
+            layoutGuide: layoutGuide
         )
         return self
     }
@@ -1892,20 +1814,17 @@ extension UIView {
     public func constrainMaxAllSidesValue(
         to other: UIView? = nil,
         padding: CGFloat = 0.0,
-        respectSafeArea: Bool = true,
-        toContentLayoutGuide: Bool = false
+        layoutGuide: LayoutGuide = .safeArea
     ) -> (left: NSLayoutConstraint, right: NSLayoutConstraint, top: NSLayoutConstraint, bottom: NSLayoutConstraint) {
         let horizontal = self.constrainMaxHorizontalValue(
             to: other,
             padding: padding,
-            respectSafeArea: respectSafeArea,
-            toContentLayoutGuide: toContentLayoutGuide
+            layoutGuide: layoutGuide
         )
         let vertical = self.constrainMaxVerticalValue(
             to: other,
             padding: padding,
-            respectSafeArea: respectSafeArea,
-            toContentLayoutGuide: toContentLayoutGuide
+            layoutGuide: layoutGuide
         )
         return (left: horizontal.left, right: horizontal.right, top: vertical.top, bottom: vertical.bottom)
     }
@@ -1914,14 +1833,12 @@ extension UIView {
     public func constrainMaxAllSides(
         to other: UIView? = nil,
         padding: CGFloat = 0.0,
-        respectSafeArea: Bool = true,
-        toContentLayoutGuide: Bool = false
+        layoutGuide: LayoutGuide = .safeArea
     ) -> Self {
         _ = self.constrainMaxAllSidesValue(
             to: other,
             padding: padding,
-            respectSafeArea: respectSafeArea,
-            toContentLayoutGuide: toContentLayoutGuide
+            layoutGuide: layoutGuide
         )
         return self
     }

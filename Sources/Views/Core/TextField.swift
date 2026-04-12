@@ -31,7 +31,7 @@ public class TextField: View {
 
         self.textField
             .useAutoLayout()
-            .constrainAllSides(respectSafeArea: false)
+            .constrainAllSides(layoutGuide: .view)
 
         self.setFont(to: UIFont.systemFont(ofSize: 18, weight: .medium))
             .setTextColor(to: Colors.textDark)

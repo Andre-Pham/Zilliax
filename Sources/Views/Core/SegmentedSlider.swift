@@ -80,7 +80,7 @@ public class SegmentedSlider<T: Any>: View {
             .setHeightConstraint(to: Self.SCRUBBER_DIAMETER)
 
         self.container
-            .constrainAllSides(respectSafeArea: false)
+            .constrainAllSides(layoutGuide: .view)
             .add(self.scrubberBackground)
             .add(self.scrubberLine)
             .add(self.scrubberControl)
@@ -90,29 +90,29 @@ public class SegmentedSlider<T: Any>: View {
 
         self.scrubberBackground
             .setBackgroundColor(to: Colors.fillSecondary)
-            .constrainHorizontal(respectSafeArea: false)
-            .constrainCenterVertical(respectSafeArea: false)
+            .constrainHorizontal(layoutGuide: .view)
+            .constrainCenterVertical(layoutGuide: .view)
             .setHeightConstraint(to: Self.SCRUBBER_DIAMETER)
             .setCornerRadius(to: Self.SCRUBBER_DIAMETER / 2.0)
 
         self.scrubberLine
             .setBackgroundColor(to: .black)
             .setOpacity(to: 0.1)
-            .constrainHorizontal(padding: Self.SCRUBBER_DIAMETER / 2.0, respectSafeArea: false)
-            .constrainCenterVertical(respectSafeArea: false)
+            .constrainHorizontal(padding: Self.SCRUBBER_DIAMETER / 2.0, layoutGuide: .view)
+            .constrainCenterVertical(layoutGuide: .view)
             .setHeightConstraint(to: 5)
             .setCornerRadius(to: 2.5)
 
         self.scrubberControl
             .setBackgroundColor(to: Colors.accent)
             .setSizeConstraint(to: Self.SCRUBBER_DIAMETER)
-            .constrainCenterVertical(respectSafeArea: false)
+            .constrainCenterVertical(layoutGuide: .view)
             .setCornerRadius(to: Self.SCRUBBER_DIAMETER / 2.0)
             .add(self.scrubberLabel)
 
         self.scrubberLabel
-            .constrainCenterHorizontal(respectSafeArea: false)
-            .constrainToOnTop(padding: 10.0, respectSafeArea: false)
+            .constrainCenterHorizontal(layoutGuide: .view)
+            .constrainToOnTop(padding: 10.0, layoutGuide: .view)
             .setWidthConstraint(to: Self.DEFAULT_LABEL_WIDTH)
             .setHeightConstraint(to: Self.DEFAULT_LABEL_HEIGHT)
             .setCornerRadius(to: Self.DEFAULT_LABEL_HEIGHT * Self.LABEL_CORNER_RADIUS_HEIGHT_MULTIPLIER)
@@ -121,8 +121,8 @@ public class SegmentedSlider<T: Any>: View {
             .add(self.scrubberLabelText)
 
         self.scrubberLabelText
-            .constrainCenterVertical(respectSafeArea: false)
-            .constrainCenterHorizontal(respectSafeArea: false)
+            .constrainCenterVertical(layoutGuide: .view)
+            .constrainCenterHorizontal(layoutGuide: .view)
             .setFont(to: UIFont.systemFont(ofSize: 16, weight: .bold))
             .setTextColor(to: Colors.textDark)
 
@@ -281,7 +281,7 @@ public class SegmentedSlider<T: Any>: View {
             let width = Self.SCRUBBER_DIAMETER * 0.4
             let cornerRadius = width / 2.0
             indicator
-                .constrainCenterVertical(respectSafeArea: false)
+                .constrainCenterVertical(layoutGuide: .view)
                 .constrainHorizontalByProportion(
                     proportionFromLeft: Double(indicatorIndex) / Double(self.values.count == 1 ? 1 : self.values.count - 1)
                 )

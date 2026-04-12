@@ -50,14 +50,14 @@ public class PillButton: View {
             .add(self.button)
 
         self.contentStack
-            .constrainVertical(respectSafeArea: false)
-            .constrainCenterHorizontal(respectSafeArea: false)
+            .constrainVertical(layoutGuide: .view)
+            .constrainCenterHorizontal(layoutGuide: .view)
             .setSpacing(to: 8)
             .constrainMaxLeft(padding: 18)
             .constrainMaxRight(padding: 18)
 
         self.button
-            .constrainAllSides(respectSafeArea: false)
+            .constrainAllSides(layoutGuide: .view)
             .animateOnPress(self)
 
         self.icon

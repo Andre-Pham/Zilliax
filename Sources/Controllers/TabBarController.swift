@@ -133,7 +133,7 @@ public class TabBarController: UITabBarController, UITabBarControllerDelegate {
 
         self.tabBarStack
             .setBackgroundColor(to: Colors.fillForeground)
-            .constrainBottom(respectSafeArea: false)
+            .constrainBottom(layoutGuide: .view)
             .matchWidthConstraint()
             .setDistribution(to: .fillEqually)
 
@@ -154,7 +154,7 @@ public class TabBarController: UITabBarController, UITabBarControllerDelegate {
             itemButton
                 .setIcon(to: self.itemIconConfigs[index])
                 .setColor(to: Colors.fillForeground)
-                .constrainVertical(respectSafeArea: false)
+                .constrainVertical(layoutGuide: .view)
                 .setOnTap({ [weak self] in
                     self?.tabBarOptionSelected(index: index)
                 })
