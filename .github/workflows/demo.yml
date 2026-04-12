@@ -31,8 +31,7 @@ jobs:
           key: ${{ runner.os }}-mint-${{ hashFiles('Mintfile') }}
 
       - name: Install Tools
-        run: |
-          mint bootstrap --link
+        run: mint bootstrap --link
 
       - name: Version Log
         run: |
@@ -84,8 +83,7 @@ jobs:
           key: ${{ runner.os }}-mint-${{ hashFiles('Mintfile') }}
 
       - name: Install Tools
-        run: |
-          mint bootstrap --link
+        run: mint bootstrap --link
 
       - name: Version Log
         run: |
