@@ -19,34 +19,20 @@ jobs:
         with:
           xcode-version: '26'
 
-      - name: Install SwiftFormat
-        run: brew install swiftformat
+      - name: Install Tools
+        run: brew install swiftformat swiftlint xcbeautify
 
       - name: SwiftFormat Check
         working-directory: Demo
-        run: swiftformat . --lint
-
-      - name: Install SwiftLint
-        run: brew install swiftlint
-
-      - name: Generate Compiler Log
-        working-directory: Demo
-        run: |
-          set -o pipefail
-          xcodebuild \
-            -project Demo.xcodeproj \
-            -scheme Demo \
-            -sdk iphonesimulator \
-            -destination 'generic/platform=iOS Simulator' \
-            clean build > swift-build.log 2>&1
+        run: make format-check
 
       - name: SwiftLint
         working-directory: Demo
-        run: swiftlint --strict --config ./Demo/.swiftlint.yml
+        run: make lint
 
       - name: SwiftLint Analyze
         working-directory: Demo
-        run: swiftlint analyze --strict --config ./Demo/.swiftlint.yml --compiler-log-path swift-build.log
+        run: make lint-analyze
 
   build:
     name: Build
@@ -61,12 +47,9 @@ jobs:
         with:
           xcode-version: '26'
 
+      - name: Install Tools
+        run: brew install xcbeautify
+
       - name: Build
         working-directory: Demo
-        run: |
-          xcodebuild \
-            -project Demo.xcodeproj \
-            -scheme Demo \
-            -sdk iphonesimulator \
-            -destination 'generic/platform=iOS Simulator' \
-            clean build
+        run: make build
