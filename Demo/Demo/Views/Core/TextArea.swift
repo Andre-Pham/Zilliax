@@ -51,8 +51,8 @@ public class TextArea: View, UITextViewDelegate {
 
         let textContainer = self.textView.textContainer
         let textContainerInset = self.textView.textContainerInset
-
         let horizontalPadding = textContainerInset.left + textContainer.lineFragmentPadding
+
         self.placeholderText
             .constrainHorizontal(to: self.textView, padding: horizontalPadding, layoutGuide: .frame)
             .constrainTop(padding: textContainerInset.top, layoutGuide: .view)
