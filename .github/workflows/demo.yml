@@ -17,7 +17,7 @@ jobs:
       - name: Setup Xcode
         uses: maxim-lobanov/setup-xcode@v1
         with:
-          xcode-version: '26'
+          xcode-version: '26.2'
 
       - name: Install Tools
         run: brew install swiftformat swiftlint xcbeautify
@@ -26,10 +26,6 @@ jobs:
         run: |
           echo "### Xcode"
           xcodebuild -version
-          echo "### DEVELOPER_DIR"
-          echo "${DEVELOPER_DIR:-<not set>}"
-          echo "### Swift path"
-          xcrun --find swift
           echo "### Swift version"
           xcrun swift --version
           echo "### SwiftFormat"
@@ -71,6 +67,8 @@ jobs:
         run: |
           echo "### Xcode"
           xcodebuild -version
+          echo "### Swift version"
+          xcrun swift --version
           echo "### xcbeautify"
           xcbeautify --version
 
