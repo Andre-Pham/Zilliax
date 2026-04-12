@@ -45,7 +45,7 @@ public class TextArea: View, UITextViewDelegate {
 
         self.textView
             .useAutoLayout()
-            .constrainAllSides(respectSafeArea: false)
+            .constrainAllSides(layoutGuide: .view)
             .setBackgroundColor(to: .clear)
             .add(self.placeholderText)
 
@@ -62,7 +62,7 @@ public class TextArea: View, UITextViewDelegate {
             constant: -horizontalPadding
         ).isActive = true
         self.placeholderText
-            .constrainTop(padding: textContainerInset.top, respectSafeArea: false)
+            .constrainTop(padding: textContainerInset.top, layoutGuide: .view)
             .setTextColor(to: .placeholderText)
 
         self.setFont(to: UIFont.systemFont(ofSize: 56, weight: .bold))
@@ -86,13 +86,13 @@ public class TextArea: View, UITextViewDelegate {
                 UIVisualEffectView(effect: UIGlassEffect())
                     .useAutoLayout()
                     .addAsSubview(of: button, at: 0)
-                    .constrainAllSides(respectSafeArea: false)
+                    .constrainAllSides(layoutGuide: .view)
                     .setInteractions(enabled: false)
             } else {
                 UIVisualEffectView(effect: UIBlurEffect(style: .regular))
                     .useAutoLayout()
                     .addAsSubview(of: button, at: 0)
-                    .constrainAllSides(respectSafeArea: false)
+                    .constrainAllSides(layoutGuide: .view)
                     .setInteractions(enabled: false)
                     .setOpacity(to: 0.75)
             }
@@ -100,8 +100,8 @@ public class TextArea: View, UITextViewDelegate {
         }
 
         self.scrollUpButton
-            .constrainTop(padding: 8, respectSafeArea: false)
-            .constrainRight(padding: 12, respectSafeArea: false)
+            .constrainTop(padding: 8, layoutGuide: .view)
+            .constrainRight(padding: 12, layoutGuide: .view)
             .setSizeConstraint(to: 36)
             .setIcon(to: Icon.Config(systemName: "chevron.up", size: 16, weight: .bold, color: Colors.textDark))
             .setOnTap { [weak self] in
@@ -110,8 +110,8 @@ public class TextArea: View, UITextViewDelegate {
             .setHidden(to: true)
 
         self.scrollDownButton
-            .constrainBottom(padding: 8, respectSafeArea: false)
-            .constrainRight(padding: 12, respectSafeArea: false)
+            .constrainBottom(padding: 8, layoutGuide: .view)
+            .constrainRight(padding: 12, layoutGuide: .view)
             .setSizeConstraint(to: 36)
             .setIcon(to: Icon.Config(systemName: "chevron.down", size: 16, weight: .bold, color: Colors.textDark))
             .setOnTap { [weak self] in

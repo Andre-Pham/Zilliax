@@ -35,15 +35,15 @@ public class ScrollViewController: UIViewController {
             })
 
         self.scroll
-            .constrainHorizontal(respectSafeArea: false)
+            .constrainHorizontal(layoutGuide: .view)
             .constrainToUnderneath(of: self.header, padding: 24)
             .constrainBottom()
             .setVerticalBounce(to: true)
             .append(self.stack)
 
         self.stack
-            .constrainTop(toContentLayoutGuide: true)
-            .constrainBottom(padding: Dimensions.screenContentPaddingVertical, toContentLayoutGuide: true)
+            .constrainTop(layoutGuide: .content)
+            .constrainBottom(padding: Dimensions.screenContentPaddingVertical, layoutGuide: .content)
             .constrainHorizontal(padding: Dimensions.screenContentPaddingHorizontal)
             .setSpacing(to: 12)
 

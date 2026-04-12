@@ -40,7 +40,7 @@ public class DetailsViewController: UIViewController {
             .add(self.details)
 
         self.details
-            .constrainAllSides(padding: 20, respectSafeArea: false)
+            .constrainAllSides(padding: 20, layoutGuide: .view)
             .addRow(title: "Order", value: "#4812")
             .addRow(title: "Status", value: "Processing")
             .addRow(title: "Placed", value: "Mar 9, 2026")

@@ -42,16 +42,16 @@ public class PillX: View {
             .add(self.buttonX)
 
         self.contentStack
-            .constrainVertical(respectSafeArea: false)
-            .constrainCenterHorizontal(respectSafeArea: false)
+            .constrainVertical(layoutGuide: .view)
+            .constrainCenterHorizontal(layoutGuide: .view)
             .setSpacing(to: 8)
             .constrainMaxLeft(padding: 18)
             .constrainMaxRight(padding: 18)
             .append(self.iconX)
 
         self.buttonX
-            .constrainRight(respectSafeArea: false)
-            .constrainVertical(respectSafeArea: false)
+            .constrainRight(layoutGuide: .view)
+            .constrainVertical(layoutGuide: .view)
             .setWidthConstraint(to: Self.HEIGHT + 18)
             .animateOnPress(self.iconX)
 

@@ -68,7 +68,7 @@ public class ViewsViewController: UIViewController {
             .append(self.stack)
 
         self.stack
-            .constrainVertical(padding: Dimensions.screenContentPaddingVertical, toContentLayoutGuide: true)
+            .constrainVertical(padding: Dimensions.screenContentPaddingVertical, layoutGuide: .content)
             .constrainHorizontal(padding: Dimensions.screenContentPaddingHorizontal)
             .appendGap(size: DeviceContext.deviceType == .phone ? 0 : 24)
 
