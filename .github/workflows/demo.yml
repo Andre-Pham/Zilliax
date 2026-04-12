@@ -24,11 +24,15 @@ jobs:
           brew install mint
           echo "$HOME/.mint/bin" >> "$GITHUB_PATH"
 
+      - name: Cache Mint packages
+        uses: actions/cache@v4
+        with:
+          path: ~/.mint
+          key: ${{ runner.os }}-mint-${{ hashFiles('Mintfile') }}
+
       - name: Install Tools
         run: |
-          mint install nicklockwood/SwiftFormat@0.60.1
-          mint install realm/SwiftLint@0.63.2
-          mint install cpisciotta/xcbeautify@3.2.1
+          mint bootstrap --link
 
       - name: Version Log
         run: |
@@ -73,9 +77,15 @@ jobs:
           brew install mint
           echo "$HOME/.mint/bin" >> "$GITHUB_PATH"
 
+      - name: Cache Mint packages
+        uses: actions/cache@v4
+        with:
+          path: ~/.mint
+          key: ${{ runner.os }}-mint-${{ hashFiles('Mintfile') }}
+
       - name: Install Tools
         run: |
-          mint install cpisciotta/xcbeautify@3.2.1
+          mint bootstrap --link
 
       - name: Version Log
         run: |
