@@ -63,7 +63,7 @@ public class VStack: View {
 
         self.stack
             .useAutoLayout()
-            .constrainAllSides(respectSafeArea: false)
+            .constrainAllSides(layoutGuide: .view)
 
         self.stack.axis = .vertical
         self.stack.alignment = .center

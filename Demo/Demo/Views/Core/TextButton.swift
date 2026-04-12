@@ -43,13 +43,13 @@ public class TextButton: View {
             .add(self.button)
 
         self.contentStack
-            .constrainAllSides(respectSafeArea: false)
+            .constrainAllSides(layoutGuide: .view)
             .setSpacing(to: 8)
 
         self.button
-            .constrainCenter(respectSafeArea: false)
-            .matchWidthConstraint(adjust: 12, respectSafeArea: false)
-            .matchHeightConstraint(adjust: 12, respectSafeArea: false)
+            .constrainCenter(layoutGuide: .view)
+            .matchWidthConstraint(adjust: 12, layoutGuide: .view)
+            .matchHeightConstraint(adjust: 12, layoutGuide: .view)
             .animateOnPress(self)
 
         self.icon

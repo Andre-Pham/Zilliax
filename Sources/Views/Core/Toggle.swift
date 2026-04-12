@@ -58,7 +58,7 @@ public class Toggle: View {
         self.thumbLeftConstraint = self.thumb.constrainLeftValue(padding: Self.INNER_PADDING)
 
         self.control
-            .constrainAllSides(respectSafeArea: false)
+            .constrainAllSides(layoutGuide: .view)
             .setOnRelease({ [weak self] in
                 self?.toggle()
             })

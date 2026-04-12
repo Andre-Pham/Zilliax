@@ -92,7 +92,7 @@ public class CollectionViewViewController: UIViewController {
             })
 
         self.collectionView
-            .constrainHorizontal(respectSafeArea: false)
+            .constrainHorizontal(layoutGuide: .view)
             .constrainToUnderneath(of: self.header, padding: 36)
             .constrainBottom()
             .setVerticalBounce(to: true)

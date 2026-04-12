@@ -88,7 +88,7 @@ public class SegmentedControl<T: Any>: View {
             .setCornerRadius(to: (Self.HEIGHT - Self.INNER_PADDING * 2) / 2)
 
         self.segmentStack
-            .constrainAllSides(respectSafeArea: false)
+            .constrainAllSides(layoutGuide: .view)
             .setDistribution(to: .fillEqually)
 
         self.panGesture

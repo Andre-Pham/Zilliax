@@ -27,7 +27,7 @@ public class Scroll: View {
 
         self.scrollView
             .useAutoLayout()
-            .constrainAllSides(respectSafeArea: false)
+            .constrainAllSides(layoutGuide: .view)
     }
 
     // MARK: Functions

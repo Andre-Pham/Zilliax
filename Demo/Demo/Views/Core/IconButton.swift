@@ -32,14 +32,14 @@ public class IconButton: View {
             .add(self.icon)
 
         self.button
-            .constrainAllSides(respectSafeArea: false)
+            .constrainAllSides(layoutGuide: .view)
             .animateOnPress(self)
 
         self.icon
-            .constrainCenter(respectSafeArea: false)
+            .constrainCenter(layoutGuide: .view)
 
         self.spinner
-            .constrainCenter(respectSafeArea: false)
+            .constrainCenter(layoutGuide: .view)
             .setHidden(to: true)
             .setIcon(to: self.icon.config.with(systemName: "progress.indicator"))
     }

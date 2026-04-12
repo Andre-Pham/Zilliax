@@ -45,7 +45,7 @@ public class PillMultiselect<T: Any>: View {
         self.add(self.flowLayout)
 
         self.flowLayout
-            .constrainAllSides(respectSafeArea: false)
+            .constrainAllSides(layoutGuide: .view)
             .setSpacing(to: 8)
     }
 

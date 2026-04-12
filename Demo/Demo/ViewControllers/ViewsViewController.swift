@@ -15,12 +15,12 @@ public class ViewsViewController: UIViewController {
         "Button": ButtonViewController(),
         "CapsuleButton": CapsuleButtonViewController(),
         "Card": CardViewController(),
-        "CollectionView": CollectionViewViewController(),
-        "FlowLayout": FlowLayoutViewController(),
-        "HStack": HStackViewController(),
         "ClearableTextField": ClearableTextFieldViewController(),
+        "CollectionView": CollectionViewViewController(),
         "Control": ControlViewController(),
         "Details": DetailsViewController(),
+        "FlowLayout": FlowLayoutViewController(),
+        "HStack": HStackViewController(),
         "Icon": IconViewController(),
         "IconButton": IconButtonViewController(),
         "IconImage": IconImageViewController(),
@@ -44,6 +44,7 @@ public class ViewsViewController: UIViewController {
         "TabBarButton": TabBarButtonViewController(),
         "TapGesture": TapGestureViewController(),
         "Text": TextViewController(),
+        "TextArea": TextAreaViewController(),
         "TextButton": TextButtonViewController(),
         "TextField": TextFieldViewController(),
         "Toggle": ToggleViewController(),
@@ -67,7 +68,7 @@ public class ViewsViewController: UIViewController {
             .append(self.stack)
 
         self.stack
-            .constrainVertical(padding: Dimensions.screenContentPaddingVertical, toContentLayoutGuide: true)
+            .constrainVertical(padding: Dimensions.screenContentPaddingVertical, layoutGuide: .content)
             .constrainHorizontal(padding: Dimensions.screenContentPaddingHorizontal)
             .appendGap(size: DeviceContext.deviceType == .phone ? 0 : 24)
 

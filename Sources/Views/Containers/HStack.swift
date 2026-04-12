@@ -63,7 +63,7 @@ public class HStack: View {
 
         self.stack
             .useAutoLayout()
-            .constrainAllSides(respectSafeArea: false)
+            .constrainAllSides(layoutGuide: .view)
 
         self.stack.axis = .horizontal
         self.stack.alignment = .center

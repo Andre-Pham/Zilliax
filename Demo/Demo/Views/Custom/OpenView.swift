@@ -28,7 +28,7 @@ public class OpenView: View {
             .append(self.icon)
 
         self.button
-            .constrainAllSides(respectSafeArea: false)
+            .constrainAllSides(layoutGuide: .view)
             .animateOnPress(self)
 
         self.icon

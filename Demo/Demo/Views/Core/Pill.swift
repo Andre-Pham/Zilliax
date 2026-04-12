@@ -39,8 +39,8 @@ public class Pill: View {
             .add(self.contentStack)
 
         self.contentStack
-            .constrainVertical(respectSafeArea: false)
-            .constrainCenterHorizontal(respectSafeArea: false)
+            .constrainVertical(layoutGuide: .view)
+            .constrainCenterHorizontal(layoutGuide: .view)
             .setSpacing(to: 8)
             .constrainMaxLeft(padding: 18)
             .constrainMaxRight(padding: 18)

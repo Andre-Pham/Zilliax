@@ -50,14 +50,14 @@ public class CapsuleButton: View {
             .add(self.button)
 
         self.contentStack
-            .constrainVertical(respectSafeArea: false)
-            .constrainCenterHorizontal(respectSafeArea: false)
+            .constrainVertical(layoutGuide: .view)
+            .constrainCenterHorizontal(layoutGuide: .view)
             .setSpacing(to: 8)
             .constrainMaxLeft(padding: 24)
             .constrainMaxRight(padding: 24)
 
         self.button
-            .constrainAllSides(respectSafeArea: false)
+            .constrainAllSides(layoutGuide: .view)
             .animateOnPress(self)
 
         self.icon

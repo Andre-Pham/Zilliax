@@ -33,7 +33,7 @@ public class ClearableTextField: View {
         self.add(self.stack)
 
         self.stack
-            .constrainAllSides(respectSafeArea: false)
+            .constrainAllSides(layoutGuide: .view)
             .setBackgroundColor(to: Colors.fillSecondary)
             .setCornerRadius(to: 16)
             .append(self.textField)
@@ -55,7 +55,7 @@ public class ClearableTextField: View {
         self.textClearIcon
             .setSymbol(systemName: "xmark")
             .setWeight(to: .bold)
-            .constrainCenter(respectSafeArea: false)
+            .constrainCenter(layoutGuide: .view)
             .setSize(to: 18)
             .setColor(to: Colors.black)
             .setOpacity(to: 0.2)
