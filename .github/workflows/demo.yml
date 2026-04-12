@@ -24,7 +24,7 @@ jobs:
           brew install mint
           echo "$HOME/.mint/bin" >> "$GITHUB_PATH"
 
-      - name: Cache Mint packages
+      - name: Restore Mint Cache
         uses: actions/cache@v4
         with:
           path: ~/.mint
@@ -77,7 +77,7 @@ jobs:
           brew install mint
           echo "$HOME/.mint/bin" >> "$GITHUB_PATH"
 
-      - name: Cache Mint packages
+      - name: Restore Mint Cache
         uses: actions/cache@v4
         with:
           path: ~/.mint
