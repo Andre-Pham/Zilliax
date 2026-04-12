@@ -53,15 +53,8 @@ public class TextArea: View, UITextViewDelegate {
         let textContainerInset = self.textView.textContainerInset
 
         let horizontalPadding = textContainerInset.left + textContainer.lineFragmentPadding
-        self.placeholderText.leadingAnchor.constraint(
-            equalTo: self.textView.frameLayoutGuide.leadingAnchor,
-            constant: horizontalPadding
-        ).isActive = true
-        self.placeholderText.trailingAnchor.constraint(
-            equalTo: self.textView.frameLayoutGuide.trailingAnchor,
-            constant: -horizontalPadding
-        ).isActive = true
         self.placeholderText
+            .constrainHorizontal(to: self.textView, padding: horizontalPadding, layoutGuide: .frame)
             .constrainTop(padding: textContainerInset.top, layoutGuide: .view)
             .setTextColor(to: .placeholderText)
 
