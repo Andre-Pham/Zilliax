@@ -22,6 +22,13 @@ jobs:
       - name: Install Tools
         run: brew install swiftformat swiftlint xcbeautify
 
+      - name: Version Log
+        run: |
+          xcodebuild -version
+          swiftformat --version
+          swiftlint version
+          xcbeautify --version
+
       - name: SwiftFormat Check
         working-directory: Demo
         run: make format-check
@@ -49,6 +56,11 @@ jobs:
 
       - name: Install Tools
         run: brew install xcbeautify
+
+      - name: Version Log
+        run: |
+          xcodebuild -version
+          xcbeautify --version
 
       - name: Build
         working-directory: Demo
