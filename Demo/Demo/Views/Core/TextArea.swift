@@ -63,7 +63,7 @@ public class TextArea: View, UITextViewDelegate {
         self.placeholderText
             .setTextColor(to: .placeholderText)
 
-        self.setFont(to: Font(font: Fonts.Inter.Bold, size: 56))
+        self.setFont(to: UIFont.systemFont(ofSize: 56, weight: .bold))
             .setTextColor(to: Colors.textDark)
 
         NotificationCenter.default.addObserver(
