@@ -202,11 +202,15 @@ public class Stepper: View {
     @discardableResult
     public func setValue(to value: Int) -> Self {
         var clamped = value
-        if let minValue = self.minValue {
+        if let minValue {
             clamped = max(clamped, minValue)
         }
-        if let maxValue = self.maxValue {
+        if let maxValue {
             clamped = min(clamped, maxValue)
+        }
+        if let minValue, let maxValue, minValue > maxValue {
+            // Clamp to the smaller value
+            clamped = maxValue
         }
         self.value = clamped
         self.update()
