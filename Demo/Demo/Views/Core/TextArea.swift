@@ -253,6 +253,7 @@ public class TextArea: View, UITextViewDelegate {
             onSubmit(self.text)
             return false
         }
+        // Respect the max character limit, if applicable
         if let maxCharacters = self.maxCharacters {
             let currentText = textView.text ?? ""
             guard let stringRange = Range(range, in: currentText) else {
