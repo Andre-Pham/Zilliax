@@ -20,6 +20,9 @@ public class TextArea: View, UITextViewDelegate {
     private var onChange: ((String) -> Void)? = nil
     private var placeholderHiddenOnFocus = false
     private var scrollButtonsEnabled = true
+    private var maxCharacters: Int? = nil
+    private var placeholderHorizontalConstraints: (left: NSLayoutConstraint, right: NSLayoutConstraint)?
+    private var placeholderTopConstraint: NSLayoutConstraint?
 
     // MARK: Computed Properties
 
@@ -53,12 +56,14 @@ public class TextArea: View, UITextViewDelegate {
         let textContainerInset = self.textView.textContainerInset
         let horizontalPadding = textContainerInset.left + textContainer.lineFragmentPadding
 
+        self.placeholderHorizontalConstraints = self.placeholderText
+            .constrainHorizontalValue(to: self.textView, padding: horizontalPadding, layoutGuide: .frame)
+        self.placeholderTopConstraint = self.placeholderText
+            .constrainTopValue(padding: textContainerInset.top, layoutGuide: .view)
         self.placeholderText
-            .constrainHorizontal(to: self.textView, padding: horizontalPadding, layoutGuide: .frame)
-            .constrainTop(padding: textContainerInset.top, layoutGuide: .view)
             .setTextColor(to: .placeholderText)
 
-        self.setFont(to: UIFont.systemFont(ofSize: 56, weight: .bold))
+        self.setFont(to: Font(font: Fonts.Inter.Bold, size: 56))
             .setTextColor(to: Colors.textDark)
 
         NotificationCenter.default.addObserver(
@@ -136,6 +141,16 @@ public class TextArea: View, UITextViewDelegate {
     }
 
     @discardableResult
+    public func fitTextToContainer() -> Self {
+        self.textView.textContainerInset = .zero
+        self.textView.textContainer.lineFragmentPadding = 0.0
+        self.placeholderHorizontalConstraints?.left.constant = 0.0
+        self.placeholderHorizontalConstraints?.right.constant = 0.0
+        self.placeholderTopConstraint?.constant = 0.0
+        return self
+    }
+
+    @discardableResult
     public func setOnSubmit(_ callback: ((String) -> Void)?) -> Self {
         self.onSubmit = callback
         return self
@@ -186,6 +201,12 @@ public class TextArea: View, UITextViewDelegate {
     }
 
     @discardableResult
+    public func setMaxCharacters(to max: Int?) -> Self {
+        self.maxCharacters = max
+        return self
+    }
+
+    @discardableResult
     public func setPlaceholderHiddenOnFocus(to hidden: Bool) -> Self {
         self.placeholderHiddenOnFocus = hidden
         return self
@@ -223,6 +244,24 @@ public class TextArea: View, UITextViewDelegate {
         self.textView.textAlignment = alignment
         self.placeholderText.setTextAlignment(to: alignment)
         return self
+    }
+
+    public func textView(_ textView: UITextView, shouldChangeTextIn range: NSRange, replacementText text: String) -> Bool {
+        // If the user taps the submit button (text is "\n") and onSubmit is defined, trigger the submit callback and close
+        // Otherwise, behave as normal
+        if text == "\n", let onSubmit = self.onSubmit {
+            onSubmit(self.text)
+            return false
+        }
+        if let maxCharacters = self.maxCharacters {
+            let currentText = textView.text ?? ""
+            guard let stringRange = Range(range, in: currentText) else {
+                return false
+            }
+            let updatedText = currentText.replacingCharacters(in: stringRange, with: text)
+            return updatedText.count <= maxCharacters
+        }
+        return true
     }
 
     public func textViewDidChange(_ textView: UITextView) {
