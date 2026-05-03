@@ -19,6 +19,13 @@ public class PillX: View {
 
     private static let HEIGHT = 36.0
 
+    // MARK: Overridden Properties
+
+    public override var intrinsicContentSize: CGSize {
+        let contentSize = self.contentStack.systemLayoutSizeFitting(UIView.layoutFittingCompressedSize)
+        return CGSize(width: contentSize.width + 36, height: Self.HEIGHT)
+    }
+
     // MARK: Properties
 
     private let contentStack = HStack()
@@ -44,9 +51,8 @@ public class PillX: View {
         self.contentStack
             .constrainVertical(layoutGuide: .view)
             .constrainCenterHorizontal(layoutGuide: .view)
+            .constrainMaxHorizontal(padding: 18)
             .setSpacing(to: 8)
-            .constrainMaxLeft(padding: 18)
-            .constrainMaxRight(padding: 18)
             .append(self.iconX)
 
         self.buttonX
@@ -86,6 +92,7 @@ public class PillX: View {
         self.iconAlignment = alignment
         self.icon.setIcon(to: config)
         self.pinXToEnd()
+        self.invalidateIntrinsicContentSize()
         return self
     }
 
@@ -101,12 +108,14 @@ public class PillX: View {
         }
         self.label.setText(to: label)
         self.pinXToEnd()
+        self.invalidateIntrinsicContentSize()
         return self
     }
 
     @discardableResult
     public func setFont(to font: UIFont) -> Self {
         self.label.setFont(to: font)
+        self.invalidateIntrinsicContentSize()
         return self
     }
 

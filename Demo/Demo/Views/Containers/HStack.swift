@@ -14,6 +14,7 @@ public class HStack: View {
     private var startSpacer: UIView? = nil
     private var endSpacer: UIView? = nil
     private var popping = Set<ObjectIdentifier>()
+    private var horizontalSpacers = [UIView]()
 
     // MARK: Computed Properties
 
@@ -47,10 +48,9 @@ public class HStack: View {
     }
 
     private var horizontalSpacer: UIView {
-        let spacerView = UIView()
-        spacerView.useAutoLayout()
-        spacerView.setContentHuggingPriority(.defaultLow, for: .horizontal)
-        spacerView.setContentCompressionResistancePriority(.defaultLow, for: .horizontal)
+        let spacerView = View().setContentPriority(to: UILayoutPriority(1), for: .horizontal)
+        let spacerWidth = spacerView.setWidthConstraintValue(to: 0)
+        spacerWidth.priority = UILayoutPriority(1)
         return spacerView
     }
 
@@ -86,6 +86,7 @@ public class HStack: View {
         let spacer = self.horizontalSpacer
         self.startSpacer = spacer
         self.insert(spacer, at: 0, animated: animated, onCompletion: onCompletion)
+        self.registerSpacer(spacer)
         return self
     }
 
@@ -103,6 +104,7 @@ public class HStack: View {
         let spacer = self.horizontalSpacer
         self.endSpacer = spacer
         self.append(spacer, animated: animated, onCompletion: onCompletion)
+        self.registerSpacer(spacer)
         return self
     }
 
@@ -249,12 +251,18 @@ public class HStack: View {
 
     @discardableResult
     public func appendSpacer(animated: Bool = false, onCompletion: (() -> Void)? = nil) -> Self {
-        return self.append(self.horizontalSpacer, animated: animated, onCompletion: onCompletion)
+        let spacer = self.horizontalSpacer
+        self.append(spacer, animated: animated, onCompletion: onCompletion)
+        self.registerSpacer(spacer)
+        return self
     }
 
     @discardableResult
     public func insertSpacer(at position: Int, animated: Bool = false, onCompletion: (() -> Void)? = nil) -> Self {
-        return self.insert(self.horizontalSpacer, at: position, animated: animated, onCompletion: onCompletion)
+        let spacer = self.horizontalSpacer
+        self.insert(spacer, at: position, animated: animated, onCompletion: onCompletion)
+        self.registerSpacer(spacer)
+        return self
     }
 
     @discardableResult
@@ -293,11 +301,13 @@ public class HStack: View {
                     view.remove()
                         .setOpacity(to: 1.0)
                         .setHidden(to: false)
+                    self.unregisterSpacer(view)
                     onCompletion?()
                 }
             )
         } else {
             view.remove()
+            self.unregisterSpacer(view)
             onCompletion?()
         }
         return self
@@ -325,6 +335,7 @@ public class HStack: View {
     public func removeAll() -> Self {
         for view in self.stack.arrangedSubviews where view != self.startSpacer && view != self.endSpacer {
             view.remove()
+            self.unregisterSpacer(view)
         }
         return self
     }
@@ -351,5 +362,16 @@ public class HStack: View {
     public func setAlignment(to alignment: UIStackView.Alignment) -> Self {
         self.stack.alignment = alignment
         return self
+    }
+
+    private func registerSpacer(_ spacer: UIView) {
+        for existing in self.horizontalSpacers {
+            spacer.matchWidthConstraint(to: existing, layoutGuide: .view)
+        }
+        self.horizontalSpacers.append(spacer)
+    }
+
+    private func unregisterSpacer(_ view: UIView) {
+        self.horizontalSpacers.removeAll { $0 === view }
     }
 }
