@@ -372,6 +372,6 @@ public class HStack: View {
     }
 
     private func unregisterSpacer(_ view: UIView) {
-        self.horizontalSpacers.removeAll { $0 === view }
+        self.horizontalSpacers.removeAll(where: { $0 === view })
     }
 }

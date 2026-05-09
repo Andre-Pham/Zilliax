@@ -372,6 +372,6 @@ public class VStack: View {
     }
 
     private func unregisterSpacer(_ view: UIView) {
-        self.verticalSpacers.removeAll { $0 === view }
+        self.verticalSpacers.removeAll(where: { $0 === view })
     }
 }
