@@ -23,7 +23,8 @@ public class PillButton: View {
 
     public override var intrinsicContentSize: CGSize {
         let contentSize = self.contentStack.systemLayoutSizeFitting(UIView.layoutFittingCompressedSize)
-        return CGSize(width: contentSize.width + 36, height: Self.HEIGHT)
+        let width = contentSize.width + 36
+        return CGSize(width: min(width, self.maxWidth ?? width), height: Self.HEIGHT)
     }
 
     // MARK: Properties
@@ -37,6 +38,8 @@ public class PillButton: View {
     private var iconAlignment = IconAlignment.left
     private var labelAdded = false
     private var isLoading = false
+    private var maxWidth: Double?
+    private var maxWidthConstraint: NSLayoutConstraint?
 
     // MARK: Computed Properties
 
@@ -75,6 +78,7 @@ public class PillButton: View {
             .setFont(to: UIFont.systemFont(ofSize: 15, weight: .semibold))
             .setTextColor(to: Colors.textSecondary)
             .setTextAlignment(to: .center)
+            .toggleWordWrapping(to: false)
     }
 
     // MARK: Functions
@@ -119,6 +123,18 @@ public class PillButton: View {
     @discardableResult
     public func setFont(to font: UIFont) -> Self {
         self.label.setFont(to: font)
+        self.invalidateIntrinsicContentSize()
+        return self
+    }
+
+    @discardableResult
+    public func setMaxWidth(to width: Double) -> Self {
+        self.maxWidth = width
+        if let maxWidthConstraint {
+            maxWidthConstraint.constant = width
+        } else {
+            self.maxWidthConstraint = self.setMaxWidthConstraintValue(to: width)
+        }
         self.invalidateIntrinsicContentSize()
         return self
     }
