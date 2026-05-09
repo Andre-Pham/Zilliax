@@ -19,6 +19,14 @@ public class Pill: View {
 
     private static let HEIGHT = 36.0
 
+    // MARK: Overridden Properties
+
+    public override var intrinsicContentSize: CGSize {
+        let contentSize = self.contentStack.systemLayoutSizeFitting(UIView.layoutFittingCompressedSize)
+        let width = contentSize.width + 36
+        return CGSize(width: min(width, self.maxWidth ?? width), height: Self.HEIGHT)
+    }
+
     // MARK: Properties
 
     private let contentStack = HStack()
@@ -27,6 +35,8 @@ public class Pill: View {
     private var iconAdded = false
     private var iconAlignment = IconAlignment.left
     private var labelAdded = false
+    private var maxWidth: Double?
+    private var maxWidthConstraint: NSLayoutConstraint?
 
     // MARK: Overridden Functions
 
@@ -41,9 +51,8 @@ public class Pill: View {
         self.contentStack
             .constrainVertical(layoutGuide: .view)
             .constrainCenterHorizontal(layoutGuide: .view)
+            .constrainMaxHorizontal(padding: 18)
             .setSpacing(to: 8)
-            .constrainMaxLeft(padding: 18)
-            .constrainMaxRight(padding: 18)
 
         self.icon
             .setIcon(to: .init(size: 14, weight: .bold, color: Colors.textSecondary))
@@ -52,6 +61,7 @@ public class Pill: View {
             .setFont(to: UIFont.systemFont(ofSize: 15, weight: .semibold))
             .setTextColor(to: Colors.textSecondary)
             .setTextAlignment(to: .center)
+            .toggleWordWrapping(to: false)
     }
 
     // MARK: Functions
@@ -72,6 +82,7 @@ public class Pill: View {
         }
         self.iconAlignment = alignment
         self.icon.setIcon(to: config)
+        self.invalidateIntrinsicContentSize()
         return self
     }
 
@@ -86,12 +97,26 @@ public class Pill: View {
             self.labelAdded = true
         }
         self.label.setText(to: label)
+        self.invalidateIntrinsicContentSize()
         return self
     }
 
     @discardableResult
     public func setFont(to font: UIFont) -> Self {
         self.label.setFont(to: font)
+        self.invalidateIntrinsicContentSize()
+        return self
+    }
+
+    @discardableResult
+    public func setMaxWidth(to width: Double) -> Self {
+        self.maxWidth = width
+        if let maxWidthConstraint {
+            maxWidthConstraint.constant = width
+        } else {
+            self.maxWidthConstraint = self.setMaxWidthConstraintValue(to: width)
+        }
+        self.invalidateIntrinsicContentSize()
         return self
     }
 
