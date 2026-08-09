@@ -11,8 +11,13 @@ public class Slider: View {
     // MARK: Static Properties
 
     private static let SCRUBBER_DIAMETER = 30.0
+    private static let DEFAULT_LABEL_WIDTH = 50.0
+    private static let DEFAULT_LABEL_HEIGHT = 35.0
+    private static let LABEL_CORNER_RADIUS_HEIGHT_MULTIPLIER = 0.45
 
     // MARK: Properties
+
+    public let scrubberLabelText = Text()
 
     public private(set) var progressProportion: CGFloat = 0.0 {
         didSet {
@@ -27,6 +32,8 @@ public class Slider: View {
     private let scrubberBackground = View()
     private let scrubberLine = View()
     private let scrubberControl = View()
+    private let scrubberLabel = View()
+    private var label: ((_ proportion: Double) -> String)? = nil
     private var onStartTracking: (() -> Void)? = nil
     private var onEndTracking: (() -> Void)? = nil
     private var onChange: ((_ proportion: Double) -> Void)? = nil
@@ -69,12 +76,41 @@ public class Slider: View {
             .setHeightConstraint(to: Self.SCRUBBER_DIAMETER)
             .constrainCenterVertical()
             .setCornerRadius(to: Self.SCRUBBER_DIAMETER / 2.0)
+            .add(self.scrubberLabel)
+
+        self.scrubberLabel
+            .constrainCenterHorizontal(layoutGuide: .view)
+            .constrainToOnTop(padding: 10.0, layoutGuide: .view)
+            .setWidthConstraint(to: Self.DEFAULT_LABEL_WIDTH)
+            .setHeightConstraint(to: Self.DEFAULT_LABEL_HEIGHT)
+            .setCornerRadius(to: Self.DEFAULT_LABEL_HEIGHT * Self.LABEL_CORNER_RADIUS_HEIGHT_MULTIPLIER)
+            .setBackgroundColor(to: Colors.fillForeground)
+            .addShadow()
+            .add(self.scrubberLabelText)
+
+        self.scrubberLabelText
+            .constrainCenterVertical(layoutGuide: .view)
+            .constrainCenterHorizontal(layoutGuide: .view)
+            .setFont(to: UIFont.systemFont(ofSize: 16, weight: .bold))
+            .setTextColor(to: Colors.textDark)
+
+        self.disableScrubberLabel()
     }
 
     // MARK: Functions
 
     public func setProgress(to proportion: Double) {
         self.progressProportion = min(1.0, max(0.0, proportion))
+    }
+
+    @discardableResult
+    public func setLabel(_ callback: ((_ proportion: Double) -> String)?) -> Self {
+        self.label = callback
+        if self.isTracking {
+            self.redrawScrubberLabel()
+            self.activateScrubberLabel()
+        }
+        return self
     }
 
     @discardableResult
@@ -99,7 +135,49 @@ public class Slider: View {
     public func setDisabled(to state: Bool) -> Self {
         self.isDisabled = state
         self.isTracking = false
+        self.disableScrubberLabel()
         return self
+    }
+
+    private func redrawScrubberLabel() {
+        guard let label = self.label else {
+            return
+        }
+        self.scrubberLabelText.setText(to: label(self.progressProportion))
+        self.scrubberLabel
+            .removeWidthConstraint()
+            .removeHeightConstraint()
+        let textSize = self.scrubberLabelText.contentBasedSize
+        let horizontalPadding = 12.0
+        let verticalPadding = 10.0
+        let fittedWidth = textSize.width + horizontalPadding * 2
+        let fittedHeight = textSize.height + verticalPadding * 2
+        if fittedWidth.isGreater(than: Self.DEFAULT_LABEL_WIDTH) {
+            self.scrubberLabel.setWidthConstraint(to: fittedWidth)
+        } else {
+            self.scrubberLabel.setWidthConstraint(to: Self.DEFAULT_LABEL_WIDTH)
+        }
+        if fittedHeight.isGreater(than: Self.DEFAULT_LABEL_HEIGHT) {
+            self.scrubberLabel
+                .setHeightConstraint(to: fittedHeight)
+                .setCornerRadius(to: fittedHeight * Self.LABEL_CORNER_RADIUS_HEIGHT_MULTIPLIER)
+        } else {
+            self.scrubberLabel
+                .setHeightConstraint(to: Self.DEFAULT_LABEL_HEIGHT)
+                .setCornerRadius(to: Self.DEFAULT_LABEL_HEIGHT * Self.LABEL_CORNER_RADIUS_HEIGHT_MULTIPLIER)
+        }
+        self.scrubberLabel.reframeIntoWindow(
+            padding: Dimensions.screenContentPaddingHorizontal / 2.0,
+            inset: Dimensions.screenContentPaddingHorizontal / 2.0
+        )
+    }
+
+    private func activateScrubberLabel() {
+        self.scrubberLabel.setHidden(to: self.label == nil)
+    }
+
+    private func disableScrubberLabel() {
+        self.scrubberLabel.setHidden(to: true)
     }
 
     private func onDrag(_ gesture: UIPanGestureRecognizer) {
@@ -109,6 +187,8 @@ public class Slider: View {
         switch gesture.state {
         case .began:
             self.isTracking = true
+            self.redrawScrubberLabel()
+            self.activateScrubberLabel()
             self.onStartTracking?()
         case .changed:
             let containerWidth = self.container.frame.width
@@ -124,8 +204,10 @@ public class Slider: View {
             let newProgress = positionInLine / lineWidth
             self.progressProportion = min(1.0, max(0.0, newProgress))
             self.onChange?(self.progressProportion)
+            self.redrawScrubberLabel()
         case .ended, .cancelled, .failed:
             self.isTracking = false
+            self.disableScrubberLabel()
             self.onEndTracking?()
         default:
             break
