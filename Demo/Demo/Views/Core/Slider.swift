@@ -97,6 +97,17 @@ public class Slider: View {
         self.disableScrubberLabel()
     }
 
+    public override func layoutSubviews() {
+        super.layoutSubviews()
+        // If any layout occurs the view needs to be re-drawn
+        // Otherwise the position is reset
+        // Includes: device rotation, size class change (on iPad), light/dark mode changes, moving app to background then foreground, etc.
+        // Must occur on the main thread to update (layout callbacks can trigger off the main thread, e.g. size changes on iPad)
+        DispatchQueue.main.async { [weak self] in
+            self?.updateCirclePosition()
+        }
+    }
+
     // MARK: Functions
 
     public func setProgress(to proportion: Double) {
