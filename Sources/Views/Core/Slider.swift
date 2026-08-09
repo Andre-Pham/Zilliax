@@ -27,16 +27,37 @@ public class Slider: View {
 
     public private(set) var isTracking = false
     public private(set) var isDisabled = false
+    public private(set) var minValue = 0.0
+    public private(set) var maxValue = 1.0
 
     private let container = PanGesture()
     private let scrubberBackground = View()
     private let scrubberLine = View()
     private let scrubberControl = View()
     private let scrubberLabel = View()
-    private var label: ((_ proportion: Double) -> String)? = nil
+    private var label: ((_ proportion: Double, _ value: Double) -> String)? = nil
     private var onStartTracking: (() -> Void)? = nil
     private var onEndTracking: (() -> Void)? = nil
-    private var onChange: ((_ proportion: Double) -> Void)? = nil
+    private var onChange: ((_ proportion: Double, _ value: Double) -> Void)? = nil
+
+    // MARK: Computed Properties
+
+    /// The current selected value derived from the proportion, min value, and max value
+    public var value: Double {
+        guard let valueRange = self.valueRange else {
+            return self.minValue
+        }
+        return self.minValue + self.progressProportion * valueRange
+    }
+
+    /// The distance between the min and max values, or nil if the range is invalid
+    private var valueRange: Double? {
+        if self.maxValue.isLess(than: self.minValue) {
+            assertionFailure("Max value must be greater or equal to min value")
+            return nil
+        }
+        return self.maxValue - self.minValue
+    }
 
     // MARK: Overridden Functions
 
@@ -110,12 +131,55 @@ public class Slider: View {
 
     // MARK: Functions
 
-    public func setProgress(to proportion: Double) {
-        self.progressProportion = min(1.0, max(0.0, proportion))
+    @discardableResult
+    public func setMin(to minValue: Double) -> Self {
+        self.minValue = minValue
+        if self.isTracking {
+            self.redrawScrubberLabel()
+        }
+        return self
     }
 
     @discardableResult
-    public func setLabel(_ callback: ((_ proportion: Double) -> String)?) -> Self {
+    public func setMax(to maxValue: Double) -> Self {
+        self.maxValue = maxValue
+        if self.isTracking {
+            self.redrawScrubberLabel()
+        }
+        return self
+    }
+
+    @discardableResult
+    public func setRange(min: Double, max: Double) -> Self {
+        self.minValue = min
+        self.maxValue = max
+        if self.isTracking {
+            self.redrawScrubberLabel()
+        }
+        return self
+    }
+
+    public func setProgress(to proportion: Double) {
+        self.progressProportion = min(1.0, max(0.0, proportion))
+        if self.isTracking {
+            self.redrawScrubberLabel()
+        }
+    }
+
+    public func setValue(to value: Double) {
+        guard let valueRange = self.valueRange else {
+            return
+        }
+        guard valueRange.isGreaterThanZero() else {
+            self.setProgress(to: 0.0)
+            return
+        }
+        let clamped = min(self.maxValue, max(self.minValue, value))
+        self.setProgress(to: (clamped - self.minValue) / valueRange)
+    }
+
+    @discardableResult
+    public func setLabel(_ callback: ((_ proportion: Double, _ value: Double) -> String)?) -> Self {
         self.label = callback
         if self.isTracking {
             self.redrawScrubberLabel()
@@ -137,7 +201,7 @@ public class Slider: View {
     }
 
     @discardableResult
-    public func setOnChange(_ callback: ((_ proportion: Double) -> Void)?) -> Self {
+    public func setOnChange(_ callback: ((_ proportion: Double, _ value: Double) -> Void)?) -> Self {
         self.onChange = callback
         return self
     }
@@ -154,7 +218,7 @@ public class Slider: View {
         guard let label = self.label else {
             return
         }
-        self.scrubberLabelText.setText(to: label(self.progressProportion))
+        self.scrubberLabelText.setText(to: label(self.progressProportion, self.value))
         self.scrubberLabel
             .removeWidthConstraint()
             .removeHeightConstraint()
@@ -214,7 +278,7 @@ public class Slider: View {
             }()
             let newProgress = positionInLine / lineWidth
             self.progressProportion = min(1.0, max(0.0, newProgress))
-            self.onChange?(self.progressProportion)
+            self.onChange?(self.progressProportion, self.value)
             self.redrawScrubberLabel()
         case .ended, .cancelled, .failed:
             self.isTracking = false
