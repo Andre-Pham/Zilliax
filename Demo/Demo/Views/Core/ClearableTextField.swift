@@ -119,6 +119,12 @@ public class ClearableTextField: View {
     }
 
     @discardableResult
+    public func setSecureTextEntry(to secure: Bool) -> Self {
+        self.textField.isSecureTextEntry = secure
+        return self
+    }
+
+    @discardableResult
     public func setText(to text: String?) -> Self {
         self.textField.text = text
         return self
