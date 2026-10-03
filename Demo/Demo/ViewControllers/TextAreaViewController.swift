@@ -10,7 +10,6 @@ public class TextAreaViewController: UIViewController {
 
     private let header = HeaderView()
     private let textArea = TextArea()
-    private let tapGesture = TapGesture()
 
     // MARK: Overridden Functions
 
@@ -41,23 +40,6 @@ public class TextAreaViewController: UIViewController {
             .setPlaceholder(to: "Placeholder")
             .setPlaceholderHiddenOnFocus(to: true)
             .setTextAlignment(to: .center)
-
-        self.tapGesture
-            .setCancelsTouchesInView(to: false)
-            .setOnGesture({ [weak self] gesture in
-                self?.handleTap(gesture)
-            })
-            .addGestureRecognizer(to: self.view)
-    }
-
-    // MARK: Functions
-
-    private func handleTap(_ gesture: UITapGestureRecognizer) {
-        let location = gesture.location(in: self.view)
-        let hitView = self.view.hitTest(location, with: nil)
-        if let hitView, hitView.existsWithinHierarchy(of: self.textArea) {
-            return
-        }
-        self.view.endEditing(true)
+            .setTapToDismiss(to: self.view)
     }
 }

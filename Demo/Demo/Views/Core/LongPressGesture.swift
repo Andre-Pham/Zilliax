@@ -35,6 +35,12 @@ public class LongPressGesture: View {
     }
 
     @discardableResult
+    public func removeGestureRecognizer() -> Self {
+        self.gesture.view?.removeGestureRecognizer(self.gesture)
+        return self
+    }
+
+    @discardableResult
     public func setCancelsTouchesInView(to state: Bool) -> Self {
         self.gesture.cancelsTouchesInView = state
         return self
