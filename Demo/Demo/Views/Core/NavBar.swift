@@ -34,7 +34,7 @@ public class NavBar: View {
             .appendGap(size: 16)
 
         self.title
-            .setFont(to: UIFont.systemFont(ofSize: 22, weight: .bold))
+            .setFont(to: UIFont.systemFont(ofSize: 22, weight: .semibold))
             .toggleWordWrapping(to: false)
             .setHeightConstraint(to: ceil(self.title.font.lineHeight))
             .setTextColor(to: Colors.textDark)
