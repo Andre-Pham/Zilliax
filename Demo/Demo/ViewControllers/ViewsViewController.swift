@@ -28,6 +28,7 @@ public class ViewsViewController: UIViewController {
         "Image": ImageViewController(),
         "KeyboardHover": KeyboardHoverViewController(),
         "LongPressGesture": LongPressGestureViewController(),
+        "NavBar": NavBarViewController(),
         "PanGesture": PanGestureViewController(),
         "Pill": PillViewController(),
         "PillButton": PillButtonViewController(),

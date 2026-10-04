@@ -39,7 +39,7 @@ public class KeyboardHoverViewController: UIViewController {
             .configureBottomConstraint(padding: Dimensions.screenContentPaddingVertical)
 
         self.textField
-            .matchWidthConstrainCenter(padding: Dimensions.screenContentPaddingHorizontal, maxWidth: 800)
+            .matchWidthConstrainCenter(padding: Dimensions.screenContentPaddingHorizontal, maxWidth: 400)
             .setPlaceholder(to: "Placeholder")
             .setTapToDismiss(to: self.view)
     }
