@@ -26,6 +26,7 @@ public class ViewsViewController: UIViewController {
         "IconImage": IconImageViewController(),
         "IconSpinner": IconSpinnerViewController(),
         "Image": ImageViewController(),
+        "KeyboardHover": KeyboardHoverViewController(),
         "LongPressGesture": LongPressGestureViewController(),
         "PanGesture": PanGestureViewController(),
         "Pill": PillViewController(),
