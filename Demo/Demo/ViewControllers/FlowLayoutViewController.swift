@@ -58,11 +58,7 @@ public class FlowLayoutViewController: UIViewController {
             .setTitle(to: "FlowLayout")
             .setDescription(to: "A container whereby subviews are arranged horizontally and wrapped vertically.")
             .setOnBack({ [weak self] in
-                guard let nav = self?.navigationController else {
-                    assertionFailure("Expected navigation controller")
-                    return
-                }
-                nav.popViewController(animated: true)
+                Navigation.pop(self)
             })
 
         self.flow

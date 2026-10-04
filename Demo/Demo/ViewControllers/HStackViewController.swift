@@ -58,11 +58,7 @@ public class HStackViewController: UIViewController {
             .setTitle(to: "HStack")
             .setDescription(to: "A container whereby subviews are arranged horizontally.")
             .setOnBack({ [weak self] in
-                guard let nav = self?.navigationController else {
-                    assertionFailure("Expected navigation controller")
-                    return
-                }
-                nav.popViewController(animated: true)
+                Navigation.pop(self)
             })
 
         self.stack

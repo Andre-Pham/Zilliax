@@ -26,11 +26,7 @@ public class TextFieldViewController: UIViewController {
             .setTitle(to: "TextField")
             .setDescription(to: "A standard text field.")
             .setOnBack({ [weak self] in
-                guard let nav = self?.navigationController else {
-                    assertionFailure("Expected navigation controller")
-                    return
-                }
-                nav.popViewController(animated: true)
+                Navigation.pop(self)
             })
 
         self.textField

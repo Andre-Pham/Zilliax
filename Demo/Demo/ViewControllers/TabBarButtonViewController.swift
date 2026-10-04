@@ -26,11 +26,7 @@ public class TabBarButtonViewController: UIViewController {
             .setTitle(to: "TabBarButton")
             .setDescription(to: "Used with TabBarController to create a responsive tab bar.")
             .setOnBack({ [weak self] in
-                guard let nav = self?.navigationController else {
-                    assertionFailure("Expected navigation controller")
-                    return
-                }
-                nav.popViewController(animated: true)
+                Navigation.pop(self)
             })
 
         self.tabBarButton

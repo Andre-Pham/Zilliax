@@ -27,11 +27,7 @@ public class LongPressGestureViewController: UIViewController {
             .setTitle(to: "LongPressGesture")
             .setDescription(to: "A base view for recognizing long press gestures.")
             .setOnBack({ [weak self] in
-                guard let nav = self?.navigationController else {
-                    assertionFailure("Expected navigation controller")
-                    return
-                }
-                nav.popViewController(animated: true)
+                Navigation.pop(self)
             })
 
         self.longPressGesture

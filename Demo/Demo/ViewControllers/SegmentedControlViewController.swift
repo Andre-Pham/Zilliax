@@ -26,11 +26,7 @@ public class SegmentedControlViewController: UIViewController {
             .setTitle(to: "SegmentedControl")
             .setDescription(to: "A segmented control for selecting a single option.")
             .setOnBack({ [weak self] in
-                guard let nav = self?.navigationController else {
-                    assertionFailure("Expected navigation controller")
-                    return
-                }
-                nav.popViewController(animated: true)
+                Navigation.pop(self)
             })
 
         self.segmentedControl

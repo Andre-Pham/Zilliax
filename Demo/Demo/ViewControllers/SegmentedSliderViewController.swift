@@ -26,11 +26,7 @@ public class SegmentedSliderViewController: UIViewController {
             .setTitle(to: "SegmentedSlider")
             .setDescription(to: "A segmented slider. Allows the selection of a discrete value.")
             .setOnBack({ [weak self] in
-                guard let nav = self?.navigationController else {
-                    assertionFailure("Expected navigation controller")
-                    return
-                }
-                nav.popViewController(animated: true)
+                Navigation.pop(self)
             })
 
         self.segmentedSlider

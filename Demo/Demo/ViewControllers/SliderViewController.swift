@@ -26,11 +26,7 @@ public class SliderViewController: UIViewController {
             .setTitle(to: "Slider")
             .setDescription(to: "A continuous slider. Allows the selection of a value within a given range.")
             .setOnBack({ [weak self] in
-                guard let nav = self?.navigationController else {
-                    assertionFailure("Expected navigation controller")
-                    return
-                }
-                nav.popViewController(animated: true)
+                Navigation.pop(self)
             })
 
         self.slider

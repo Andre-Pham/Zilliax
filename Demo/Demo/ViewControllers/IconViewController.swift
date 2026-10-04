@@ -26,11 +26,7 @@ public class IconViewController: UIViewController {
             .setTitle(to: "Icon")
             .setDescription(to: "An icon view. By default, has no intrinsic width or height.")
             .setOnBack({ [weak self] in
-                guard let nav = self?.navigationController else {
-                    assertionFailure("Expected navigation controller")
-                    return
-                }
-                nav.popViewController(animated: true)
+                Navigation.pop(self)
             })
 
         self.icon

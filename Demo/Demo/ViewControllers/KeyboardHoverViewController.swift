@@ -27,11 +27,7 @@ public class KeyboardHoverViewController: UIViewController {
             .setTitle(to: "KeyboardHover")
             .setDescription(to: "Positions views relative to the keyboard layout guide (when active).")
             .setOnBack({ [weak self] in
-                guard let nav = self?.navigationController else {
-                    assertionFailure("Expected navigation controller")
-                    return
-                }
-                nav.popViewController(animated: true)
+                Navigation.pop(self)
             })
 
         self.keyboardHover

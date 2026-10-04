@@ -26,11 +26,7 @@ public class PillXViewController: UIViewController {
             .setTitle(to: "PillX")
             .setDescription(to: "A pill with a trailing x button.")
             .setOnBack({ [weak self] in
-                guard let nav = self?.navigationController else {
-                    assertionFailure("Expected navigation controller")
-                    return
-                }
-                nav.popViewController(animated: true)
+                Navigation.pop(self)
             })
 
         self.pillX

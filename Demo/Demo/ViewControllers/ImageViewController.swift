@@ -26,11 +26,7 @@ public class ImageViewController: UIViewController {
             .setTitle(to: "Image")
             .setDescription(to: "An image view.")
             .setOnBack({ [weak self] in
-                guard let nav = self?.navigationController else {
-                    assertionFailure("Expected navigation controller")
-                    return
-                }
-                nav.popViewController(animated: true)
+                Navigation.pop(self)
             })
 
         self.imageView

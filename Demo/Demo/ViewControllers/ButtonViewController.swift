@@ -30,11 +30,7 @@ public class ButtonViewController: UIViewController {
                 to: "The base view for buttons. Allows tap interactions, press and release animations, and context menu triggers."
             )
             .setOnBack({ [weak self] in
-                guard let nav = self?.navigationController else {
-                    assertionFailure("Expected navigation controller")
-                    return
-                }
-                nav.popViewController(animated: true)
+                Navigation.pop(self)
             })
 
         self.button

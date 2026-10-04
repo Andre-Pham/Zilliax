@@ -27,11 +27,7 @@ public class ControlViewController: UIViewController {
             .setTitle(to: "Control")
             .setDescription(to: "The base view for controls. Allows press and release interactions and animations.")
             .setOnBack({ [weak self] in
-                guard let nav = self?.navigationController else {
-                    assertionFailure("Expected navigation controller")
-                    return
-                }
-                nav.popViewController(animated: true)
+                Navigation.pop(self)
             })
 
         self.control

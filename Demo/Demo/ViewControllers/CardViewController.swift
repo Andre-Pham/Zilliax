@@ -27,11 +27,7 @@ public class CardViewController: UIViewController {
             .setTitle(to: "Card")
             .setDescription(to: "A standard card view.")
             .setOnBack({ [weak self] in
-                guard let nav = self?.navigationController else {
-                    assertionFailure("Expected navigation controller")
-                    return
-                }
-                nav.popViewController(animated: true)
+                Navigation.pop(self)
             })
 
         self.card

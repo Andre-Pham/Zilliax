@@ -84,11 +84,7 @@ public class CollectionViewViewController: UIViewController {
             .setTitle(to: "CollectionView")
             .setDescription(to: "A container that renders an ordered collection of data items using customizable layouts.")
             .setOnBack({ [weak self] in
-                guard let nav = self?.navigationController else {
-                    assertionFailure("Expected navigation controller")
-                    return
-                }
-                nav.popViewController(animated: true)
+                Navigation.pop(self)
             })
 
         self.collectionView
