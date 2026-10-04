@@ -25,7 +25,7 @@ public class KeyboardHoverViewController: UIViewController {
             .constrainTop()
             .constrainHorizontal(padding: Dimensions.screenContentPaddingHorizontal)
             .setTitle(to: "KeyboardHover")
-            .setDescription(to: "Positions views relative to the keyboard's layout guide (when active).")
+            .setDescription(to: "Positions views relative to the keyboard layout guide (when active).")
             .setOnBack({ [weak self] in
                 guard let nav = self?.navigationController else {
                     assertionFailure("Expected navigation controller")
