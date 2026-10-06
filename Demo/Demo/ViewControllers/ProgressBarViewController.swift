@@ -29,11 +29,7 @@ public class ProgressBarViewController: UIViewController {
             .setTitle(to: "ProgressBar")
             .setDescription(to: "A progress bar.")
             .setOnBack({ [weak self] in
-                guard let nav = self?.navigationController else {
-                    assertionFailure("Expected navigation controller")
-                    return
-                }
-                nav.popViewController(animated: true)
+                Navigation.pop(self)
             })
 
         self.progressBar

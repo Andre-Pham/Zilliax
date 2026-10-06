@@ -27,11 +27,7 @@ public class ScrollViewController: UIViewController {
             .setTitle(to: "Scroll")
             .setDescription(to: "A container that scrolls.")
             .setOnBack({ [weak self] in
-                guard let nav = self?.navigationController else {
-                    assertionFailure("Expected navigation controller")
-                    return
-                }
-                nav.popViewController(animated: true)
+                Navigation.pop(self)
             })
 
         self.scroll

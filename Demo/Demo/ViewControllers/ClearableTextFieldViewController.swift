@@ -10,7 +10,6 @@ public class ClearableTextFieldViewController: UIViewController {
 
     private let header = HeaderView()
     private let clearableTextField = ClearableTextField()
-    private let tapGesture = TapGesture()
 
     // MARK: Overridden Functions
 
@@ -27,34 +26,13 @@ public class ClearableTextFieldViewController: UIViewController {
             .setTitle(to: "ClearableTextField")
             .setDescription(to: "A clearable text field.")
             .setOnBack({ [weak self] in
-                guard let nav = self?.navigationController else {
-                    assertionFailure("Expected navigation controller")
-                    return
-                }
-                nav.popViewController(animated: true)
+                Navigation.pop(self)
             })
 
         self.clearableTextField
             .matchWidthConstrainCenter(padding: Dimensions.screenContentPaddingHorizontal, maxWidth: 400)
             .constrainCenterVertical()
             .setPlaceholder(to: "Placeholder")
-
-        self.tapGesture
-            .setCancelsTouchesInView(to: false)
-            .setOnGesture({ [weak self] gesture in
-                self?.handleTap(gesture)
-            })
-            .addGestureRecognizer(to: self.view)
-    }
-
-    // MARK: Functions
-
-    private func handleTap(_ gesture: UITapGestureRecognizer) {
-        let location = gesture.location(in: self.view)
-        let hitView = self.view.hitTest(location, with: nil)
-        if let hitView, hitView.existsWithinHierarchy(of: self.clearableTextField) {
-            return
-        }
-        self.view.endEditing(true)
+            .setTapToDismiss(to: self.view)
     }
 }

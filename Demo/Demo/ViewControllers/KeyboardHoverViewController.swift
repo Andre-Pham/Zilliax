@@ -1,15 +1,16 @@
 //
-//  TextAreaViewController.swift
+//  KeyboardHoverViewController.swift
 //  Demo
 //
 
 import UIKit
 
-public class TextAreaViewController: UIViewController {
+public class KeyboardHoverViewController: UIViewController {
     // MARK: Properties
 
     private let header = HeaderView()
-    private let textArea = TextArea()
+    private let textField = ClearableTextField()
+    private let keyboardHover = KeyboardHover()
 
     // MARK: Overridden Functions
 
@@ -18,24 +19,24 @@ public class TextAreaViewController: UIViewController {
 
         self.view
             .add(self.header)
-            .add(self.textArea)
+            .add(self.textField)
 
         self.header
             .constrainTop()
             .constrainHorizontal(padding: Dimensions.screenContentPaddingHorizontal)
-            .setTitle(to: "TextArea")
-            .setDescription(to: "An area for entering text.")
+            .setTitle(to: "KeyboardHover")
+            .setDescription(to: "Positions views relative to the keyboard layout guide (when active).")
             .setOnBack({ [weak self] in
                 Navigation.pop(self)
             })
 
-        self.textArea
+        self.keyboardHover
+            .setView(to: self.textField)
+            .configureBottomConstraint(padding: Dimensions.screenContentPaddingVertical)
+
+        self.textField
             .matchWidthConstrainCenter(padding: Dimensions.screenContentPaddingHorizontal, maxWidth: 400)
-            .constrainToUnderneath(of: self.header, padding: 36)
-            .setHeightConstraint(proportion: 0.25)
             .setPlaceholder(to: "Placeholder")
-            .setPlaceholderHiddenOnFocus(to: true)
-            .setTextAlignment(to: .center)
             .setTapToDismiss(to: self.view)
     }
 }

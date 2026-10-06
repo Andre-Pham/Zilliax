@@ -11,6 +11,7 @@ public class TextField: View {
     // MARK: Properties
 
     private let textField = InternalTextField()
+    private let tapToDismissGesture = TapGesture()
     private var onSubmit: ((String) -> Void)? = nil
     private var onFocus: (() -> Void)? = nil
     private var onUnfocus: (() -> Void)? = nil
@@ -32,6 +33,12 @@ public class TextField: View {
         self.textField
             .useAutoLayout()
             .constrainAllSides(layoutGuide: .view)
+
+        self.tapToDismissGesture
+            .setCancelsTouchesInView(to: false)
+            .setOnGesture({ [weak self] gesture in
+                self?.handleTapToDismiss(gesture)
+            })
 
         self.setFont(to: UIFont.systemFont(ofSize: 18, weight: .medium))
             .setTextColor(to: Colors.textDark)
@@ -83,6 +90,16 @@ public class TextField: View {
     }
 
     @discardableResult
+    public func setTapToDismiss(to view: UIView?) -> Self {
+        if let view {
+            self.tapToDismissGesture.addGestureRecognizer(to: view)
+        } else {
+            self.tapToDismissGesture.removeGestureRecognizer()
+        }
+        return self
+    }
+
+    @discardableResult
     public func setSubmitLabel(to label: UIReturnKeyType) -> Self {
         self.textField.returnKeyType = label
         return self
@@ -128,6 +145,17 @@ public class TextField: View {
     public func setTextAlignment(to alignment: NSTextAlignment) -> Self {
         self.textField.textAlignment = alignment
         return self
+    }
+
+    private func handleTapToDismiss(_ gesture: UITapGestureRecognizer) {
+        guard self.textField.isFirstResponder, let view = gesture.view else {
+            return
+        }
+        let location = gesture.location(in: view)
+        if let hitView = view.hitTest(location, with: nil), hitView.existsWithinHierarchy(of: self) {
+            return
+        }
+        self.textField.resignFirstResponder()
     }
 
     @objc

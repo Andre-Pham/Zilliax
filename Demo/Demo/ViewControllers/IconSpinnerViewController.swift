@@ -26,11 +26,7 @@ public class IconSpinnerViewController: UIViewController {
             .setTitle(to: "IconSpinner")
             .setDescription(to: "An icon spinner.")
             .setOnBack({ [weak self] in
-                guard let nav = self?.navigationController else {
-                    assertionFailure("Expected navigation controller")
-                    return
-                }
-                nav.popViewController(animated: true)
+                Navigation.pop(self)
             })
 
         self.spinner

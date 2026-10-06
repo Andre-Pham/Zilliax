@@ -26,11 +26,7 @@ public class ToggleViewController: UIViewController {
             .setTitle(to: "Toggle")
             .setDescription(to: "A control that toggles on/off.")
             .setOnBack({ [weak self] in
-                guard let nav = self?.navigationController else {
-                    assertionFailure("Expected navigation controller")
-                    return
-                }
-                nav.popViewController(animated: true)
+                Navigation.pop(self)
             })
 
         self.toggle

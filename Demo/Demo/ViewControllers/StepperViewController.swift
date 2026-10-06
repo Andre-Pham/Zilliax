@@ -26,11 +26,7 @@ public class StepperViewController: UIViewController {
             .setTitle(to: "Stepper")
             .setDescription(to: "A control that increments/decrements a number.")
             .setOnBack({ [weak self] in
-                guard let nav = self?.navigationController else {
-                    assertionFailure("Expected navigation controller")
-                    return
-                }
-                nav.popViewController(animated: true)
+                Navigation.pop(self)
             })
 
         self.stepper

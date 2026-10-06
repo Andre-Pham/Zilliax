@@ -13,6 +13,7 @@ extension UIView {
         case safeArea
         case content
         case frame
+        case keyboard
 
         internal func resolve(_ target: UIView) -> UILayoutGuide? {
             switch self {
@@ -30,6 +31,8 @@ extension UIView {
                     fatalError("frameLayoutGuide requires target to be a UIScrollView")
                 }
                 return scrollView.frameLayoutGuide
+            case .keyboard:
+                return target.keyboardLayoutGuide
             }
         }
     }

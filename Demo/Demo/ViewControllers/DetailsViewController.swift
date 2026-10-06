@@ -27,11 +27,7 @@ public class DetailsViewController: UIViewController {
             .setTitle(to: "Details")
             .setDescription(to: "A stacked list of title-value rows for compact detail summaries.")
             .setOnBack({ [weak self] in
-                guard let nav = self?.navigationController else {
-                    assertionFailure("Expected navigation controller")
-                    return
-                }
-                nav.popViewController(animated: true)
+                Navigation.pop(self)
             })
 
         self.card

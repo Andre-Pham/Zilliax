@@ -31,11 +31,7 @@ public class PanGestureViewController: UIViewController {
             .setTitle(to: "PanGesture")
             .setDescription(to: "A base view for recognizing panning gestures.")
             .setOnBack({ [weak self] in
-                guard let nav = self?.navigationController else {
-                    assertionFailure("Expected navigation controller")
-                    return
-                }
-                nav.popViewController(animated: true)
+                Navigation.pop(self)
             })
 
         self.panGesture

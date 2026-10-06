@@ -26,11 +26,7 @@ public class IconButtonViewController: UIViewController {
             .setTitle(to: "IconButton")
             .setDescription(to: "A standard circular button with an icon.")
             .setOnBack({ [weak self] in
-                guard let nav = self?.navigationController else {
-                    assertionFailure("Expected navigation controller")
-                    return
-                }
-                nav.popViewController(animated: true)
+                Navigation.pop(self)
             })
 
         self.iconButton

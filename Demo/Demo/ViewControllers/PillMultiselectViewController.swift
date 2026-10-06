@@ -26,11 +26,7 @@ public class PillMultiselectViewController: UIViewController {
             .setTitle(to: "PillMultiselect")
             .setDescription(to: "A collection of pills for selecting multiple options.")
             .setOnBack({ [weak self] in
-                guard let nav = self?.navigationController else {
-                    assertionFailure("Expected navigation controller")
-                    return
-                }
-                nav.popViewController(animated: true)
+                Navigation.pop(self)
             })
 
         self.pillMultiselect

@@ -28,11 +28,7 @@ public class TapGestureViewController: UIViewController {
             .setTitle(to: "TapGesture")
             .setDescription(to: "A base view for recognizing tap gestures.")
             .setOnBack({ [weak self] in
-                guard let nav = self?.navigationController else {
-                    assertionFailure("Expected navigation controller")
-                    return
-                }
-                nav.popViewController(animated: true)
+                Navigation.pop(self)
             })
 
         self.tapGesture

@@ -14,6 +14,7 @@ public class ClearableTextField: View {
     private let textField = InternalTextField()
     private let textClearControl = Control()
     private let textClearIcon = Icon()
+    private let tapToDismissGesture = TapGesture()
     private var onSubmit: ((String) -> Void)? = nil
     private var onFocus: (() -> Void)? = nil
     private var onUnfocus: (() -> Void)? = nil
@@ -60,6 +61,12 @@ public class ClearableTextField: View {
             .setColor(to: Colors.black)
             .setOpacity(to: 0.2)
 
+        self.tapToDismissGesture
+            .setCancelsTouchesInView(to: false)
+            .setOnGesture({ [weak self] gesture in
+                self?.handleTapToDismiss(gesture)
+            })
+
         self.setFont(to: UIFont.systemFont(ofSize: 18, weight: .medium))
             .setTextColor(to: Colors.textDark)
 
@@ -103,6 +110,16 @@ public class ClearableTextField: View {
     @discardableResult
     public func setOnChange(_ callback: ((String) -> Void)?) -> Self {
         self.onChange = callback
+        return self
+    }
+
+    @discardableResult
+    public func setTapToDismiss(to view: UIView?) -> Self {
+        if let view {
+            self.tapToDismissGesture.addGestureRecognizer(to: view)
+        } else {
+            self.tapToDismissGesture.removeGestureRecognizer()
+        }
         return self
     }
 
@@ -152,6 +169,17 @@ public class ClearableTextField: View {
     public func setTextAlignment(to alignment: NSTextAlignment) -> Self {
         self.textField.textAlignment = alignment
         return self
+    }
+
+    private func handleTapToDismiss(_ gesture: UITapGestureRecognizer) {
+        guard self.textField.isFirstResponder, let view = gesture.view else {
+            return
+        }
+        let location = gesture.location(in: view)
+        if let hitView = view.hitTest(location, with: nil), hitView.existsWithinHierarchy(of: self) {
+            return
+        }
+        self.textField.resignFirstResponder()
     }
 
     @objc

@@ -26,11 +26,7 @@ public class CapsuleButtonViewController: UIViewController {
             .setTitle(to: "CapsuleButton")
             .setDescription(to: "A standard capsule-shaped button.")
             .setOnBack({ [weak self] in
-                guard let nav = self?.navigationController else {
-                    assertionFailure("Expected navigation controller")
-                    return
-                }
-                nav.popViewController(animated: true)
+                Navigation.pop(self)
             })
 
         self.capsuleButton

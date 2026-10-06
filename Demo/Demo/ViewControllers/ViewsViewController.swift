@@ -26,7 +26,9 @@ public class ViewsViewController: UIViewController {
         "IconImage": IconImageViewController(),
         "IconSpinner": IconSpinnerViewController(),
         "Image": ImageViewController(),
+        "KeyboardHover": KeyboardHoverViewController(),
         "LongPressGesture": LongPressGestureViewController(),
+        "NavBar": NavBarViewController(),
         "PanGesture": PanGestureViewController(),
         "Pill": PillViewController(),
         "PillButton": PillButtonViewController(),
@@ -76,11 +78,7 @@ public class ViewsViewController: UIViewController {
             let toAppend = OpenView()
                 .setText(to: name)
                 .setOnTap({ [weak self] in
-                    guard let nav = self?.navigationController else {
-                        assertionFailure("Expected navigation controller")
-                        return
-                    }
-                    nav.pushViewController(viewController, animated: true)
+                    Navigation.push(from: self, to: viewController)
                 })
 
             self.stack.append(toAppend)
