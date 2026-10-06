@@ -31,12 +31,12 @@ public class NavBar: View {
 
         self.stack
             .constrainAllSides(layoutGuide: .view)
-            .appendGap(size: 20)
+            .appendGap(size: 21)
             .append(self.title)
-            .appendGap(size: 16)
+            .appendGap(size: 18)
 
         self.title
-            .setFont(to: UIFont.systemFont(ofSize: 22, weight: .semibold))
+            .setFont(to: UIFont.systemFont(ofSize: 20, weight: .semibold))
             .toggleWordWrapping(to: false)
             .setHeightConstraint(to: ceil(self.title.font.lineHeight))
             .setTextColor(to: Colors.textDark)
