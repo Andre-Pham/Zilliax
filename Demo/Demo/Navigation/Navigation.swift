@@ -50,6 +50,18 @@ public enum Navigation {
         nav.popViewController(animated: animated)
     }
 
+    public static func popToRoot(_ viewController: UIViewController?, animated: Bool = true) {
+        guard let viewController else {
+            assertionFailure("Expected view controller to be defined")
+            return
+        }
+        guard let nav = viewController.navigationController else {
+            assertionFailure("Expected navigation controller")
+            return
+        }
+        nav.popToRootViewController(animated: animated)
+    }
+
     public static func dismiss(_ viewController: UIViewController?, animated: Bool = true) {
         guard let viewController else {
             assertionFailure("Expected view controller to be defined")
