@@ -14,6 +14,7 @@ public class TextArea: View, UITextViewDelegate {
     private let placeholderText = Text()
     private let scrollUpButton = IconButton()
     private let scrollDownButton = IconButton()
+    private let tapToDismissGesture = TapGesture()
     private var onSubmit: ((String) -> Void)? = nil
     private var onFocus: (() -> Void)? = nil
     private var onUnfocus: (() -> Void)? = nil
@@ -62,6 +63,12 @@ public class TextArea: View, UITextViewDelegate {
             .constrainTopValue(padding: textContainerInset.top, layoutGuide: .view)
         self.placeholderText
             .setTextColor(to: .placeholderText)
+
+        self.tapToDismissGesture
+            .setCancelsTouchesInView(to: false)
+            .setOnGesture({ [weak self] gesture in
+                self?.handleTapToDismiss(gesture)
+            })
 
         self.setFont(to: UIFont.systemFont(ofSize: 56, weight: .bold))
             .setTextColor(to: Colors.textDark)
@@ -175,6 +182,16 @@ public class TextArea: View, UITextViewDelegate {
     }
 
     @discardableResult
+    public func setTapToDismiss(to view: UIView?) -> Self {
+        if let view {
+            self.tapToDismissGesture.addGestureRecognizer(to: view)
+        } else {
+            self.tapToDismissGesture.removeGestureRecognizer()
+        }
+        return self
+    }
+
+    @discardableResult
     public func setSubmitLabel(to label: UIReturnKeyType) -> Self {
         self.textView.returnKeyType = label
         return self
@@ -272,6 +289,17 @@ public class TextArea: View, UITextViewDelegate {
 
     public func scrollViewDidScroll(_ scrollView: UIScrollView) {
         self.updateScrollIndicators()
+    }
+
+    private func handleTapToDismiss(_ gesture: UITapGestureRecognizer) {
+        guard self.textView.isFirstResponder, let view = gesture.view else {
+            return
+        }
+        let location = gesture.location(in: view)
+        if let hitView = view.hitTest(location, with: nil), hitView.existsWithinHierarchy(of: self) {
+            return
+        }
+        self.textView.resignFirstResponder()
     }
 
     @objc
